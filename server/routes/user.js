@@ -36,6 +36,14 @@ router.put('/profile', auth, async (req, res) => {
       fixedAmount,
       interacEmail,
       theme,
+      weddingDate,
+      venue,
+      brideName,
+      groomName,
+      cardType,
+      collection,
+      country,
+      currency,
     } = req.body;
 
     const updateData = {};
@@ -52,6 +60,14 @@ router.put('/profile', auth, async (req, res) => {
     if (fixedAmount !== undefined) updateData.fixedAmount = fixedAmount;
     if (interacEmail !== undefined) updateData.interacEmail = interacEmail;
     if (theme) updateData.theme = theme;
+    if (weddingDate !== undefined) updateData.weddingDate = weddingDate;
+    if (venue !== undefined) updateData.venue = venue;
+    if (brideName !== undefined) updateData.brideName = brideName;
+    if (groomName !== undefined) updateData.groomName = groomName;
+    if (cardType !== undefined) updateData.cardType = cardType;
+    if (collection !== undefined) updateData.collection = collection;
+    if (country !== undefined) updateData.country = country;
+    if (currency !== undefined) updateData.currency = currency;
 
     const user = await User.findByIdAndUpdate(
       req.user._id,

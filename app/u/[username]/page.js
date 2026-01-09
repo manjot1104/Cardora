@@ -5,6 +5,8 @@ import { useParams, useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import api from '@/lib/api';
 import Link from 'next/link';
+import WeddingTemplate from '@/components/WeddingTemplate';
+import { getTemplateById } from '@/lib/templates';
 
 export default function PublicCardPage() {
   const params = useParams();
@@ -46,6 +48,55 @@ export default function PublicCardPage() {
     );
   }
 
+  // Check if user has selected a wedding/engagement/anniversary template
+  const isEventTemplate = user.theme && user.theme !== 'default' && (
+    getTemplateById(user.theme) || 
+    (user.cardType && ['wedding', 'engagement', 'anniversary'].includes(user.cardType))
+  );
+
+  // If event template is selected, render it
+  if (isEventTemplate) {
+    return (
+      <div className="min-h-screen w-full">
+        <WeddingTemplate 
+          user={{
+            ...user,
+            cardType: user.cardType || (user.theme && user.theme !== 'default' ? 'wedding' : 'business')
+          }} 
+          templateId={user.theme} 
+        />
+        {/* Overlay with action buttons */}
+        <div className="fixed bottom-8 left-1/2 transform -translate-x-1/2 z-50 flex gap-4">
+          {user.paymentEnabled && (
+            <Link
+              href={`/pay/${user.username}`}
+              className="px-6 py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-full font-semibold shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all flex items-center gap-2"
+            >
+              💳 Pay Now
+            </Link>
+          )}
+          <button
+            onClick={() => {
+              if (navigator.share) {
+                navigator.share({
+                  title: `${user.name}'s Wedding Invitation`,
+                  text: `You're invited to ${user.name}'s wedding!`,
+                  url: window.location.href,
+                });
+              } else {
+                navigator.clipboard.writeText(window.location.href);
+                alert('Link copied to clipboard!');
+              }
+            }}
+            className="px-6 py-3 bg-white/90 backdrop-blur-sm text-gray-700 rounded-full font-semibold shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all flex items-center gap-2"
+          >
+            📤 Share Invitation
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   const socialLinks = [
     { key: 'linkedin', icon: '💼', label: 'LinkedIn' },
     { key: 'twitter', icon: '🐦', label: 'Twitter' },
@@ -55,44 +106,78 @@ export default function PublicCardPage() {
   ].filter((link) => user.socialLinks?.[link.key]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 py-12 px-4">
-      <div className="max-w-2xl mx-auto">
+    <div className="min-h-screen bg-gradient-to-br from-indigo-100 via-purple-50 to-pink-100 dark:from-gray-900 dark:via-purple-900 dark:to-indigo-900 py-12 px-4 relative overflow-hidden">
+      {/* Animated background elements */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-0 left-1/4 w-96 h-96 bg-purple-300 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob"></div>
+        <div className="absolute top-0 right-1/4 w-96 h-96 bg-yellow-300 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob animation-delay-2000"></div>
+        <div className="absolute -bottom-8 left-1/3 w-96 h-96 bg-pink-300 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob animation-delay-4000"></div>
+      </div>
+
+      <div className="max-w-2xl mx-auto relative z-10">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="glass p-8 md:p-12 rounded-3xl shadow-2xl"
+          className="backdrop-blur-xl bg-white/80 dark:bg-gray-800/80 p-8 md:p-12 rounded-3xl shadow-2xl border border-white/20 dark:border-gray-700/50"
         >
-          {/* Header */}
+          {/* Premium Header with gradient */}
           <div className="text-center mb-8">
             <motion.div
-              initial={{ scale: 0 }}
-              animate={{ scale: 1 }}
-              transition={{ delay: 0.2, type: 'spring' }}
-              className="w-32 h-32 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full mx-auto mb-6 flex items-center justify-center text-6xl"
+              initial={{ scale: 0, rotate: -180 }}
+              animate={{ scale: 1, rotate: 0 }}
+              transition={{ delay: 0.2, type: 'spring', stiffness: 200 }}
+              className="relative w-36 h-36 mx-auto mb-6"
             >
-              {user.name?.charAt(0).toUpperCase() || '👤'}
+              <div className="absolute inset-0 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-full animate-pulse"></div>
+              <div className="absolute inset-1 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 rounded-full flex items-center justify-center text-6xl font-bold text-white shadow-2xl">
+                {user.name?.charAt(0).toUpperCase() || '👤'}
+              </div>
             </motion.div>
-            <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-2">{user.name}</h1>
+            <motion.h1 
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.4 }}
+              className="text-5xl font-bold bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent mb-3"
+            >
+              {user.name}
+            </motion.h1>
             {user.profession && (
-              <p className="text-xl text-gray-600 dark:text-gray-400 mb-1">{user.profession}</p>
+              <motion.p 
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.5 }}
+                className="text-2xl font-semibold text-gray-700 dark:text-gray-300 mb-2"
+              >
+                {user.profession}
+              </motion.p>
             )}
             {user.company && (
-              <p className="text-lg text-gray-500 dark:text-gray-500">{user.company}</p>
+              <motion.p 
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.6 }}
+                className="text-lg text-gray-500 dark:text-gray-400 font-medium"
+              >
+                {user.company}
+              </motion.p>
             )}
           </div>
 
-          {/* Contact Info */}
-          <div className="space-y-4 mb-8">
+          {/* Premium Contact Info */}
+          <div className="space-y-3 mb-8">
             {user.email && (
               <motion.a
                 href={`mailto:${user.email}`}
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.3 }}
-                className="flex items-center gap-4 p-4 bg-gray-100 dark:bg-gray-800 rounded-xl hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+                transition={{ delay: 0.7 }}
+                className="group flex items-center gap-4 p-5 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-gray-700 dark:to-gray-800 rounded-2xl hover:from-blue-100 hover:to-purple-100 dark:hover:from-gray-600 dark:hover:to-gray-700 transition-all shadow-md hover:shadow-xl transform hover:scale-[1.02] border border-blue-100 dark:border-gray-600"
               >
-                <span className="text-2xl">📧</span>
-                <span className="text-gray-900 dark:text-white">{user.email}</span>
+                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center text-2xl shadow-lg group-hover:scale-110 transition-transform">
+                  📧
+                </div>
+                <span className="text-gray-900 dark:text-white font-medium flex-1">{user.email}</span>
+                <span className="text-blue-500 opacity-0 group-hover:opacity-100 transition-opacity">→</span>
               </motion.a>
             )}
 
@@ -101,11 +186,14 @@ export default function PublicCardPage() {
                 href={`tel:${user.phone}`}
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.4 }}
-                className="flex items-center gap-4 p-4 bg-gray-100 dark:bg-gray-800 rounded-xl hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+                transition={{ delay: 0.8 }}
+                className="group flex items-center gap-4 p-5 bg-gradient-to-r from-purple-50 to-pink-50 dark:from-gray-700 dark:to-gray-800 rounded-2xl hover:from-purple-100 hover:to-pink-100 dark:hover:from-gray-600 dark:hover:to-gray-700 transition-all shadow-md hover:shadow-xl transform hover:scale-[1.02] border border-purple-100 dark:border-gray-600"
               >
-                <span className="text-2xl">📱</span>
-                <span className="text-gray-900 dark:text-white">{user.phone}</span>
+                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-2xl shadow-lg group-hover:scale-110 transition-transform">
+                  📱
+                </div>
+                <span className="text-gray-900 dark:text-white font-medium flex-1">{user.phone}</span>
+                <span className="text-purple-500 opacity-0 group-hover:opacity-100 transition-opacity">→</span>
               </motion.a>
             )}
 
@@ -116,11 +204,14 @@ export default function PublicCardPage() {
                 rel="noopener noreferrer"
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.5 }}
-                className="flex items-center gap-4 p-4 bg-gray-100 dark:bg-gray-800 rounded-xl hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+                transition={{ delay: 0.9 }}
+                className="group flex items-center gap-4 p-5 bg-gradient-to-r from-green-50 to-emerald-50 dark:from-gray-700 dark:to-gray-800 rounded-2xl hover:from-green-100 hover:to-emerald-100 dark:hover:from-gray-600 dark:hover:to-gray-700 transition-all shadow-md hover:shadow-xl transform hover:scale-[1.02] border border-green-100 dark:border-gray-600"
               >
-                <span className="text-2xl">💬</span>
-                <span className="text-gray-900 dark:text-white">{user.whatsapp}</span>
+                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-green-500 to-emerald-500 flex items-center justify-center text-2xl shadow-lg group-hover:scale-110 transition-transform">
+                  💬
+                </div>
+                <span className="text-gray-900 dark:text-white font-medium flex-1">{user.whatsapp}</span>
+                <span className="text-green-500 opacity-0 group-hover:opacity-100 transition-opacity">→</span>
               </motion.a>
             )}
 
@@ -128,47 +219,64 @@ export default function PublicCardPage() {
               <motion.div
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.6 }}
-                className="flex items-start gap-4 p-4 bg-gray-100 dark:bg-gray-800 rounded-xl"
+                transition={{ delay: 1.0 }}
+                className="flex items-start gap-4 p-5 bg-gradient-to-r from-amber-50 to-orange-50 dark:from-gray-700 dark:to-gray-800 rounded-2xl border border-amber-100 dark:border-gray-600 shadow-md"
               >
-                <span className="text-2xl">📍</span>
-                <span className="text-gray-900 dark:text-white">{user.address}</span>
+                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-amber-500 to-orange-500 flex items-center justify-center text-2xl shadow-lg flex-shrink-0">
+                  📍
+                </div>
+                <span className="text-gray-900 dark:text-white font-medium">{user.address}</span>
               </motion.div>
             )}
           </div>
 
-          {/* Social Links */}
+          {/* Premium Social Links */}
           {socialLinks.length > 0 && (
             <div className="mb-8">
-              <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">Connect</h2>
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+              <motion.h2 
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 1.1 }}
+                className="text-2xl font-bold text-gray-900 dark:text-white mb-6 text-center"
+              >
+                Connect With Me
+              </motion.h2>
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                 {socialLinks.map((link, index) => (
                   <motion.a
                     key={link.key}
                     href={user.socialLinks[link.key]}
                     target="_blank"
                     rel="noopener noreferrer"
-                    initial={{ opacity: 0, scale: 0.8 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ delay: 0.7 + index * 0.1 }}
-                    className="flex flex-col items-center justify-center p-4 bg-gray-100 dark:bg-gray-800 rounded-xl hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+                    initial={{ opacity: 0, scale: 0.8, y: 20 }}
+                    animate={{ opacity: 1, scale: 1, y: 0 }}
+                    transition={{ delay: 1.2 + index * 0.1 }}
+                    className="group flex flex-col items-center justify-center p-6 bg-gradient-to-br from-white to-gray-50 dark:from-gray-800 dark:to-gray-700 rounded-2xl hover:from-blue-50 hover:to-purple-50 dark:hover:from-gray-700 dark:hover:to-gray-600 transition-all shadow-lg hover:shadow-2xl transform hover:scale-105 border border-gray-200 dark:border-gray-600"
                   >
-                    <span className="text-3xl mb-2">{link.icon}</span>
-                    <span className="text-sm text-gray-700 dark:text-gray-300">{link.label}</span>
+                    <div className="text-4xl mb-3 group-hover:scale-110 transition-transform">{link.icon}</div>
+                    <span className="text-sm font-semibold text-gray-700 dark:text-gray-300">{link.label}</span>
                   </motion.a>
                 ))}
               </div>
             </div>
           )}
 
-          {/* Action Buttons */}
-          <div className="flex flex-col sm:flex-row gap-4">
+          {/* Premium Action Buttons */}
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 1.4 }}
+            className="flex flex-col sm:flex-row gap-4"
+          >
             {user.paymentEnabled && (
               <Link
                 href={`/pay/${user.username}`}
-                className="flex-1 py-4 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-xl font-semibold text-center hover:shadow-xl transform hover:scale-105 transition-all"
+                className="flex-1 group relative py-4 bg-gradient-to-r from-purple-600 via-pink-600 to-rose-600 text-white rounded-2xl font-bold text-center hover:shadow-2xl transform hover:scale-105 transition-all overflow-hidden"
               >
-                💳 Pay Now
+                <span className="relative z-10 flex items-center justify-center gap-2">
+                  💳 Pay Now
+                </span>
+                <div className="absolute inset-0 bg-gradient-to-r from-purple-700 via-pink-700 to-rose-700 opacity-0 group-hover:opacity-100 transition-opacity"></div>
               </Link>
             )}
             <button
@@ -184,11 +292,11 @@ export default function PublicCardPage() {
                   alert('Link copied to clipboard!');
                 }
               }}
-              className="flex-1 py-4 border-2 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-xl font-semibold hover:bg-gray-100 dark:hover:bg-gray-800 transition-all"
+              className="flex-1 py-4 bg-white dark:bg-gray-800 border-2 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-2xl font-bold hover:bg-gradient-to-r hover:from-blue-50 hover:to-purple-50 dark:hover:from-gray-700 dark:hover:to-gray-600 hover:border-blue-400 dark:hover:border-purple-400 transition-all shadow-lg hover:shadow-xl transform hover:scale-105 flex items-center justify-center gap-2"
             >
               📤 Share Card
             </button>
-          </div>
+          </motion.div>
         </motion.div>
       </div>
     </div>

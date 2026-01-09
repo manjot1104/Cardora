@@ -48,7 +48,12 @@ export default function SignupPage() {
       toast.success('Account created successfully!');
       router.push('/dashboard');
     } catch (error) {
-      toast.error(error.response?.data?.error || 'Signup failed');
+      console.error('Signup error:', error);
+      if (!error.response) {
+        toast.error('Cannot connect to server. Please make sure the backend server is running on port 5000.');
+      } else {
+        toast.error(error.response?.data?.error || 'Signup failed');
+      }
     } finally {
       setLoading(false);
     }

@@ -6,7 +6,7 @@ const inter = Inter({ subsets: ['latin'] })
 
 export const metadata = {
   title: 'Cardora - One Tap. Endless Connections.',
-  description: 'Digital Business Card & Payment Platform',
+  description: 'The modern way to share your professional identity using NFC and QR. Digital Business Cards, Wedding Invitations, and NFC Smart Cards with instant payment integration.',
 }
 
 export default function RootLayout({ children }) {

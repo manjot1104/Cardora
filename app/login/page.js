@@ -33,7 +33,12 @@ export default function LoginPage() {
       toast.success('Login successful!');
       router.push('/dashboard');
     } catch (error) {
-      toast.error(error.response?.data?.error || 'Login failed');
+      console.error('Login error:', error);
+      if (!error.response) {
+        toast.error('Cannot connect to server. Please make sure the backend server is running on port 5000.');
+      } else {
+        toast.error(error.response?.data?.error || 'Login failed');
+      }
     } finally {
       setLoading(false);
     }

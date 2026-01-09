@@ -59,6 +59,14 @@ router.get('/:username', async (req, res) => {
         interacEmail: user.interacEmail,
         theme: user.theme,
         username: user.username,
+        weddingDate: user.weddingDate,
+        venue: user.venue,
+        brideName: user.brideName,
+        groomName: user.groomName,
+        cardType: user.cardType,
+        collection: user.collection,
+        country: user.country,
+        currency: user.currency,
       },
     });
   } catch (error) {

@@ -7,6 +7,7 @@ import Confetti from 'react-confetti';
 import api from '@/lib/api';
 import toast from 'react-hot-toast';
 import Link from 'next/link';
+import { getCountryByCode, formatCurrency } from '@/lib/countryConfig';
 
 export default function PaymentPage() {
   const params = useParams();
@@ -146,7 +147,7 @@ export default function PaymentPage() {
           <div className="space-y-6">
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                Amount ($)
+                Amount {user?.currency && getCountryByCode(user.country || 'IN') ? `(${getCountryByCode(user.country || 'IN').symbol})` : '($)'}
               </label>
               <input
                 type="number"
@@ -160,8 +161,10 @@ export default function PaymentPage() {
                 className="w-full px-4 py-4 text-3xl font-bold text-center rounded-xl border-2 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none disabled:opacity-50"
                 placeholder="0.00"
               />
-              {user.paymentType === 'fixed' && (
-                <p className="text-sm text-gray-500 mt-2 text-center">Fixed amount: ${user.fixedAmount}</p>
+              {user.paymentType === 'fixed' && user.fixedAmount && (
+                <p className="text-sm text-gray-500 mt-2 text-center">
+                  Fixed amount: {formatCurrency(user.fixedAmount, user.country || 'IN')}
+                </p>
               )}
             </div>
 

@@ -131,11 +131,102 @@ export default function DashboardPage() {
           </div>
         </motion.div>
 
-        {/* Quick Actions */}
+        {/* Create Card Section */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.5 }}
+          className="mb-8"
+        >
+          <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-6">Create Your Card</h2>
+          <div className="grid md:grid-cols-2 gap-6">
+            {/* Business Card Option */}
+            <Link
+              href="/dashboard/card"
+              className="relative group overflow-hidden"
+            >
+              <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-purple-500 rounded-3xl opacity-0 group-hover:opacity-10 blur-xl transition-opacity"></div>
+              <div className="relative glass p-8 rounded-3xl hover:shadow-2xl transition-all border-2 border-blue-200 dark:border-blue-800 group-hover:border-blue-400 dark:group-hover:border-blue-600">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="text-6xl group-hover:scale-110 transition-transform">💼</div>
+                  <span className="px-4 py-2 bg-gradient-to-r from-blue-500 to-purple-500 text-white text-sm font-bold rounded-full">
+                    Business Card
+                  </span>
+                </div>
+                <h3 className="text-2xl font-bold mb-3 text-gray-900 dark:text-white">
+                  Sales / Real Estate Card
+                </h3>
+                <p className="text-gray-600 dark:text-gray-400 mb-4">
+                  Create a professional digital business card for networking and sales
+                </p>
+                <ul className="space-y-2 text-sm text-gray-600 dark:text-gray-400 mb-6">
+                  <li className="flex items-center gap-2">
+                    <span className="text-green-500">✓</span>
+                    <span>Professional profile</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <span className="text-green-500">✓</span>
+                    <span>Contact sharing</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <span className="text-green-500">✓</span>
+                    <span>Payment integration</span>
+                  </li>
+                </ul>
+                <div className="flex items-center gap-2 text-blue-600 dark:text-blue-400 font-semibold group-hover:gap-4 transition-all">
+                  <span>Create Business Card</span>
+                  <span>→</span>
+                </div>
+              </div>
+            </Link>
+
+            {/* Wedding Card Option */}
+            <Link
+              href="/dashboard/card"
+              className="relative group overflow-hidden"
+            >
+              <div className="absolute inset-0 bg-gradient-to-r from-pink-500 to-rose-500 rounded-3xl opacity-0 group-hover:opacity-10 blur-xl transition-opacity"></div>
+              <div className="relative glass p-8 rounded-3xl hover:shadow-2xl transition-all border-2 border-pink-200 dark:border-pink-800 group-hover:border-pink-400 dark:group-hover:border-pink-600">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="text-6xl group-hover:scale-110 transition-transform">💍</div>
+                  <span className="px-4 py-2 bg-gradient-to-r from-pink-500 to-rose-500 text-white text-sm font-bold rounded-full">
+                    Wedding Card
+                  </span>
+                </div>
+                <h3 className="text-2xl font-bold mb-3 text-gray-900 dark:text-white">
+                  Digital Wedding Invitation
+                </h3>
+                <p className="text-gray-600 dark:text-gray-400 mb-4">
+                  Create beautiful digital wedding invitations with premium templates
+                </p>
+                <ul className="space-y-2 text-sm text-gray-600 dark:text-gray-400 mb-6">
+                  <li className="flex items-center gap-2">
+                    <span className="text-green-500">✓</span>
+                    <span>30 Premium Templates</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <span className="text-green-500">✓</span>
+                    <span>Modern designs</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <span className="text-green-500">✓</span>
+                    <span>Gift payment integration</span>
+                  </li>
+                </ul>
+                <div className="flex items-center gap-2 text-pink-600 dark:text-pink-400 font-semibold group-hover:gap-4 transition-all">
+                  <span>Create Wedding Card</span>
+                  <span>→</span>
+                </div>
+              </div>
+            </Link>
+          </div>
+        </motion.div>
+
+        {/* Quick Actions */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.6 }}
           className="grid md:grid-cols-3 gap-6"
         >
           <Link

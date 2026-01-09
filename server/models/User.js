@@ -63,6 +63,32 @@ const userSchema = new mongoose.Schema({
     type: String,
     default: 'default',
   },
+  // Wedding-specific fields (optional)
+  weddingDate: String,
+  venue: String,
+  brideName: String,
+  groomName: String,
+  // Card type and collection
+  cardType: {
+    type: String,
+    enum: ['business', 'wedding', 'engagement', 'anniversary'],
+    default: 'business',
+  },
+  collection: {
+    type: String,
+    enum: ['standard', 'signature'],
+    default: 'standard',
+  },
+  // Country/Region support
+  country: {
+    type: String,
+    enum: ['IN', 'CA'],
+    default: 'IN',
+  },
+  currency: {
+    type: String,
+    default: 'INR',
+  },
 }, {
   timestamps: true,
 });
