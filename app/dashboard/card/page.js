@@ -180,18 +180,18 @@ export default function CardPage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
         >
-          <div className="flex items-center justify-between mb-8">
+          <div className="flex items-center justify-between mb-6 sm:mb-8">
             <div>
-              <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-2">Card Settings</h1>
-              <p className="text-gray-600 dark:text-gray-400">Create and customize your digital card</p>
+              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 dark:text-white mb-2">Card Settings</h1>
+              <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400">Create and customize your digital card</p>
             </div>
           </div>
 
           {/* Country Selector */}
-          <div className="glass p-6 rounded-3xl mb-8 border-2 border-indigo-200 dark:border-indigo-800">
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">Select Your Country</h2>
-            <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">Choose your country for currency and payment methods</p>
-            <div className="grid md:grid-cols-2 gap-4">
+          <div className="glass p-4 sm:p-6 rounded-2xl sm:rounded-3xl mb-4 sm:mb-6 md:mb-8 border-2 border-indigo-200 dark:border-indigo-800">
+            <h2 className="text-lg sm:text-xl md:text-2xl font-bold text-gray-900 dark:text-white mb-2 sm:mb-3 md:mb-4">Select Your Country</h2>
+            <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 mb-3 sm:mb-4">Choose your country for currency and payment methods</p>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3 md:gap-4">
               {Object.values(countries).map((country) => (
                 <button
                   key={country.code}
@@ -223,29 +223,29 @@ export default function CardPage() {
           </div>
 
           {/* Card Type Selector */}
-          <div className="glass p-6 rounded-3xl mb-8 border-2 border-blue-200 dark:border-blue-800">
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">Choose Card Type</h2>
-            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="glass p-4 sm:p-6 rounded-2xl sm:rounded-3xl mb-4 sm:mb-6 md:mb-8 border-2 border-blue-200 dark:border-blue-800">
+            <h2 className="text-lg sm:text-xl md:text-2xl font-bold text-gray-900 dark:text-white mb-2 sm:mb-3 md:mb-4">Choose Card Type</h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3 md:gap-4">
               <button
                 onClick={() => {
                   setFormData({ ...formData, theme: 'default', cardType: 'business', collection: 'standard' });
                   setPreviewTemplate(null);
                   toast.success('Business Card mode selected');
                 }}
-                className={`p-6 rounded-2xl border-2 transition-all text-left ${
+                className={`p-3 sm:p-4 md:p-6 rounded-xl sm:rounded-2xl border-2 transition-all text-left ${
                   formData.cardType === 'business'
                     ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
                     : 'border-gray-200 dark:border-gray-700 hover:border-blue-300 dark:hover:border-blue-600'
                 }`}
               >
-                <div className="flex items-center justify-between mb-3">
-                  <div className="text-4xl">💼</div>
+                <div className="flex items-center justify-between mb-2 sm:mb-3">
+                  <div className="text-2xl sm:text-3xl md:text-4xl">💼</div>
                   {formData.cardType === 'business' && (
-                    <span className="px-3 py-1 bg-blue-500 text-white text-xs font-bold rounded-full">Active</span>
+                    <span className="px-2 sm:px-3 py-1 bg-blue-500 text-white text-xs font-bold rounded-full">Active</span>
                   )}
                 </div>
-                <h3 className="text-xl font-bold mb-2 text-gray-900 dark:text-white">Business Card</h3>
-                <p className="text-sm text-gray-600 dark:text-gray-400">
+                <h3 className="text-base sm:text-lg md:text-xl font-bold mb-1 sm:mb-2 text-gray-900 dark:text-white">Business Card</h3>
+                <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">
                   Professional digital business card
                 </p>
               </button>
@@ -257,20 +257,20 @@ export default function CardPage() {
                   setPreviewTemplate(firstWeddingTemplate);
                   toast.success('Wedding Card mode selected');
                 }}
-                className={`p-6 rounded-2xl border-2 transition-all text-left ${
+                className={`p-3 sm:p-4 md:p-6 rounded-xl sm:rounded-2xl border-2 transition-all text-left ${
                   formData.cardType === 'wedding'
                     ? 'border-pink-500 bg-pink-50 dark:bg-pink-900/20'
                     : 'border-gray-200 dark:border-gray-700 hover:border-pink-300 dark:hover:border-pink-600'
                 }`}
               >
-                <div className="flex items-center justify-between mb-3">
-                  <div className="text-4xl">💍</div>
+                <div className="flex items-center justify-between mb-2 sm:mb-3">
+                  <div className="text-2xl sm:text-3xl md:text-4xl">💍</div>
                   {formData.cardType === 'wedding' && (
-                    <span className="px-3 py-1 bg-pink-500 text-white text-xs font-bold rounded-full">Active</span>
+                    <span className="px-2 sm:px-3 py-1 bg-pink-500 text-white text-xs font-bold rounded-full">Active</span>
                   )}
                 </div>
-                <h3 className="text-xl font-bold mb-2 text-gray-900 dark:text-white">Wedding Card</h3>
-                <p className="text-sm text-gray-600 dark:text-gray-400">
+                <h3 className="text-base sm:text-lg md:text-xl font-bold mb-1 sm:mb-2 text-gray-900 dark:text-white">Wedding Card</h3>
+                <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">
                   Beautiful digital wedding invitations
                 </p>
               </button>
@@ -282,20 +282,20 @@ export default function CardPage() {
                   setPreviewTemplate(firstEngagementTemplate);
                   toast.success('Engagement Card mode selected');
                 }}
-                className={`p-6 rounded-2xl border-2 transition-all text-left ${
+                className={`p-3 sm:p-4 md:p-6 rounded-xl sm:rounded-2xl border-2 transition-all text-left ${
                   formData.cardType === 'engagement'
                     ? 'border-purple-500 bg-purple-50 dark:bg-purple-900/20'
                     : 'border-gray-200 dark:border-gray-700 hover:border-purple-300 dark:hover:border-purple-600'
                 }`}
               >
-                <div className="flex items-center justify-between mb-3">
-                  <div className="text-4xl">💎</div>
+                <div className="flex items-center justify-between mb-2 sm:mb-3">
+                  <div className="text-2xl sm:text-3xl md:text-4xl">💎</div>
                   {formData.cardType === 'engagement' && (
-                    <span className="px-3 py-1 bg-purple-500 text-white text-xs font-bold rounded-full">Active</span>
+                    <span className="px-2 sm:px-3 py-1 bg-purple-500 text-white text-xs font-bold rounded-full">Active</span>
                   )}
                 </div>
-                <h3 className="text-xl font-bold mb-2 text-gray-900 dark:text-white">Engagement Card</h3>
-                <p className="text-sm text-gray-600 dark:text-gray-400">
+                <h3 className="text-base sm:text-lg md:text-xl font-bold mb-1 sm:mb-2 text-gray-900 dark:text-white">Engagement Card</h3>
+                <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">
                   Royal engagement celebrations
                 </p>
               </button>
@@ -307,20 +307,20 @@ export default function CardPage() {
                   setPreviewTemplate(firstAnniversaryTemplate);
                   toast.success('Anniversary Card mode selected');
                 }}
-                className={`p-6 rounded-2xl border-2 transition-all text-left ${
+                className={`p-3 sm:p-4 md:p-6 rounded-xl sm:rounded-2xl border-2 transition-all text-left ${
                   formData.cardType === 'anniversary'
                     ? 'border-amber-500 bg-amber-50 dark:bg-amber-900/20'
                     : 'border-gray-200 dark:border-gray-700 hover:border-amber-300 dark:hover:border-amber-600'
                 }`}
               >
-                <div className="flex items-center justify-between mb-3">
-                  <div className="text-4xl">🎉</div>
+                <div className="flex items-center justify-between mb-2 sm:mb-3">
+                  <div className="text-2xl sm:text-3xl md:text-4xl">🎉</div>
                   {formData.cardType === 'anniversary' && (
-                    <span className="px-3 py-1 bg-amber-500 text-white text-xs font-bold rounded-full">Active</span>
+                    <span className="px-2 sm:px-3 py-1 bg-amber-500 text-white text-xs font-bold rounded-full">Active</span>
                   )}
                 </div>
-                <h3 className="text-xl font-bold mb-2 text-gray-900 dark:text-white">Anniversary Card</h3>
-                <p className="text-sm text-gray-600 dark:text-gray-400">
+                <h3 className="text-base sm:text-lg md:text-xl font-bold mb-1 sm:mb-2 text-gray-900 dark:text-white">Anniversary Card</h3>
+                <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">
                   Designer anniversary cards
                 </p>
               </button>
@@ -329,23 +329,23 @@ export default function CardPage() {
 
           {/* Signature Collection Section - Only show for Engagement or Anniversary */}
           {(formData.cardType === 'engagement' || formData.cardType === 'anniversary') && (
-            <div className="glass p-8 rounded-3xl mb-8 border-4 border-purple-300 dark:border-purple-700 relative overflow-hidden">
+            <div className="glass p-4 sm:p-6 md:p-8 rounded-2xl sm:rounded-3xl mb-4 sm:mb-6 md:mb-8 border-2 sm:border-4 border-purple-300 dark:border-purple-700 relative overflow-hidden">
               <div className="absolute inset-0 bg-gradient-to-r from-purple-500/10 via-pink-500/10 to-rose-500/10"></div>
               <div className="relative z-10">
-                <div className="flex items-center justify-between mb-6">
+                <div className="flex items-center justify-between mb-4 sm:mb-6">
                   <div>
-                    <div className="inline-block px-4 py-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-full text-xs font-bold mb-2">
+                    <div className="inline-block px-3 sm:px-4 py-1 sm:py-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-full text-xs font-bold mb-2">
                       👑 SIGNATURE COLLECTION
                     </div>
-                    <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+                    <h2 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white mb-2">
                       Premium & Exclusive Templates
                     </h2>
-                    <p className="text-gray-600 dark:text-gray-400 italic">
+                    <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400 italic">
                       "Where unforgettable moments begin"
                     </p>
                   </div>
                 </div>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2 sm:gap-3 md:gap-4">
                   {getSignatureTemplatesByType(formData.cardType === 'engagement' ? 'engagement' : formData.cardType === 'anniversary' ? 'anniversary' : 'wedding').map((template) => {
                     const isSelected = formData.theme === template.id;
                     return (
@@ -385,23 +385,23 @@ export default function CardPage() {
 
           {/* Premium Wedding Templates Section - Only show when Wedding Card mode */}
           {formData.cardType === 'wedding' && (
-            <div className="glass p-8 rounded-3xl mb-8">
-              <div className="flex items-center justify-between mb-6">
+            <div className="glass p-4 sm:p-6 md:p-8 rounded-2xl sm:rounded-3xl mb-4 sm:mb-6 md:mb-8">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4 sm:mb-6 gap-3 sm:gap-0">
                 <div>
-                  <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+                  <h2 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white mb-2">
                     💍 Premium Wedding Card Templates
                   </h2>
-                  <p className="text-gray-600 dark:text-gray-400">
+                  <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400">
                     Choose from {weddingTemplates.length} beautifully designed digital wedding invitations
                   </p>
                 </div>
-                <div className="px-4 py-2 bg-gradient-to-r from-pink-500 to-rose-500 text-white rounded-full text-sm font-semibold">
+                <div className="px-3 sm:px-4 py-1.5 sm:py-2 bg-gradient-to-r from-pink-500 to-rose-500 text-white rounded-full text-xs sm:text-sm font-semibold">
                   Premium Collection
                 </div>
               </div>
 
             {/* Category Filter */}
-            <div className="flex flex-wrap gap-2 mb-6">
+            <div className="flex flex-wrap gap-2 mb-4 sm:mb-6">
               <button
                 onClick={() => setSelectedCategory('All')}
                 className={`px-4 py-2 rounded-full font-medium transition-all ${
@@ -428,7 +428,7 @@ export default function CardPage() {
             </div>
 
             {/* Template Grid */}
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 max-h-96 overflow-y-auto p-2">
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-3 md:gap-4 max-h-96 overflow-y-auto p-2">
               {filteredTemplates.map((template) => {
                 const isSelected = formData.theme === template.id;
                 return (
@@ -482,32 +482,32 @@ export default function CardPage() {
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              className="glass p-8 rounded-3xl mb-8 border-2 border-blue-200 dark:border-blue-800"
+              className="glass p-4 sm:p-6 md:p-8 rounded-2xl sm:rounded-3xl mb-4 sm:mb-6 md:mb-8 border-2 border-blue-200 dark:border-blue-800"
             >
-              <div className="flex items-center justify-between mb-6">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4 sm:mb-6 gap-3 sm:gap-0">
                 <div>
-                  <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-1">
+                  <h3 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white mb-1">
                     {(() => {
                       const sigTemplate = getSignatureTemplateById(previewTemplate);
                       const regTemplate = getTemplateById(previewTemplate);
                       return sigTemplate ? sigTemplate.name : (regTemplate ? regTemplate.name : 'Template');
                     })()}
                   </h3>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                  <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">
                     Live Preview - See how your invitation will look
                   </p>
                 </div>
-                <div className="px-4 py-2 bg-gradient-to-r from-pink-500 to-rose-500 text-white rounded-full text-xs font-bold">
+                <div className="px-3 sm:px-4 py-1.5 sm:py-2 bg-gradient-to-r from-pink-500 to-rose-500 text-white rounded-full text-xs font-bold">
                   PREVIEW
                 </div>
               </div>
-              <div className="relative bg-white dark:bg-gray-900 rounded-2xl overflow-hidden shadow-2xl border-4 border-gray-200 dark:border-gray-700">
-                <div className="absolute top-4 right-4 z-10 flex gap-2">
-                  <div className="w-3 h-3 rounded-full bg-red-500"></div>
-                  <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
-                  <div className="w-3 h-3 rounded-full bg-green-500"></div>
+              <div className="relative bg-white dark:bg-gray-900 rounded-xl sm:rounded-2xl overflow-hidden shadow-2xl border-2 sm:border-4 border-gray-200 dark:border-gray-700">
+                <div className="absolute top-2 sm:top-4 right-2 sm:right-4 z-10 flex gap-1 sm:gap-2">
+                  <div className="w-2 h-2 sm:w-3 sm:h-3 rounded-full bg-red-500"></div>
+                  <div className="w-2 h-2 sm:w-3 sm:h-3 rounded-full bg-yellow-500"></div>
+                  <div className="w-2 h-2 sm:w-3 sm:h-3 rounded-full bg-green-500"></div>
                 </div>
-                <div className="h-[600px] overflow-y-auto">
+                <div className="h-[400px] sm:h-[500px] md:h-[600px] overflow-y-auto">
                   <WeddingTemplate
                     key={`${previewTemplate}-${formData.cardType}`}
                     user={{
@@ -532,10 +532,10 @@ export default function CardPage() {
             </motion.div>
           )}
 
-          <div className="grid lg:grid-cols-2 gap-8">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 md:gap-8">
             {/* Settings Form */}
-            <div className="glass p-8 rounded-3xl">
-              <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">Configure Your Card</h2>
+            <div className="glass p-4 sm:p-6 lg:p-8 rounded-2xl sm:rounded-3xl">
+              <h2 className="text-lg sm:text-xl md:text-2xl font-bold text-gray-900 dark:text-white mb-4 sm:mb-6">Configure Your Card</h2>
 
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="flex items-center justify-between p-4 bg-gray-100 dark:bg-gray-800 rounded-lg">
@@ -693,14 +693,14 @@ export default function CardPage() {
             </div>
 
             {/* QR Code Preview */}
-            <div className="glass p-8 rounded-3xl">
-              <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">Your QR Code</h2>
+            <div className="glass p-4 sm:p-6 md:p-8 rounded-2xl sm:rounded-3xl">
+              <h2 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white mb-4 sm:mb-6">Your QR Code</h2>
 
-              <div className="flex flex-col items-center space-y-6">
-                <div className="p-4 bg-white rounded-2xl shadow-lg animate-glow">
+              <div className="flex flex-col items-center space-y-4 sm:space-y-6">
+                <div className="p-3 sm:p-4 bg-white rounded-xl sm:rounded-2xl shadow-lg animate-glow">
                   <QRCodeSVG
                     value={cardUrl}
-                    size={200}
+                    size={typeof window !== 'undefined' && window.innerWidth < 640 ? 150 : 200}
                     level="H"
                     includeMargin={true}
                   />

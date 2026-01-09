@@ -22,7 +22,10 @@ const corsOptions = {
       process.env.FRONTEND_URL,
     ].filter(Boolean);
     
-    if (allowedOrigins.indexOf(origin) !== -1 || process.env.NODE_ENV !== 'production') {
+    // Allow Vercel preview deployments (e.g., *.vercel.app)
+    const isVercelPreview = origin && origin.includes('.vercel.app');
+    
+    if (allowedOrigins.indexOf(origin) !== -1 || isVercelPreview || process.env.NODE_ENV !== 'production') {
       callback(null, true);
     } else {
       callback(new Error('Not allowed by CORS'));

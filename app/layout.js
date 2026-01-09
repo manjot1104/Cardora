@@ -9,6 +9,12 @@ export const metadata = {
   description: 'The modern way to share your professional identity using NFC and QR. Digital Business Cards, Wedding Invitations, and NFC Smart Cards with instant payment integration.',
 }
 
+export const viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 5,
+}
+
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
