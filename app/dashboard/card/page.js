@@ -29,6 +29,13 @@ export default function CardPage() {
     venue: '',
     brideName: '',
     groomName: '',
+    // Parent names (optional)
+    brideFatherName: '',
+    brideMotherName: '',
+    groomFatherName: '',
+    groomMotherName: '',
+    // Deceased elders (optional)
+    deceasedElders: '',
     cardType: 'business',
     collection: 'standard',
     country: 'IN',
@@ -64,6 +71,11 @@ export default function CardPage() {
         venue: userData.venue || '',
         brideName: userData.brideName || '',
         groomName: userData.groomName || '',
+        brideFatherName: userData.brideFatherName || '',
+        brideMotherName: userData.brideMotherName || '',
+        groomFatherName: userData.groomFatherName || '',
+        groomMotherName: userData.groomMotherName || '',
+        deceasedElders: userData.deceasedElders || '',
         cardType: userData.cardType || 'business',
         collection: userData.collection || 'standard',
         country: userData.country || detectedCountry.code,
@@ -146,6 +158,11 @@ export default function CardPage() {
         venue: formData.venue || undefined,
         brideName: formData.brideName || undefined,
         groomName: formData.groomName || undefined,
+        brideFatherName: formData.brideFatherName || undefined,
+        brideMotherName: formData.brideMotherName || undefined,
+        groomFatherName: formData.groomFatherName || undefined,
+        groomMotherName: formData.groomMotherName || undefined,
+        deceasedElders: formData.deceasedElders || undefined,
         cardType: formData.cardType || undefined,
         collection: formData.collection || undefined,
         country: formData.country || undefined,
@@ -252,10 +269,11 @@ export default function CardPage() {
 
               <button
                 onClick={() => {
-                  const firstWeddingTemplate = weddingTemplates[0].id;
-                  setFormData({ ...formData, theme: firstWeddingTemplate, cardType: 'wedding', collection: 'standard' });
-                  setPreviewTemplate(firstWeddingTemplate);
-                  toast.success('Wedding Card mode selected');
+                  // Set Traditional Indian as default for Indian-style weddings
+                  const traditionalIndianTemplate = weddingTemplates.find(t => t.id === 'traditional-indian')?.id || weddingTemplates[0].id;
+                  setFormData({ ...formData, theme: traditionalIndianTemplate, cardType: 'wedding', collection: 'standard' });
+                  setPreviewTemplate(traditionalIndianTemplate);
+                  toast.success('Wedding Card mode selected - Traditional Indian template loaded!');
                 }}
                 className={`p-3 sm:p-4 md:p-6 rounded-xl sm:rounded-2xl border-2 transition-all text-left ${
                   formData.cardType === 'wedding'
@@ -271,7 +289,7 @@ export default function CardPage() {
                 </div>
                 <h3 className="text-base sm:text-lg md:text-xl font-bold mb-1 sm:mb-2 text-gray-900 dark:text-white">Wedding Card</h3>
                 <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">
-                  Beautiful digital wedding invitations
+                  Beautiful digital wedding invitations with Traditional Indian style
                 </p>
               </button>
 
@@ -518,6 +536,12 @@ export default function CardPage() {
                       venue: formData.venue || 'Grand Ballroom',
                       company: formData.venue || 'Grand Ballroom',
                       address: formData.weddingDate || 'December 15, 2024',
+                      // Parents information
+                      brideFatherName: formData.brideFatherName || '',
+                      brideMotherName: formData.brideMotherName || '',
+                      groomFatherName: formData.groomFatherName || '',
+                      groomMotherName: formData.groomMotherName || '',
+                      deceasedElders: formData.deceasedElders || '',
                     }}
                     templateId={previewTemplate}
                     cardType={formData.cardType || 'wedding'}
@@ -677,6 +701,79 @@ export default function CardPage() {
                           className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
                           placeholder="Grand Ballroom, Hotel Name"
                         />
+                      </div>
+
+                      {/* Parents Information Section */}
+                      <div className="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
+                        <h4 className="text-base font-semibold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
+                          👨‍👩‍👧‍👦 Parents' Names (Optional - Traditional Indian Style)
+                        </h4>
+                        
+                        {/* Deceased Elders */}
+                        <div className="mb-4">
+                          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                            Deceased Elders (Optional)
+                          </label>
+                          <input
+                            type="text"
+                            name="deceasedElders"
+                            value={formData.deceasedElders}
+                            onChange={handleChange}
+                            className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+                            placeholder="Late S. Inderjeet Singh & Late Smt. Surjeet Kaur"
+                          />
+                          <p className="text-xs text-gray-500 mt-1">e.g., "Late S. Father Name & Late Smt. Mother Name"</p>
+                        </div>
+
+                        {/* Bride's Parents */}
+                        <div className="mb-4">
+                          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                            Bride's Parents
+                          </label>
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <input
+                              type="text"
+                              name="brideFatherName"
+                              value={formData.brideFatherName}
+                              onChange={handleChange}
+                              className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+                              placeholder="Father Name"
+                            />
+                            <input
+                              type="text"
+                              name="brideMotherName"
+                              value={formData.brideMotherName}
+                              onChange={handleChange}
+                              className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+                              placeholder="Mother Name"
+                            />
+                          </div>
+                        </div>
+
+                        {/* Groom's Parents */}
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                            Groom's Parents
+                          </label>
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <input
+                              type="text"
+                              name="groomFatherName"
+                              value={formData.groomFatherName}
+                              onChange={handleChange}
+                              className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+                              placeholder="Father Name"
+                            />
+                            <input
+                              type="text"
+                              name="groomMotherName"
+                              value={formData.groomMotherName}
+                              onChange={handleChange}
+                              className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+                              placeholder="Mother Name"
+                            />
+                          </div>
+                        </div>
                       </div>
                     </div>
                   </div>

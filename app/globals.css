@@ -86,8 +86,49 @@ body {
   }
 }
 
+@keyframes gradientShift {
+  0%, 100% { 
+    background-position: 0% 50%; 
+  }
+  50% { 
+    background-position: 100% 50%; 
+  }
+}
+
+@keyframes skyGradient {
+  0%, 100% { 
+    background-position: 0% 50%; 
+  }
+  50% { 
+    background-position: 100% 50%; 
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-20px);
+  }
+}
+
 .animate-blob {
   animation: blob 7s infinite;
+}
+
+.animate-gradient {
+  animation: gradientShift 15s ease infinite;
+  background-size: 400% 400%;
+}
+
+.animate-sky {
+  animation: skyGradient 20s ease infinite;
+  background-size: 100% 200%;
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
 }
 
 .animation-delay-2000 {
