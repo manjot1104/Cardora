@@ -11,7 +11,10 @@ const app = express();
 const corsOptions = {
   origin: function (origin, callback) {
     // Allow requests with no origin (like mobile apps, Postman, or curl)
-    if (!origin) return callback(null, true);
+    if (!origin) {
+      console.log('✅ CORS: Allowing request with no origin');
+      return callback(null, true);
+    }
     
     // List of allowed origins
     const allowedOrigins = [
@@ -19,21 +22,45 @@ const corsOptions = {
       'http://localhost:3001',
       'https://cardora.onrender.com',
       'https://cardora.vercel.app',
+      'https://cardoradigital.ca',
+      'https://www.cardoradigital.ca',
       process.env.FRONTEND_URL,
     ].filter(Boolean);
     
-    // Allow Vercel preview deployments (e.g., *.vercel.app)
-    const isVercelPreview = origin && origin.includes('.vercel.app');
+    // Check if origin matches allowed list
+    const isAllowedOrigin = allowedOrigins.indexOf(origin) !== -1;
     
-    if (allowedOrigins.indexOf(origin) !== -1 || isVercelPreview || process.env.NODE_ENV !== 'production') {
+    // Allow Vercel deployments (all *.vercel.app domains)
+    const isVercelDomain = origin && (
+      origin.includes('.vercel.app') || 
+      origin.includes('vercel.app')
+    );
+    
+    // In development, allow all origins
+    const isDevelopment = process.env.NODE_ENV !== 'production';
+    
+    // Log for debugging
+    console.log('🌐 CORS Check:', {
+      origin,
+      isAllowedOrigin,
+      isVercelDomain,
+      isDevelopment,
+      allowedOrigins,
+    });
+    
+    if (isAllowedOrigin || isVercelDomain || isDevelopment) {
+      console.log('✅ CORS: Allowing origin:', origin);
       callback(null, true);
     } else {
-      callback(new Error('Not allowed by CORS'));
+      console.error('❌ CORS: Blocked origin:', origin);
+      console.error('📋 Allowed origins:', allowedOrigins);
+      callback(new Error(`Not allowed by CORS. Origin: ${origin}`));
     }
   },
   credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+  exposedHeaders: ['Content-Range', 'X-Content-Range'],
 };
 
 app.use(cors(corsOptions));
