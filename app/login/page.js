@@ -35,7 +35,17 @@ export default function LoginPage() {
     } catch (error) {
       console.error('Login error:', error);
       if (!error.response) {
-        toast.error('Cannot connect to server. Please make sure the backend server is running on port 5000.');
+        // Network error - provide helpful message
+        const isRender = error.config?.baseURL?.includes('onrender.com');
+        if (isRender) {
+          toast.error('Backend server is starting up. Please wait 30-60 seconds and try again. (Render free tier cold start)', {
+            duration: 5000,
+          });
+        } else {
+          toast.error('Cannot connect to backend server. Please check your connection or contact support.', {
+            duration: 5000,
+          });
+        }
       } else {
         toast.error(error.response?.data?.error || 'Login failed');
       }
