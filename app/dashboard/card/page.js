@@ -151,23 +151,30 @@ export default function CardPage() {
     setSaving(true);
 
     try {
-      await api.put('/user/profile', {
-        ...formData,
+      // Prepare update data - explicitly include all fields
+      const updateData = {
+        profileEnabled: formData.profileEnabled,
+        paymentEnabled: formData.paymentEnabled,
+        paymentType: formData.paymentType || 'custom',
         fixedAmount: formData.fixedAmount ? parseFloat(formData.fixedAmount) : undefined,
-        weddingDate: formData.weddingDate || undefined,
-        venue: formData.venue || undefined,
-        brideName: formData.brideName || undefined,
-        groomName: formData.groomName || undefined,
-        brideFatherName: formData.brideFatherName || undefined,
-        brideMotherName: formData.brideMotherName || undefined,
-        groomFatherName: formData.groomFatherName || undefined,
-        groomMotherName: formData.groomMotherName || undefined,
-        deceasedElders: formData.deceasedElders || undefined,
-        cardType: formData.cardType || undefined,
-        collection: formData.collection || undefined,
+        interacEmail: formData.interacEmail || '',
+        theme: formData.theme || 'default',
+        weddingDate: formData.weddingDate || '',
+        venue: formData.venue || '',
+        brideName: formData.brideName || '',
+        groomName: formData.groomName || '',
+        brideFatherName: formData.brideFatherName || '',
+        brideMotherName: formData.brideMotherName || '',
+        groomFatherName: formData.groomFatherName || '',
+        groomMotherName: formData.groomMotherName || '',
+        deceasedElders: formData.deceasedElders || '',
+        cardType: formData.cardType || 'business',
+        collection: formData.collection || 'standard',
         country: formData.country || undefined,
         currency: formData.currency || undefined,
-      });
+      };
+
+      await api.put('/user/profile', updateData);
       toast.success('Card settings updated successfully!');
       fetchUser();
     } catch (error) {

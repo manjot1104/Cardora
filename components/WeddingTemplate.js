@@ -1,7 +1,9 @@
 'use client';
 
+import { useState } from 'react';
 import { getTemplateById } from '@/lib/templates';
 import { getSignatureTemplateById } from '@/lib/signatureTemplates';
+import VenueMap from './VenueMap';
 
 export default function WeddingTemplate({ user, templateId, cardType = 'wedding' }) {
   // Get template data - check signature templates first, then regular templates
@@ -79,53 +81,75 @@ export default function WeddingTemplate({ user, templateId, cardType = 'wedding'
                   {weddingDate}
                 </p>
               </div>
-              <div className="flex items-center gap-2">
-                <span className="text-2xl">📍</span>
-                <p className="text-lg sm:text-xl font-semibold text-gray-800 dark:text-gray-200">
-                  {venue}
-                </p>
+              <div className="flex flex-col items-center gap-2">
+                <div className="flex items-center gap-2">
+                  <span className="text-2xl">📍</span>
+                  <button
+                    onClick={() => {
+                      const googleMapsSearchUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(venue)}`;
+                      window.open(googleMapsSearchUrl, '_blank', 'noopener,noreferrer');
+                    }}
+                    className="text-lg sm:text-xl font-semibold text-gray-800 dark:text-gray-200 hover:underline cursor-pointer transition-all hover:scale-105"
+                    style={{
+                      color: template.colors.primary,
+                    }}
+                    title="Click to search on Google Maps"
+                  >
+                    {venue}
+                  </button>
+                </div>
               </div>
             </div>
+            {/* Venue Map */}
+            <VenueMap venue={venue} templateColors={template.colors} />
           </div>
 
           {/* Parents Information (Traditional Indian Style) */}
-          {(brideFatherName || brideMotherName || groomFatherName || groomMotherName || deceasedElders) && (
-            <div className="border-t-2 border-gray-200 dark:border-gray-700 pt-6 mt-6">
-              <div className="text-center space-y-3">
-                {deceasedElders && (
-                  <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400 italic">
-                    {deceasedElders}
+          <div className="border-t-2 border-gray-200 dark:border-gray-700 pt-6 mt-6">
+            <div className="text-center space-y-4">
+              {deceasedElders && (
+                <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400 italic">
+                  {deceasedElders}
+                </p>
+              )}
+              
+              {/* Bride's Parents Section */}
+              <div>
+                <p className="text-base sm:text-lg font-semibold text-gray-800 dark:text-gray-200 mb-2">
+                  Bride's Parents
+                </p>
+                {(brideFatherName || brideMotherName) ? (
+                  <p className="text-sm sm:text-base text-gray-700 dark:text-gray-300">
+                    {brideFatherName && brideMotherName 
+                      ? `${brideFatherName} & ${brideMotherName}`
+                      : brideFatherName || brideMotherName}
+                  </p>
+                ) : (
+                  <p className="text-sm sm:text-base text-gray-500 dark:text-gray-500 italic">
+                    (Name not provided)
                   </p>
                 )}
-                
-                {(brideFatherName || brideMotherName) && (
-                  <div>
-                    <p className="text-base sm:text-lg font-semibold text-gray-800 dark:text-gray-200 mb-1">
-                      Bride's Parents
-                    </p>
-                    <p className="text-sm sm:text-base text-gray-700 dark:text-gray-300">
-                      {brideFatherName && brideMotherName 
-                        ? `${brideFatherName} & ${brideMotherName}`
-                        : brideFatherName || brideMotherName}
-                    </p>
-                  </div>
-                )}
+              </div>
 
-                {(groomFatherName || groomMotherName) && (
-                  <div>
-                    <p className="text-base sm:text-lg font-semibold text-gray-800 dark:text-gray-200 mb-1">
-                      Groom's Parents
-                    </p>
-                    <p className="text-sm sm:text-base text-gray-700 dark:text-gray-300">
-                      {groomFatherName && groomMotherName 
-                        ? `${groomFatherName} & ${groomMotherName}`
-                        : groomFatherName || groomMotherName}
-                    </p>
-                  </div>
+              {/* Groom's Parents Section */}
+              <div>
+                <p className="text-base sm:text-lg font-semibold text-gray-800 dark:text-gray-200 mb-2">
+                  Groom's Parents
+                </p>
+                {(groomFatherName || groomMotherName) ? (
+                  <p className="text-sm sm:text-base text-gray-700 dark:text-gray-300">
+                    {groomFatherName && groomMotherName 
+                      ? `${groomFatherName} & ${groomMotherName}`
+                      : groomFatherName || groomMotherName}
+                  </p>
+                ) : (
+                  <p className="text-sm sm:text-base text-gray-500 dark:text-gray-500 italic">
+                    (Name not provided)
+                  </p>
                 )}
               </div>
             </div>
-          )}
+          </div>
 
           {/* Decorative Divider */}
           <div className="flex items-center justify-center my-8">

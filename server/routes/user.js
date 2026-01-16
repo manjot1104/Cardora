@@ -40,6 +40,11 @@ router.put('/profile', auth, async (req, res) => {
       venue,
       brideName,
       groomName,
+      brideFatherName,
+      brideMotherName,
+      groomFatherName,
+      groomMotherName,
+      deceasedElders,
       cardType,
       collection,
       country,
@@ -64,6 +69,11 @@ router.put('/profile', auth, async (req, res) => {
     if (venue !== undefined) updateData.venue = venue;
     if (brideName !== undefined) updateData.brideName = brideName;
     if (groomName !== undefined) updateData.groomName = groomName;
+    if (brideFatherName !== undefined) updateData.brideFatherName = brideFatherName;
+    if (brideMotherName !== undefined) updateData.brideMotherName = brideMotherName;
+    if (groomFatherName !== undefined) updateData.groomFatherName = groomFatherName;
+    if (groomMotherName !== undefined) updateData.groomMotherName = groomMotherName;
+    if (deceasedElders !== undefined) updateData.deceasedElders = deceasedElders;
     if (cardType !== undefined) updateData.cardType = cardType;
     if (collection !== undefined) updateData.collection = collection;
     if (country !== undefined) updateData.country = country;

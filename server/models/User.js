@@ -68,6 +68,11 @@ const userSchema = new mongoose.Schema({
   venue: String,
   brideName: String,
   groomName: String,
+  brideFatherName: String,
+  brideMotherName: String,
+  groomFatherName: String,
+  groomMotherName: String,
+  deceasedElders: String,
   // Card type and collection
   cardType: {
     type: String,
