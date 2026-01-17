@@ -50,7 +50,28 @@ export default function SignupPage() {
     } catch (error) {
       console.error('Signup error:', error);
       if (!error.response) {
-        toast.error('Cannot connect to server. Please make sure the backend server is running on port 5000.');
+        // Network error - provide helpful message
+        const isRender = error.config?.baseURL?.includes('onrender.com');
+        const isLocalhost = error.config?.baseURL?.includes('localhost');
+        const isTimeout = error.code === 'ECONNABORTED' || error.message?.includes('timeout');
+        
+        if (isTimeout && isRender) {
+          toast.error('Backend server is starting up. Please wait 30-60 seconds and try again. (Render free tier cold start)', {
+            duration: 6000,
+          });
+        } else if (isLocalhost) {
+          toast.error('Cannot connect to server. Please make sure the backend server is running on port 5000.', {
+            duration: 5000,
+          });
+        } else if (isRender) {
+          toast.error('Backend server is sleeping. Please wait 30-60 seconds and try again. (Render free tier)', {
+            duration: 6000,
+          });
+        } else {
+          toast.error('Cannot connect to backend server. Please check your connection or try again in a few moments.', {
+            duration: 5000,
+          });
+        }
       } else {
         toast.error(error.response?.data?.error || 'Signup failed');
       }
