@@ -85,6 +85,15 @@ router.put('/profile', auth, async (req, res) => {
       { new: true, runValidators: true }
     ).select('-password');
 
+    // Debug: Log saved parent names
+    console.log('💾 Saved User Data:', {
+      brideFatherName: user?.brideFatherName,
+      brideMotherName: user?.brideMotherName,
+      groomFatherName: user?.groomFatherName,
+      groomMotherName: user?.groomMotherName,
+      deceasedElders: user?.deceasedElders,
+    });
+
     res.json(user);
   } catch (error) {
     console.error('Update profile error:', error);

@@ -21,7 +21,15 @@ export default function PublicCardPage() {
   const fetchCard = async () => {
     try {
       const response = await api.get(`/card/${params.username}`);
-      setUser(response.data.user);
+      const userData = response.data.user;
+      console.log('🔍 Fetched User Data:', {
+        brideFatherName: userData?.brideFatherName,
+        brideMotherName: userData?.brideMotherName,
+        groomFatherName: userData?.groomFatherName,
+        groomMotherName: userData?.groomMotherName,
+        deceasedElders: userData?.deceasedElders,
+      });
+      setUser(userData);
     } catch (error) {
       console.error('Error fetching card:', error);
     } finally {
