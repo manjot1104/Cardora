@@ -8,7 +8,7 @@ const analyticsSchema = new mongoose.Schema({
   },
   type: {
     type: String,
-    enum: ['profile_view', 'payment_view', 'payment_success', 'qr_scan', 'nfc_tap'],
+    enum: ['profile_view', 'payment_view', 'payment_success', 'qr_scan', 'nfc_tap', 'cart_payment_view', 'cart_payment_success'],
     required: true,
   },
   deviceType: {

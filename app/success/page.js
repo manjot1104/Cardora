@@ -5,6 +5,7 @@ import { useSearchParams, useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import Confetti from 'react-confetti';
 import api from '@/lib/api';
+import { clearCart } from '@/lib/cart';
 import Link from 'next/link';
 
 function SuccessContent() {
@@ -16,10 +17,17 @@ function SuccessContent() {
 
   useEffect(() => {
     const sessionId = searchParams.get('session_id');
+    const type = searchParams.get('type');
+    
     if (sessionId) {
       verifyPayment(sessionId);
     } else {
       setVerifying(false);
+    }
+
+    // Clear cart if it's a cart payment
+    if (type === 'cart') {
+      clearCart();
     }
   }, [searchParams]);
 

@@ -1,4 +1,20 @@
 const express = require('express');
+
+// Verify Stripe key is configured
+if (!process.env.STRIPE_SECRET_KEY) {
+  console.warn('⚠️  WARNING: STRIPE_SECRET_KEY not found in environment variables');
+  console.warn('⚠️  Payment functionality will not work without Stripe keys');
+} else {
+  const keyPrefix = process.env.STRIPE_SECRET_KEY.substring(0, 7);
+  if (keyPrefix === 'sk_test') {
+    console.log('✅ Stripe Test Mode: Test keys detected');
+  } else if (keyPrefix === 'sk_live') {
+    console.log('🔴 Stripe Live Mode: Live keys detected - BE CAREFUL!');
+  } else {
+    console.warn('⚠️  Stripe key format unrecognized');
+  }
+}
+
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const User = require('../models/User');
 const Payment = require('../models/Payment');
@@ -90,6 +106,151 @@ router.post('/create-stripe-session', async (req, res) => {
   }
 });
 
+// @route   POST /api/payment/create-cart-session
+// @desc    Create Stripe checkout session for cart items
+// @access  Private
+router.post('/create-cart-session', auth, async (req, res) => {
+  if (!process.env.STRIPE_SECRET_KEY) {
+    return res.status(500).json({ error: 'Stripe is not configured. Please add STRIPE_SECRET_KEY to environment variables.' });
+  }
+  try {
+    const { items, total, currency = 'USD', country = 'IN' } = req.body;
+
+    console.log('📦 Creating cart session with:', {
+      itemsCount: items?.length,
+      total,
+      currency,
+      country,
+      userId: req.user._id,
+    });
+
+    if (!items || !Array.isArray(items) || items.length === 0) {
+      console.error('❌ No items provided');
+      return res.status(400).json({ error: 'Cart items are required' });
+    }
+
+    if (!total || total <= 0) {
+      console.error('❌ Invalid total:', total);
+      return res.status(400).json({ error: 'Valid total amount is required' });
+    }
+
+    const user = await User.findById(req.user._id);
+    if (!user) {
+      console.error('❌ User not found:', req.user._id);
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    // Validate and create line items for cart
+    const lineItems = [];
+    for (let i = 0; i < items.length; i++) {
+      const item = items[i];
+      
+      if (!item.price || item.price <= 0) {
+        console.error(`❌ Invalid price for item ${i + 1}:`, item);
+        return res.status(400).json({ 
+          error: `Invalid price for item: ${item.name || 'Unknown'}` 
+        });
+      }
+      
+      if (!item.quantity || item.quantity <= 0) {
+        console.error(`❌ Invalid quantity for item ${i + 1}:`, item);
+        return res.status(400).json({ 
+          error: `Invalid quantity for item: ${item.name || 'Unknown'}` 
+        });
+      }
+      
+      const unitPrice = item.price / item.quantity;
+      const unitAmountInCents = Math.round(unitPrice * 100);
+      
+      if (unitAmountInCents <= 0) {
+        console.error(`❌ Invalid unit amount for item ${i + 1}:`, {
+          price: item.price,
+          quantity: item.quantity,
+          unitPrice,
+          unitAmountInCents,
+        });
+        return res.status(400).json({ 
+          error: `Invalid unit price for item: ${item.name || 'Unknown'}` 
+        });
+      }
+      
+      lineItems.push({
+        price_data: {
+          currency: (currency || 'USD').toLowerCase(),
+          product_data: {
+            name: item.name || 'Business Cards',
+            description: `${item.quantity} cards - ${item.size || 'standard'} - ${item.orientation || 'horizontal'}`,
+          },
+          unit_amount: unitAmountInCents,
+        },
+        quantity: item.quantity,
+      });
+    }
+
+    console.log('✅ Line items created:', lineItems.length);
+
+    // Create Stripe Checkout Session
+    const session = await stripe.checkout.sessions.create({
+      payment_method_types: ['card'],
+      line_items: lineItems,
+      mode: 'payment',
+      success_url: `${process.env.FRONTEND_URL || 'http://localhost:3000'}/success?session_id={CHECKOUT_SESSION_ID}&type=cart`,
+      cancel_url: `${process.env.FRONTEND_URL || 'http://localhost:3000'}/dashboard/checkout`,
+      metadata: {
+        userId: user._id.toString(),
+        username: user.username,
+        type: 'cart',
+        itemCount: items.length.toString(),
+      },
+    });
+
+    // Create payment records for each item
+    for (const item of items) {
+      await Payment.create({
+        userId: user._id,
+        amount: item.price,
+        currency: currency || 'USD',
+        paymentMethod: 'stripe',
+        stripeSessionId: session.id,
+        status: 'pending',
+        purpose: `Business Cards - ${item.name}`,
+      });
+    }
+
+    // Track payment view
+    await Analytics.create({
+      userId: user._id,
+      type: 'cart_payment_view',
+      deviceType: detectDeviceType(req.get('user-agent')),
+      userAgent: req.get('user-agent'),
+      ipAddress: req.ip,
+    });
+
+    res.json({ sessionId: session.id, url: session.url });
+  } catch (error) {
+    console.error('❌ Create cart session error:', error);
+    console.error('Error details:', {
+      message: error.message,
+      type: error.type,
+      code: error.code,
+      statusCode: error.statusCode,
+    });
+    
+    // Return more detailed error message
+    let errorMessage = 'Failed to create payment session';
+    if (error.type === 'StripeInvalidRequestError') {
+      errorMessage = error.message || 'Invalid payment request';
+    } else if (error.message) {
+      errorMessage = error.message;
+    }
+    
+    res.status(500).json({ 
+      error: errorMessage,
+      details: process.env.NODE_ENV === 'development' ? error.message : undefined
+    });
+  }
+});
+
 // @route   POST /api/payment/verify
 // @desc    Verify Stripe payment
 // @access  Public
@@ -116,10 +277,14 @@ router.post('/verify', async (req, res) => {
       );
 
       if (payment) {
+        // Check if this is a cart payment from metadata
+        const session = await stripe.checkout.sessions.retrieve(sessionId);
+        const isCartPayment = session.metadata?.type === 'cart';
+        
         // Track successful payment
         await Analytics.create({
           userId: payment.userId,
-          type: 'payment_success',
+          type: isCartPayment ? 'cart_payment_success' : 'payment_success',
           deviceType: 'unknown',
         });
       }
@@ -181,9 +346,12 @@ const webhookHandler = async (req, res) => {
     // Track successful payment
     const payment = await Payment.findOne({ stripeSessionId: session.id });
     if (payment) {
+      // Check if this is a cart payment from metadata
+      const isCartPayment = session.metadata?.type === 'cart';
+      
       await Analytics.create({
         userId: payment.userId,
-        type: 'payment_success',
+        type: isCartPayment ? 'cart_payment_success' : 'payment_success',
         deviceType: 'unknown',
       });
     }
