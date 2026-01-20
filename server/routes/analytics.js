@@ -105,5 +105,89 @@ router.get('/summary', auth, async (req, res) => {
   }
 });
 
+// @route   GET /api/analytics/visitors
+// @desc    Get detailed visitor insights for logged-in user
+// @access  Private
+router.get('/visitors', auth, async (req, res) => {
+  try {
+    const userId = req.user._id;
+    const limit = parseInt(req.query.limit) || 50;
+    const page = parseInt(req.query.page) || 1;
+    const skip = (page - 1) * limit;
+
+    // Get all profile views with details
+    const visitors = await Analytics.find({
+      userId,
+      type: 'profile_view',
+    })
+      .sort({ createdAt: -1 })
+      .limit(limit)
+      .skip(skip)
+      .select('deviceType userAgent ipAddress referer createdAt')
+      .lean();
+
+    // Get total count for pagination
+    const totalVisitors = await Analytics.countDocuments({
+      userId,
+      type: 'profile_view',
+    });
+
+    // Format visitor data
+    const formattedVisitors = visitors.map((visitor) => {
+      // Extract browser name from user agent
+      let browser = 'Unknown';
+      if (visitor.userAgent) {
+        if (visitor.userAgent.includes('Chrome')) browser = 'Chrome';
+        else if (visitor.userAgent.includes('Firefox')) browser = 'Firefox';
+        else if (visitor.userAgent.includes('Safari')) browser = 'Safari';
+        else if (visitor.userAgent.includes('Edge')) browser = 'Edge';
+        else if (visitor.userAgent.includes('Opera')) browser = 'Opera';
+      }
+
+      // Mask IP address for privacy (show only last octet)
+      let maskedIP = 'N/A';
+      if (visitor.ipAddress) {
+        const parts = visitor.ipAddress.split('.');
+        if (parts.length === 4) {
+          maskedIP = `***.***.***.${parts[3]}`;
+        } else {
+          maskedIP = visitor.ipAddress.substring(0, 10) + '...';
+        }
+      }
+
+      // Format referer
+      let refererDisplay = 'Direct';
+      if (visitor.referer) {
+        try {
+          const url = new URL(visitor.referer);
+          refererDisplay = url.hostname.replace('www.', '');
+        } catch (e) {
+          refererDisplay = visitor.referer.substring(0, 30);
+        }
+      }
+
+      return {
+        id: visitor._id,
+        deviceType: visitor.deviceType || 'unknown',
+        browser,
+        ipAddress: maskedIP,
+        referer: refererDisplay,
+        visitedAt: visitor.createdAt,
+      };
+    });
+
+    res.json({
+      visitors: formattedVisitors,
+      totalVisitors,
+      currentPage: page,
+      totalPages: Math.ceil(totalVisitors / limit),
+      hasMore: skip + limit < totalVisitors,
+    });
+  } catch (error) {
+    console.error('Get visitors error:', error);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
 module.exports = router;
 

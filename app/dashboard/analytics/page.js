@@ -22,7 +22,9 @@ import {
 export default function AnalyticsPage() {
   const router = useRouter();
   const [stats, setStats] = useState(null);
+  const [visitors, setVisitors] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [visitorsLoading, setVisitorsLoading] = useState(true);
 
   useEffect(() => {
     const token = getAuthToken();
@@ -31,6 +33,7 @@ export default function AnalyticsPage() {
       return;
     }
     fetchAnalytics();
+    fetchVisitors();
   }, []);
 
   const fetchAnalytics = async () => {
@@ -41,6 +44,43 @@ export default function AnalyticsPage() {
       console.error('Error fetching analytics:', error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchVisitors = async () => {
+    try {
+      const response = await api.get('/analytics/visitors');
+      setVisitors(response.data);
+    } catch (error) {
+      console.error('Error fetching visitors:', error);
+    } finally {
+      setVisitorsLoading(false);
+    }
+  };
+
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    const now = new Date();
+    const diffInSeconds = Math.floor((now - date) / 1000);
+    
+    if (diffInSeconds < 60) return 'Just now';
+    if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)} minutes ago`;
+    if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)} hours ago`;
+    if (diffInSeconds < 604800) return `${Math.floor(diffInSeconds / 86400)} days ago`;
+    
+    return date.toLocaleDateString('en-US', { 
+      month: 'short', 
+      day: 'numeric', 
+      year: date.getFullYear() !== now.getFullYear() ? 'numeric' : undefined 
+    });
+  };
+
+  const getDeviceIcon = (deviceType) => {
+    switch (deviceType) {
+      case 'mobile': return '📱';
+      case 'tablet': return '📱';
+      case 'desktop': return '💻';
+      default: return '🖥️';
     }
   };
 
@@ -173,6 +213,82 @@ export default function AnalyticsPage() {
               </div>
             </motion.div>
           </div>
+
+          {/* Visitor Insights */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.6 }}
+            className="glass p-6 rounded-3xl mt-8"
+          >
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Visitor Insights</h2>
+              {visitors && (
+                <span className="text-sm text-gray-600 dark:text-gray-400">
+                  Total: {visitors.totalVisitors} visitors
+                </span>
+              )}
+            </div>
+
+            {visitorsLoading ? (
+              <div className="flex items-center justify-center h-64">
+                <div className="text-gray-600 dark:text-gray-400">Loading visitors...</div>
+              </div>
+            ) : visitors && visitors.visitors.length > 0 ? (
+              <div className="overflow-x-auto">
+                <table className="w-full">
+                  <thead>
+                    <tr className="border-b border-gray-200 dark:border-gray-700">
+                      <th className="text-left py-3 px-4 text-sm font-semibold text-gray-700 dark:text-gray-300">Device</th>
+                      <th className="text-left py-3 px-4 text-sm font-semibold text-gray-700 dark:text-gray-300">Browser</th>
+                      <th className="text-left py-3 px-4 text-sm font-semibold text-gray-700 dark:text-gray-300">IP Address</th>
+                      <th className="text-left py-3 px-4 text-sm font-semibold text-gray-700 dark:text-gray-300">Referer</th>
+                      <th className="text-left py-3 px-4 text-sm font-semibold text-gray-700 dark:text-gray-300">Visited</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {visitors.visitors.map((visitor, index) => (
+                      <motion.tr
+                        key={visitor.id}
+                        initial={{ opacity: 0, x: -20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: index * 0.05 }}
+                        className="border-b border-gray-100 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors"
+                      >
+                        <td className="py-4 px-4">
+                          <div className="flex items-center gap-2">
+                            <span className="text-xl">{getDeviceIcon(visitor.deviceType)}</span>
+                            <span className="text-sm text-gray-700 dark:text-gray-300 capitalize">
+                              {visitor.deviceType}
+                            </span>
+                          </div>
+                        </td>
+                        <td className="py-4 px-4 text-sm text-gray-700 dark:text-gray-300">
+                          {visitor.browser}
+                        </td>
+                        <td className="py-4 px-4 text-sm text-gray-600 dark:text-gray-400 font-mono">
+                          {visitor.ipAddress}
+                        </td>
+                        <td className="py-4 px-4 text-sm text-gray-600 dark:text-gray-400">
+                          {visitor.referer}
+                        </td>
+                        <td className="py-4 px-4 text-sm text-gray-600 dark:text-gray-400">
+                          {formatDate(visitor.visitedAt)}
+                        </td>
+                      </motion.tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            ) : (
+              <div className="h-64 flex items-center justify-center text-gray-500 dark:text-gray-400">
+                <div className="text-center">
+                  <p className="text-lg mb-2">No visitors yet</p>
+                  <p className="text-sm">Your profile views will appear here</p>
+                </div>
+              </div>
+            )}
+          </motion.div>
         </motion.div>
       </div>
     </DashboardLayout>
