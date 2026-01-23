@@ -94,6 +94,9 @@ const userSchema = new mongoose.Schema({
     type: String,
     default: 'INR',
   },
+  // Password reset fields
+  resetToken: String,
+  resetTokenExpiry: Date,
 }, {
   timestamps: true,
 });
