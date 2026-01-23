@@ -43,8 +43,13 @@ const sendPasswordResetEmail = async (email, resetToken, resetUrl) => {
     
     // Verify connection before sending
     console.log('📧 Verifying SMTP connection...');
-    await transporter.verify();
-    console.log('✅ SMTP connection verified successfully');
+    try {
+      await transporter.verify();
+      console.log('✅ SMTP connection verified successfully');
+    } catch (verifyError) {
+      console.error('❌ SMTP connection verification failed:', verifyError);
+      throw verifyError; // Re-throw to be caught by outer catch
+    }
     
     const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
 

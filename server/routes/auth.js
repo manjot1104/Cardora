@@ -158,11 +158,35 @@ router.post('/forgot-password', async (req, res) => {
     console.log('📧 Email result:', emailResult);
 
     // Always return reset link in development mode if email is not configured or failed
-    const shouldReturnLink = process.env.NODE_ENV === 'development' && 
+    const isDevelopment = process.env.NODE_ENV !== 'production';
+    const shouldReturnLink = isDevelopment && 
       (!process.env.SMTP_USER || !process.env.SMTP_PASS || !emailResult.success || emailResult.emailConfigured === false);
     
     if (!emailResult.success) {
       console.warn('⚠️ Email sending failed, but reset link is available');
+      console.warn('⚠️ Error:', emailResult.error);
+      console.warn('⚠️ Error Code:', emailResult.errorCode);
+    }
+
+    // If email failed, still return success but include error details and reset link
+    if (!emailResult.success && shouldReturnLink) {
+      return res.json({ 
+        message: 'Password reset link generated (email sending failed).',
+        resetLink: resetUrl,
+        note: !process.env.SMTP_USER || !process.env.SMTP_PASS 
+          ? 'Email not configured - use this link for testing'
+          : `Email sending failed: ${emailResult.error || 'Unknown error'} - use this link for testing`,
+        emailError: emailResult.error,
+        emailErrorCode: emailResult.errorCode
+      });
+    }
+
+    // If email failed in production, return error
+    if (!emailResult.success && !shouldReturnLink) {
+      return res.status(500).json({ 
+        error: 'Failed to send email. Please try again later.',
+        details: emailResult.error
+      });
     }
 
     res.json({ 

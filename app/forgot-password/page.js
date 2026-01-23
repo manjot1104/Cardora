@@ -22,16 +22,27 @@ export default function ForgotPasswordPage() {
       const response = await api.post('/auth/forgot-password', { email });
       setEmailSent(true);
       
-      // If reset link is provided (development mode, email not configured)
+      // If reset link is provided (development mode, email not configured or failed)
       if (response.data.resetLink) {
         setResetLink(response.data.resetLink);
-        toast.success('Password reset link generated!', { duration: 5000 });
+        if (response.data.emailError) {
+          toast.error(`Email failed: ${response.data.emailError}`, { duration: 8000 });
+        } else {
+          toast.success('Password reset link generated!', { duration: 5000 });
+        }
       } else {
         toast.success('Password reset link sent! Check your email.');
       }
     } catch (error) {
       console.error('Forgot password error:', error);
-      toast.error(error.response?.data?.error || 'Failed to send reset email. Please try again.');
+      const errorMessage = error.response?.data?.error || error.response?.data?.details || 'Failed to send reset email. Please try again.';
+      toast.error(errorMessage, { duration: 8000 });
+      
+      // If there's a reset link in the error response, show it
+      if (error.response?.data?.resetLink) {
+        setResetLink(error.response.data.resetLink);
+        setEmailSent(true);
+      }
     } finally {
       setLoading(false);
     }
