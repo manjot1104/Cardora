@@ -169,23 +169,25 @@ router.post('/forgot-password', async (req, res) => {
     }
 
     // If email failed, still return success but include error details and reset link
-    if (!emailResult.success && shouldReturnLink) {
+    // Always return reset link if email fails (both dev and production for better UX)
+    if (!emailResult.success) {
+      // In production, still return the link but log the error
+      if (!shouldReturnLink) {
+        console.error('❌ Production email failure - returning reset link anyway for user convenience');
+      }
+      
       return res.json({ 
-        message: 'Password reset link generated (email sending failed).',
+        message: 'Password reset link generated. ' + 
+          (!process.env.SMTP_USER || !process.env.SMTP_PASS 
+            ? 'Email not configured - please use the link below.'
+            : 'Email delivery may be delayed - please use the link below or check your email.'),
         resetLink: resetUrl,
         note: !process.env.SMTP_USER || !process.env.SMTP_PASS 
-          ? 'Email not configured - use this link for testing'
-          : `Email sending failed: ${emailResult.error || 'Unknown error'} - use this link for testing`,
+          ? 'Email not configured - use this link to reset password'
+          : `Email sending had issues: ${emailResult.error || 'Unknown error'} - use this link to reset password`,
         emailError: emailResult.error,
-        emailErrorCode: emailResult.errorCode
-      });
-    }
-
-    // If email failed in production, return error
-    if (!emailResult.success && !shouldReturnLink) {
-      return res.status(500).json({ 
-        error: 'Failed to send email. Please try again later.',
-        details: emailResult.error
+        emailErrorCode: emailResult.errorCode,
+        emailDelayed: true // Flag to indicate email might be delayed
       });
     }
 

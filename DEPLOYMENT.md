@@ -55,6 +55,11 @@ In the Render dashboard, go to **Environment** section and add:
 | `STRIPE_SECRET_KEY` | `sk_live_...` or `sk_test_...` | Your Stripe secret key |
 | `STRIPE_WEBHOOK_SECRET` | `whsec_...` | Your Stripe webhook secret |
 | `FRONTEND_URL` | `https://your-app.vercel.app` | **Set this AFTER deploying frontend** |
+| `SMTP_HOST` | `smtp.gmail.com` | Email server host |
+| `SMTP_PORT` | `587` | Email server port |
+| `SMTP_SECURE` | `false` | Use TLS (false for port 587) |
+| `SMTP_USER` | `your-email@gmail.com` | Gmail address |
+| `SMTP_PASS` | `your-app-password` | Gmail app password (16 chars) |
 | `PORT` | (Auto-set by Render) | Render automatically sets this |
 
 **Important Notes:**
