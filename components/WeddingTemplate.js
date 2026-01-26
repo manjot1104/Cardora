@@ -39,11 +39,54 @@ export default function WeddingTemplate({ user, templateId, cardType = 'wedding'
   // Check if this is in preview mode (not full screen)
   const isPreview = typeof window !== 'undefined' && window.location.pathname.includes('/dashboard/card');
   
+  // Check if template has background image
+  const hasBackgroundImage = !!(template.backgroundImage || template.backgroundType === 'image');
+  const backgroundImageUrl = template.backgroundImage || user?.cardBackgroundImage;
+  
+  // Construct full image URL
+  // In Next.js, public folder is served at root, so /images/... works directly
+  // But for CSS background-image, we need to ensure the path is correct
+  const fullImageUrl = hasBackgroundImage && backgroundImageUrl
+    ? (typeof window !== 'undefined' 
+        ? `${window.location.origin}${backgroundImageUrl}`
+        : backgroundImageUrl)
+    : null;
+  
+  // Debug logging
+  if (typeof window !== 'undefined') {
+    console.log('🖼️ Background Image Debug:', {
+      templateId: templateId,
+      template: template?.id,
+      hasBackgroundImage,
+      templateBackgroundImage: template?.backgroundImage,
+      backgroundImageUrl,
+      fullImageUrl,
+      userBackgroundImage: user?.cardBackgroundImage,
+      backgroundType: template?.backgroundType,
+      windowOrigin: window.location.origin,
+    });
+    
+    // Test image loading
+    if (fullImageUrl) {
+      const img = new Image();
+      img.onload = () => console.log('✅ Image loaded successfully:', fullImageUrl);
+      img.onerror = (e) => {
+        console.error('❌ Image failed to load:', fullImageUrl);
+        console.error('Error details:', e);
+      };
+      img.src = fullImageUrl;
+    } else {
+      console.warn('⚠️ No fullImageUrl - hasBackgroundImage:', hasBackgroundImage, 'backgroundImageUrl:', backgroundImageUrl);
+    }
+  }
+  
   return (
     <div 
       className={`${isPreview ? 'w-full min-h-screen' : 'w-screen h-screen'} relative overflow-hidden`}
       style={{
-        background: `linear-gradient(135deg, ${template.colors.secondary} 0%, ${template.colors.primary} 100%)`,
+        background: fullImageUrl
+          ? `url("${fullImageUrl}") center center / cover no-repeat`
+          : `linear-gradient(135deg, ${template.colors.secondary} 0%, ${template.colors.primary} 100%)`,
         width: isPreview ? '100%' : '100vw',
         height: isPreview ? 'auto' : '100vh',
         minHeight: isPreview ? '100vh' : 'auto',
@@ -51,8 +94,19 @@ export default function WeddingTemplate({ user, templateId, cardType = 'wedding'
         margin: isPreview ? '0 auto' : '0',
       }}
     >
+      {/* Overlay for image backgrounds to ensure text readability */}
+      {fullImageUrl && (
+        <div 
+          className="absolute inset-0 z-10"
+          style={{
+            background: template.hasOverlay !== false 
+              ? 'linear-gradient(135deg, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.4) 100%)'
+              : 'none',
+          }}
+        ></div>
+      )}
       {/* Premium Background Decorations - Flowers, Leaves & Couple Patterns */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+      <div className={`absolute inset-0 overflow-hidden pointer-events-none ${fullImageUrl ? 'z-20' : 'z-0'}`}>
         {/* Couple Illustration for Premium Templates */}
         {template.hasCouple && (
           <>
@@ -420,7 +474,7 @@ export default function WeddingTemplate({ user, templateId, cardType = 'wedding'
 
         {/* Main Card - Full Width & Full Height */}
         <div 
-          className={`w-full ${isPreview ? 'min-h-screen' : 'h-full'} relative z-10 bg-white/95 dark:bg-gray-900/95 backdrop-blur-md overflow-hidden border-0`}
+          className={`w-full ${isPreview ? 'min-h-screen' : 'h-full'} relative z-30 ${fullImageUrl ? 'bg-transparent' : 'bg-white/95 dark:bg-gray-900/95'} ${fullImageUrl ? '' : 'backdrop-blur-md'} overflow-hidden border-0`}
           style={{ 
             borderColor: template.colors.accent,
             width: '100%',
@@ -438,7 +492,10 @@ export default function WeddingTemplate({ user, templateId, cardType = 'wedding'
           <div 
             className="text-center py-6 px-4 relative overflow-hidden"
             style={{
-              background: `linear-gradient(135deg, ${template.colors.secondary} 0%, ${template.colors.primary} 100%)`,
+              background: hasBackgroundImage && backgroundImageUrl
+                ? 'rgba(255, 255, 255, 0.1)'
+                : `linear-gradient(135deg, ${template.colors.secondary} 0%, ${template.colors.primary} 100%)`,
+              backdropFilter: hasBackgroundImage && backgroundImageUrl ? 'blur(10px)' : 'none',
             }}
           >
             <div className="relative z-10">
@@ -466,7 +523,10 @@ export default function WeddingTemplate({ user, templateId, cardType = 'wedding'
         <div 
           className="text-center py-4 sm:py-5 px-4 sm:px-6 relative overflow-hidden"
           style={{
-            background: `linear-gradient(135deg, ${template.colors.primary} 0%, ${template.colors.accent} 100%)`,
+            background: hasBackgroundImage && backgroundImageUrl
+              ? 'rgba(255, 255, 255, 0.15)'
+              : `linear-gradient(135deg, ${template.colors.primary} 0%, ${template.colors.accent} 100%)`,
+            backdropFilter: hasBackgroundImage && backgroundImageUrl ? 'blur(8px)' : 'none',
           }}
         >
           {/* Header Background Decorations */}

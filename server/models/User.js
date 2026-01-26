@@ -94,6 +94,12 @@ const userSchema = new mongoose.Schema({
     type: String,
     default: 'INR',
   },
+  // Image fields for cards
+  profileImage: String, // URL to profile/logo image
+  cardBackgroundImage: String, // URL to card background image
+  cardImages: [{
+    type: String, // Array of image URLs for cards
+  }],
   // Password reset fields
   resetToken: String,
   resetTokenExpiry: Date,

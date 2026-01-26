@@ -2,6 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const dotenv = require('dotenv');
+const path = require('path');
 
 dotenv.config();
 
@@ -71,6 +72,10 @@ app.post('/api/payment/webhook', express.raw({ type: 'application/json' }), paym
 
 // JSON middleware for other routes
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+// Serve static files from public directory
+app.use('/uploads', express.static(path.join(__dirname, '../public/uploads')));
 
 // Routes
 app.use('/api/auth', require('./routes/auth'));
@@ -78,6 +83,7 @@ app.use('/api/user', require('./routes/user'));
 app.use('/api/card', require('./routes/card'));
 app.use('/api/analytics', require('./routes/analytics'));
 app.use('/api/payment', paymentRoutes);
+app.use('/api/upload', require('./routes/upload'));
 
 // MongoDB Connection
 mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/cardora')

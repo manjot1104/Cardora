@@ -72,6 +72,9 @@ router.get('/:username', async (req, res) => {
         collection: user.collection,
         country: user.country,
         currency: user.currency,
+        profileImage: user.profileImage,
+        cardBackgroundImage: user.cardBackgroundImage,
+        cardImages: user.cardImages,
       },
     });
   } catch (error) {

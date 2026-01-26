@@ -49,6 +49,8 @@ router.put('/profile', auth, async (req, res) => {
       collection,
       country,
       currency,
+      profileImage,
+      cardBackgroundImage,
     } = req.body;
 
     const updateData = {};
@@ -78,6 +80,8 @@ router.put('/profile', auth, async (req, res) => {
     if (collection !== undefined) updateData.collection = collection;
     if (country !== undefined) updateData.country = country;
     if (currency !== undefined) updateData.currency = currency;
+    if (profileImage !== undefined) updateData.profileImage = profileImage;
+    if (cardBackgroundImage !== undefined) updateData.cardBackgroundImage = cardBackgroundImage;
 
     const user = await User.findByIdAndUpdate(
       req.user._id,

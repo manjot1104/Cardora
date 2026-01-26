@@ -35,6 +35,8 @@ export default function BusinessCardPreview({ user, orientation = 'horizontal', 
   const createPremiumDesign = (template) => {
     const baseDesign = {
       logo: getInitials(user?.name),
+      profileImage: user?.profileImage,
+      backgroundImage: user?.cardBackgroundImage,
       company: user?.company || 'YOUR COMPANY',
       name: user?.name || 'Your Name',
       title: user?.profession || user?.company || 'Your Title',
@@ -231,9 +233,19 @@ export default function BusinessCardPreview({ user, orientation = 'horizontal', 
                 /* Minimal Style */
                 <div className="h-full flex flex-col justify-between" style={{ color: design.template?.colors.secondary || '#1F2937' }}>
                   <div>
-                    <div className="w-12 h-12 border-2 flex items-center justify-center mb-3" style={{ borderColor: design.template?.colors.accent || '#3B82F6' }}>
-                      <span className="text-xl font-bold">{design.logo}</span>
-                    </div>
+                    {design.profileImage ? (
+                      <div className="w-12 h-12 border-2 mb-3 overflow-hidden rounded" style={{ borderColor: design.template?.colors.accent || '#3B82F6' }}>
+                        <img 
+                          src={`${typeof window !== 'undefined' ? window.location.origin : ''}${design.profileImage}`}
+                          alt={design.name}
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                    ) : (
+                      <div className="w-12 h-12 border-2 flex items-center justify-center mb-3" style={{ borderColor: design.template?.colors.accent || '#3B82F6' }}>
+                        <span className="text-xl font-bold">{design.logo}</span>
+                      </div>
+                    )}
                     <h3 className="text-sm font-bold mb-1">{design.company}</h3>
                   </div>
                   <div>
@@ -283,7 +295,7 @@ export default function BusinessCardPreview({ user, orientation = 'horizontal', 
                     }}></div>
                   )}
                   
-                  <div className={`flex-1 ${isVertical ? 'mb-2' : 'mr-3'} flex flex-col justify-center min-w-0 relative z-10`}>
+                  <div className={`flex-1 ${isVertical ? 'mb-2' : 'mr-3'} flex flex-col justify-center min-w-0 relative z-10 ${design.backgroundImage ? 'text-white' : ''}`}>
                     <div 
                       className="w-14 h-14 sm:w-16 sm:h-16 rounded-lg flex items-center justify-center mb-2 flex-shrink-0 shadow-lg"
                       style={{ 
@@ -295,7 +307,7 @@ export default function BusinessCardPreview({ user, orientation = 'horizontal', 
                     </div>
                     <h3 className="text-sm sm:text-base font-bold mb-1 truncate">{design.company}</h3>
                   </div>
-                  <div className="flex-1 flex flex-col justify-center min-w-0 relative z-10">
+                  <div className={`flex-1 flex flex-col justify-center min-w-0 relative z-10 ${design.backgroundImage ? 'text-white' : ''}`}>
                     <h4 className="text-sm sm:text-base font-semibold mb-1 truncate">{design.name}</h4>
                     <p className="text-xs sm:text-sm opacity-90 mb-1 truncate">{design.title}</p>
                     <div className="space-y-0.5">

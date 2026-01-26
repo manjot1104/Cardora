@@ -12,6 +12,7 @@ import { weddingTemplates, getTemplateById, getCategories } from '@/lib/template
 import { getAllSignatureTemplates, getSignatureTemplateById, getSignatureTemplatesByType } from '@/lib/signatureTemplates';
 import WeddingTemplate from '@/components/WeddingTemplate';
 import BusinessCardPreview from '@/components/BusinessCardPreview';
+import ImageUpload from '@/components/ImageUpload';
 import { countries, detectUserCountry, formatCurrency } from '@/lib/countryConfig';
 import { businessCardTemplates, getBusinessCardTemplateById, getBusinessCardCategories } from '@/lib/businessCardTemplates';
 import { addToCart, getCartCount } from '@/lib/cart';
