@@ -402,22 +402,6 @@ export default function AnimatedInvitePage() {
               />
             </div>
 
-            <div className="md:col-span-2">
-              <label className="block text-sm font-semibold text-gray-900 dark:text-white mb-2">
-                Custom URL Slug (Optional)
-              </label>
-              <input
-                type="text"
-                name="slug"
-                value={formData.slug}
-                onChange={handleChange}
-                className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
-                placeholder="john-jane"
-              />
-              <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                Leave empty to auto-generate from names
-              </p>
-            </div>
           </div>
 
           {/* Image Uploads */}

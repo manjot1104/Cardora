@@ -1,5 +1,7 @@
 'use client';
 
+import { getBackgroundImageUrl } from '@/lib/imageUtils';
+
 export default function BaseAnimatedTemplate({ data, config }) {
   const {
     backgroundImage,
@@ -26,7 +28,7 @@ export default function BaseAnimatedTemplate({ data, config }) {
           <div 
             className="absolute inset-0 bg-cover bg-center"
             style={{
-              backgroundImage: `url(${backgroundImage})`,
+              backgroundImage: getBackgroundImageUrl(backgroundImage),
               opacity: 0.7,
               zIndex: 0,
             }}
@@ -68,7 +70,7 @@ export default function BaseAnimatedTemplate({ data, config }) {
           <div 
             className="absolute inset-0 bg-cover bg-center"
             style={{
-              backgroundImage: `url(${backgroundImage})`,
+              backgroundImage: getBackgroundImageUrl(backgroundImage),
               opacity: 0.7,
               zIndex: 0,
             }}
@@ -96,7 +98,7 @@ export default function BaseAnimatedTemplate({ data, config }) {
           <div 
             className="absolute inset-0 bg-cover bg-center"
             style={{
-              backgroundImage: `url(${data.couplePhoto})`,
+              backgroundImage: getBackgroundImageUrl(data.couplePhoto),
               opacity: 0.7,
               zIndex: 0,
             }}
@@ -133,7 +135,7 @@ export default function BaseAnimatedTemplate({ data, config }) {
           <div 
             className="absolute inset-0 bg-cover bg-center"
             style={{
-              backgroundImage: `url(${data.couplePhoto})`,
+              backgroundImage: getBackgroundImageUrl(data.couplePhoto),
               opacity: 0.7,
               zIndex: 0,
             }}
@@ -185,7 +187,7 @@ export default function BaseAnimatedTemplate({ data, config }) {
           <div 
             className="absolute inset-0 bg-cover bg-center"
             style={{
-              backgroundImage: `url(${data.couplePhoto})`,
+              backgroundImage: getBackgroundImageUrl(data.couplePhoto),
               opacity: 0.7,
               zIndex: 0,
             }}

@@ -4,6 +4,7 @@ import { useState, useRef } from 'react';
 import { motion } from 'framer-motion';
 import api from '@/lib/api';
 import toast from 'react-hot-toast';
+import { getImageUrl } from '@/lib/imageUtils';
 
 export default function ImageUpload({ 
   imageType = 'card', 
@@ -150,7 +151,7 @@ export default function ImageUpload({
         {preview ? (
           <div className="relative">
             <img
-              src={preview.startsWith('data:') ? preview : `${typeof window !== 'undefined' ? window.location.origin : ''}${preview}`}
+              src={preview.startsWith('data:') ? preview : getImageUrl(preview)}
               alt="Preview"
               className="w-full h-48 object-cover rounded-lg"
             />

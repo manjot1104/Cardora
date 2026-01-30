@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { getBackgroundImageUrl } from '@/lib/imageUtils';
 
 export default function MotionVideoTemplate({ data }) {
   const containerRef = useRef(null);
@@ -123,7 +124,7 @@ export default function MotionVideoTemplate({ data }) {
           <div 
             className="absolute inset-0 bg-cover bg-center"
             style={{
-              backgroundImage: `url(${data.backgroundImage})`,
+              backgroundImage: getBackgroundImageUrl(data.backgroundImage),
               opacity: 0.7,
               zIndex: 0,
             }}
@@ -208,7 +209,7 @@ export default function MotionVideoTemplate({ data }) {
             <div 
               className="absolute inset-0 bg-cover bg-center"
               style={{
-                backgroundImage: `url(${data.couplePhoto})`,
+                backgroundImage: getBackgroundImageUrl(data.couplePhoto),
                 opacity: 0.85,
                 zIndex: 0,
               }}
@@ -253,7 +254,7 @@ export default function MotionVideoTemplate({ data }) {
             <div 
               className="absolute inset-0 bg-cover bg-center"
               style={{
-                backgroundImage: `url(${data.backgroundImage})`,
+                backgroundImage: getBackgroundImageUrl(data.backgroundImage),
                 opacity: 0.85,
                 zIndex: 0,
               }}
@@ -343,7 +344,7 @@ export default function MotionVideoTemplate({ data }) {
             <div 
               className="absolute inset-0 bg-cover bg-center"
               style={{
-                backgroundImage: `url(${data.couplePhoto})`,
+                backgroundImage: getBackgroundImageUrl(data.couplePhoto),
                 opacity: 0.85,
                 zIndex: 0,
               }}

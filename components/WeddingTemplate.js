@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { getTemplateById } from '@/lib/templates';
 import { getSignatureTemplateById } from '@/lib/signatureTemplates';
+import { getImageUrl, getBackgroundImageUrl } from '@/lib/imageUtils';
 
 export default function WeddingTemplate({ user, templateId, cardType = 'wedding' }) {
   // Get template data - check signature templates first, then regular templates
@@ -44,12 +45,14 @@ export default function WeddingTemplate({ user, templateId, cardType = 'wedding'
   const backgroundImageUrl = template.backgroundImage || user?.cardBackgroundImage;
   
   // Construct full image URL
-  // In Next.js, public folder is served at root, so /images/... works directly
-  // But for CSS background-image, we need to ensure the path is correct
+  // For uploaded images (/uploads/...), use backend URL
+  // For public images (/images/...), use frontend URL
   const fullImageUrl = hasBackgroundImage && backgroundImageUrl
-    ? (typeof window !== 'undefined' 
-        ? `${window.location.origin}${backgroundImageUrl}`
-        : backgroundImageUrl)
+    ? (backgroundImageUrl.startsWith('/uploads/')
+        ? getImageUrl(backgroundImageUrl)
+        : (typeof window !== 'undefined' 
+            ? `${window.location.origin}${backgroundImageUrl}`
+            : backgroundImageUrl))
     : null;
   
   // Debug logging

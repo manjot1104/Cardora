@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
+import { getBackgroundImageUrl } from '@/lib/imageUtils';
 import ParticleLayer, { PARTICLE_TYPES } from '@/components/cinematic/ParticleLayer';
 import { 
   DecorativeBorder, 
@@ -79,7 +80,7 @@ export default function CinematicFilmTemplate({ data }) {
             repeat: Infinity,
           }}
           style={{
-            backgroundImage: `url(${data.backgroundImage || '/images/wedding-backgrounds/opulent-mandap-indoor.png'})`,
+            backgroundImage: getBackgroundImageUrl(data.backgroundImage || '/images/wedding-backgrounds/opulent-mandap-indoor.png'),
             backgroundSize: 'cover',
             backgroundPosition: 'center',
           }}
@@ -218,7 +219,7 @@ export default function CinematicFilmTemplate({ data }) {
           <motion.div 
             className="absolute inset-0 bg-cover bg-center"
             style={{
-              backgroundImage: `url(${data.couplePhoto})`,
+              backgroundImage: getBackgroundImageUrl(data.couplePhoto),
               opacity: 0.7,
               zIndex: 0,
             }}
@@ -334,7 +335,7 @@ export default function CinematicFilmTemplate({ data }) {
           <motion.div 
             className="absolute inset-0 bg-cover bg-center"
             style={{
-              backgroundImage: `url(${data.couplePhoto})`,
+              backgroundImage: getBackgroundImageUrl(data.couplePhoto),
               opacity: 0.7,
               zIndex: 0,
             }}
