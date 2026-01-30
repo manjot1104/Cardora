@@ -197,6 +197,10 @@ export default function CardPage() {
     }
   };
 
+  const getCardBasePrice = (country) => {
+    return country === 'CA' ? 20 : 500; // $20 for Canada, ₹500 for India
+  };
+
   const handleAddToCart = () => {
     if (!user) {
       toast.error('Please save your card settings first');
@@ -205,7 +209,7 @@ export default function CardPage() {
 
     let cartItem;
     const unitPrice = 0.19;
-    const basePrice = 500;
+    const basePrice = getCardBasePrice(formData.country || 'IN');
     const serviceFee = 2.99;
     const totalPrice = basePrice + (unitPrice * quantity) + serviceFee;
 
@@ -530,7 +534,7 @@ export default function CardPage() {
                   <div className="mb-6">
                     <div className="flex items-baseline gap-2 mb-2">
                       <span className="text-3xl font-bold text-gray-900 dark:text-white">
-                        {formatCurrency(500, formData.country || 'IN')}
+                        {formatCurrency(getCardBasePrice(formData.country || 'IN'), formData.country || 'IN')}
                       </span>
                       <span className="text-sm text-gray-600 dark:text-gray-400">*</span>
                     </div>
@@ -708,7 +712,7 @@ export default function CardPage() {
                     <div className="flex justify-between items-center mb-2">
                       <span className="text-sm text-gray-600 dark:text-gray-400">Subtotal</span>
                       <span className="text-lg font-bold text-gray-900 dark:text-white">
-                        {formatCurrency(500, formData.country || 'IN')}
+                        {formatCurrency(getCardBasePrice(formData.country || 'IN'), formData.country || 'IN')}
                       </span>
                     </div>
                   </div>
@@ -988,7 +992,7 @@ export default function CardPage() {
                 <div className="mb-6">
                   <div className="flex items-baseline gap-2 mb-2">
                     <span className="text-3xl font-bold text-gray-900 dark:text-white">
-                      {formatCurrency(500, formData.country || 'IN')}
+                      {formatCurrency(getCardBasePrice(formData.country || 'IN'), formData.country || 'IN')}
                     </span>
                     <span className="text-sm text-gray-600 dark:text-gray-400">*</span>
                   </div>
@@ -1068,7 +1072,7 @@ export default function CardPage() {
                   <div className="flex justify-between items-center mb-2">
                     <span className="text-sm text-gray-600 dark:text-gray-400">Subtotal</span>
                     <span className="text-lg font-bold text-gray-900 dark:text-white">
-                      {formatCurrency(500, formData.country || 'IN')}
+                      {formatCurrency(getCardBasePrice(formData.country || 'IN'), formData.country || 'IN')}
                     </span>
                   </div>
                 </div>

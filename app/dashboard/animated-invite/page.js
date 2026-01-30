@@ -10,7 +10,7 @@ import toast from 'react-hot-toast';
 import { QRCodeSVG } from 'qrcode.react';
 import { animatedTemplates, getAnimatedTemplateById } from '@/lib/animatedTemplates';
 import ImageUpload from '@/components/ImageUpload';
-import { formatCurrency, detectUserCountry } from '@/lib/countryConfig';
+import { countries, formatCurrency, detectUserCountry } from '@/lib/countryConfig';
 import { addToCart, getCartCount } from '@/lib/cart';
 
 export default function AnimatedInvitePage() {
@@ -142,6 +142,10 @@ export default function AnimatedInvitePage() {
     }
   };
 
+  const getAnimatedInviteBasePrice = (country) => {
+    return country === 'CA' ? 50 : 2000; // $50 for Canada, ₹2000 for India
+  };
+
   const handleAddToCart = async () => {
     if (!formData.groomName || !formData.brideName) {
       toast.error('Please fill in groom and bride names');
@@ -164,7 +168,7 @@ export default function AnimatedInvitePage() {
 
     // Add to cart
     const unitPrice = 0.19;
-    const basePrice = 2000;
+    const basePrice = getAnimatedInviteBasePrice(country);
     const serviceFee = 2.99;
     const totalPrice = basePrice + (unitPrice * quantity) + serviceFee;
 
@@ -180,7 +184,7 @@ export default function AnimatedInvitePage() {
       basePrice: basePrice,
       serviceFee: serviceFee,
       price: totalPrice,
-      currency: 'INR',
+      currency: country === 'CA' ? 'CAD' : 'INR',
       country: country,
       userId: user._id,
       username: user.username,
@@ -227,7 +231,7 @@ export default function AnimatedInvitePage() {
 
   return (
     <DashboardLayout>
-      <div className="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
+      <div className="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8 overflow-x-hidden">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -239,6 +243,45 @@ export default function AnimatedInvitePage() {
           <p className="text-gray-600 dark:text-gray-400">
             Create cinematic, Instagram-worthy animated wedding invitations
           </p>
+        </motion.div>
+
+        {/* Country Selector */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="glass p-4 sm:p-6 rounded-2xl mb-6 border-2 border-indigo-200 dark:border-indigo-800"
+        >
+          <h2 className="text-lg sm:text-xl md:text-2xl font-bold text-gray-900 dark:text-white mb-2 sm:mb-3 md:mb-4">Select Your Country</h2>
+          <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 mb-3 sm:mb-4">Choose your country for currency and payment methods</p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3 md:gap-4">
+            {Object.values(countries).map((countryOption) => (
+              <button
+                key={countryOption.code}
+                onClick={() => {
+                  setCountry(countryOption.code);
+                  toast.success(`${countryOption.name} selected - Currency: ${countryOption.currency}`);
+                }}
+                className={`p-4 rounded-2xl border-2 transition-all text-left ${
+                  country === countryOption.code
+                    ? 'border-indigo-500 bg-indigo-50 dark:bg-indigo-900/20'
+                    : 'border-gray-200 dark:border-gray-700 hover:border-indigo-300 dark:hover:border-indigo-600'
+                }`}
+              >
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <span className="text-3xl">{countryOption.flag}</span>
+                    <div>
+                      <h3 className="font-bold text-gray-900 dark:text-white">{countryOption.name}</h3>
+                      <p className="text-sm text-gray-600 dark:text-gray-400">{countryOption.currency} {countryOption.symbol}</p>
+                    </div>
+                  </div>
+                  {country === countryOption.code && (
+                    <span className="px-3 py-1 bg-indigo-500 text-white text-xs font-bold rounded-full">Active</span>
+                  )}
+                </div>
+              </button>
+            ))}
+          </div>
         </motion.div>
 
         {/* Template Selection */}
@@ -434,28 +477,28 @@ export default function AnimatedInvitePage() {
           </div>
 
           {/* Pricing Section */}
-          <div className="mt-6 p-6 bg-gradient-to-br from-blue-50 to-purple-50 dark:from-gray-800 dark:to-gray-900 rounded-xl border-2 border-blue-200 dark:border-blue-800">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-xl font-bold text-gray-900 dark:text-white">
+          <div className="mt-6 p-4 sm:p-6 bg-gradient-to-br from-blue-50 to-purple-50 dark:from-gray-800 dark:to-gray-900 rounded-xl border-2 border-blue-200 dark:border-blue-800 overflow-hidden">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4 gap-2 sm:gap-0">
+              <h3 className="text-lg sm:text-xl font-bold text-gray-900 dark:text-white">
                 🎬 Animated Wedding Invites
               </h3>
               <div className="flex items-center gap-2">
                 <span className="text-xs text-gray-600 dark:text-gray-400">Powered by</span>
-                <span className="text-sm font-bold text-blue-600 dark:text-blue-400">Cardora</span>
+                <span className="text-xs sm:text-sm font-bold text-blue-600 dark:text-blue-400">Cardora</span>
               </div>
             </div>
 
             {/* Price Display */}
             <div className="mb-6">
               <div className="flex items-baseline gap-2 mb-2">
-                <span className="text-3xl font-bold text-gray-900 dark:text-white">
-                  {formatCurrency(2000, country)}
+                <span className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">
+                  {formatCurrency(getAnimatedInviteBasePrice(country), country)}
                 </span>
-                <span className="text-sm text-gray-600 dark:text-gray-400">*</span>
+                <span className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">*</span>
               </div>
-              <p className="text-xs text-gray-600 dark:text-gray-400 flex items-center gap-1">
+              <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 flex items-start sm:items-center gap-1 flex-wrap">
                 <span>*</span>Service fee up to {formatCurrency(2.99, country)} per order
-                <svg className="w-4 h-4 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                <svg className="w-3 h-3 sm:w-4 sm:h-4 text-gray-400 flex-shrink-0 mt-0.5 sm:mt-0" fill="currentColor" viewBox="0 0 20 20">
                   <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z" clipRule="evenodd" />
                 </svg>
               </p>
@@ -485,20 +528,20 @@ export default function AnimatedInvitePage() {
 
             {/* Quantity Selection */}
             <div className="mb-6">
-              <p className="text-sm font-semibold text-gray-900 dark:text-white mb-3">
+              <p className="text-sm sm:text-base font-semibold text-gray-900 dark:text-white mb-3">
                 Sharing Capacity
               </p>
-              <div className="px-4 py-2 bg-gray-100 dark:bg-gray-800 rounded-lg mb-2">
-                <span className="text-sm text-gray-700 dark:text-gray-300">
+              <div className="px-3 sm:px-4 py-2 bg-gray-100 dark:bg-gray-800 rounded-lg mb-2 overflow-hidden w-full">
+                <span className="text-xs sm:text-sm text-gray-700 dark:text-gray-300 break-words block overflow-wrap-anywhere">
                   {quantity} shares ({quantity} shares x 1 pack)
                 </span>
               </div>
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-2 sm:gap-3 w-full">
                 <button
                   onClick={() => setQuantity(Math.max(50, quantity - 50))}
-                  className="px-3 py-2 bg-gray-200 dark:bg-gray-700 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-all"
+                  className="px-3 sm:px-4 py-2 sm:py-2.5 bg-gray-200 dark:bg-gray-700 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-all flex-shrink-0 min-w-[44px]"
                 >
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 12H4" />
                   </svg>
                 </button>
@@ -508,28 +551,28 @@ export default function AnimatedInvitePage() {
                   onChange={(e) => setQuantity(Math.max(50, parseInt(e.target.value) || 50))}
                   min="50"
                   step="50"
-                  className="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white text-center"
+                  className="flex-1 min-w-0 px-2 sm:px-4 py-2 sm:py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white text-center text-sm sm:text-base font-medium"
                 />
                 <button
                   onClick={() => setQuantity(quantity + 50)}
-                  className="px-3 py-2 bg-gray-200 dark:bg-gray-700 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-all"
+                  className="px-3 sm:px-4 py-2 sm:py-2.5 bg-gray-200 dark:bg-gray-700 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-all flex-shrink-0 min-w-[44px]"
                 >
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
                   </svg>
                 </button>
               </div>
-              <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
+              <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 mt-2">
                 Unit price: {formatCurrency(0.19, country)}
               </p>
             </div>
 
             {/* Price Summary */}
-            <div className="mb-6 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
-              <div className="flex justify-between items-center mb-2">
-                <span className="text-sm text-gray-600 dark:text-gray-400">Subtotal</span>
-                <span className="text-lg font-bold text-gray-900 dark:text-white">
-                  {formatCurrency(2000, country)}
+            <div className="mb-6 p-3 sm:p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
+              <div className="flex justify-between items-center">
+                <span className="text-sm sm:text-base font-medium text-gray-600 dark:text-gray-400">Subtotal</span>
+                <span className="text-lg sm:text-xl font-bold text-gray-900 dark:text-white">
+                  {formatCurrency(getAnimatedInviteBasePrice(country), country)}
                 </span>
               </div>
             </div>
