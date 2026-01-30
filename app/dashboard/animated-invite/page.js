@@ -164,7 +164,7 @@ export default function AnimatedInvitePage() {
 
     // Add to cart
     const unitPrice = 0.19;
-    const basePrice = 29.99;
+    const basePrice = 2000;
     const serviceFee = 2.99;
     const totalPrice = basePrice + (unitPrice * quantity) + serviceFee;
 
@@ -449,7 +449,7 @@ export default function AnimatedInvitePage() {
             <div className="mb-6">
               <div className="flex items-baseline gap-2 mb-2">
                 <span className="text-3xl font-bold text-gray-900 dark:text-white">
-                  {formatCurrency(29.99, country)}
+                  {formatCurrency(2000, country)}
                 </span>
                 <span className="text-sm text-gray-600 dark:text-gray-400">*</span>
               </div>
@@ -529,7 +529,7 @@ export default function AnimatedInvitePage() {
               <div className="flex justify-between items-center mb-2">
                 <span className="text-sm text-gray-600 dark:text-gray-400">Subtotal</span>
                 <span className="text-lg font-bold text-gray-900 dark:text-white">
-                  {formatCurrency(29.99, country)}
+                  {formatCurrency(2000, country)}
                 </span>
               </div>
             </div>

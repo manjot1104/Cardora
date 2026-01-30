@@ -149,13 +149,13 @@ export default function MotionVideoTemplate({ data }) {
                 <div className="absolute inset-0 bg-gradient-to-br from-rose-300 via-pink-400 to-purple-500 rounded-full shadow-2xl border-4 border-white flex items-center justify-center" style={{
                   boxShadow: '0 0 60px rgba(251, 113, 133, 0.8), 0 0 120px rgba(192, 132, 252, 0.6), 0 0 180px rgba(236, 72, 153, 0.4)',
                 }}>
-                  <div className="text-6xl font-serif text-white" style={{
+                  <div className="text-6xl font-serif text-black" style={{
                     textShadow: '0 0 20px rgba(255, 255, 255, 0.8), 2px 2px 8px rgba(0, 0, 0, 0.3)',
                   }}>
                     {groomName.charAt(0)}&{brideName.charAt(0)}
                   </div>
                 </div>
-                <div className="absolute -bottom-4 left-1/2 transform -translate-x-1/2 text-white text-sm font-bold bg-gradient-to-r from-rose-500 to-pink-500 px-6 py-3 rounded-full shadow-lg" style={{
+                <div className="absolute -bottom-4 left-1/2 transform -translate-x-1/2 text-black text-sm font-bold bg-gradient-to-r from-rose-500 to-pink-500 px-6 py-3 rounded-full shadow-lg" style={{
                   boxShadow: '0 4px 20px rgba(251, 113, 133, 0.7), 0 0 30px rgba(236, 72, 153, 0.5)',
                 }}>
                   Tap to Open
@@ -366,7 +366,7 @@ export default function MotionVideoTemplate({ data }) {
           }}>
             Will you join us?
           </h2>
-          <button className="px-16 py-6 bg-gradient-to-r from-yellow-300 via-orange-300 to-pink-300 text-white rounded-full text-xl font-bold shadow-2xl hover:scale-110 transition-transform active:scale-95 relative z-20" style={{
+          <button className="px-16 py-6 bg-gradient-to-r from-yellow-300 via-orange-300 to-pink-300 text-black rounded-full text-xl font-bold shadow-2xl hover:scale-110 transition-transform active:scale-95 relative z-20" style={{
             boxShadow: '0 10px 60px rgba(251, 191, 36, 0.8), 0 0 100px rgba(236, 72, 153, 0.6), 0 0 150px rgba(251, 191, 36, 0.4)',
             textShadow: '2px 2px 8px rgba(0, 0, 0, 0.2)',
             background: 'linear-gradient(to right, #fde047, #fb923c, #f9a8d4)',
