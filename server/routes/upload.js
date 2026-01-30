@@ -78,6 +78,11 @@ router.post('/image', auth, upload.single('image'), async (req, res) => {
       if (fs.existsSync(oldImagePath)) {
         fs.unlinkSync(oldImagePath);
       }
+    } else if (imageType === 'couplePhoto' && user.couplePhoto) {
+      const oldImagePath = path.join(process.cwd(), 'public', user.couplePhoto);
+      if (fs.existsSync(oldImagePath)) {
+        fs.unlinkSync(oldImagePath);
+      }
     }
 
     // Update user based on image type
@@ -85,6 +90,8 @@ router.post('/image', auth, upload.single('image'), async (req, res) => {
       user.profileImage = imageUrl;
     } else if (imageType === 'background') {
       user.cardBackgroundImage = imageUrl;
+    } else if (imageType === 'couplePhoto') {
+      user.couplePhoto = imageUrl;
     } else {
       // Add to cardImages array
       if (!user.cardImages) {

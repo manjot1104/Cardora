@@ -372,7 +372,7 @@ export default function CardPage() {
           {/* Card Type Selector */}
           <div className="glass p-4 sm:p-6 rounded-2xl sm:rounded-3xl mb-4 sm:mb-6 md:mb-8 border-2 border-blue-200 dark:border-blue-800">
             <h2 className="text-lg sm:text-xl md:text-2xl font-bold text-gray-900 dark:text-white mb-2 sm:mb-3 md:mb-4">Choose Card Type</h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3 md:gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-2 sm:gap-3 md:gap-4">
               <button
                 onClick={() => {
                   setFormData({ ...formData, theme: 'default', cardType: 'business', collection: 'standard' });
@@ -420,6 +420,22 @@ export default function CardPage() {
                 <h3 className="text-base sm:text-lg md:text-xl font-bold mb-1 sm:mb-2 text-gray-900 dark:text-white">Wedding Card</h3>
                 <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">
                   Beautiful digital wedding invitations with Traditional Indian style
+                </p>
+              </button>
+
+              <button
+                onClick={() => {
+                  router.push('/dashboard/animated-invite');
+                }}
+                className="p-3 sm:p-4 md:p-6 rounded-xl sm:rounded-2xl border-2 transition-all text-left border-purple-500 bg-purple-50 dark:bg-purple-900/20 hover:border-purple-600 dark:hover:border-purple-500"
+              >
+                <div className="flex items-center justify-between mb-2 sm:mb-3">
+                  <div className="text-2xl sm:text-3xl md:text-4xl">🎬</div>
+                  <span className="px-2 sm:px-3 py-1 bg-purple-500 text-white text-xs font-bold rounded-full">New</span>
+                </div>
+                <h3 className="text-base sm:text-lg md:text-xl font-bold mb-1 sm:mb-2 text-gray-900 dark:text-white">Animated Invites</h3>
+                <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">
+                  Premium cinematic auto-play wedding invitations - Movie-like experience
                 </p>
               </button>
 

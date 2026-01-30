@@ -103,6 +103,13 @@ const userSchema = new mongoose.Schema({
   // Password reset fields
   resetToken: String,
   resetTokenExpiry: Date,
+  // Animated wedding invite fields
+  animatedInviteSlug: String, // Unique slug for animated invite (e.g., "pedro-julia")
+  animatedTemplateId: String, // Template ID for animated invite
+  weddingStory: String, // Custom story text
+  couplePhoto: String, // URL to couple photo
+  weddingMusic: String, // URL to background music file
+  weddingTime: String, // Wedding time (e.g., "6:00 PM")
 }, {
   timestamps: true,
 });

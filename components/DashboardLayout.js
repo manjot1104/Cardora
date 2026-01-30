@@ -41,6 +41,7 @@ export default function DashboardLayout({ children }) {
     { href: '/dashboard', label: 'Dashboard', icon: '📊' },
     { href: '/dashboard/profile', label: 'Profile', icon: '👤' },
     { href: '/dashboard/card', label: 'My Card', icon: '💼' },
+    { href: '/dashboard/animated-invite', label: 'Animated Invites', icon: '🎬' },
     { href: '/dashboard/payments', label: 'Payments', icon: '💳' },
     { href: '/dashboard/analytics', label: 'Analytics', icon: '📈' },
   ];

@@ -242,9 +242,9 @@ export default function BusinessCardPreview({ user, orientation = 'horizontal', 
                         />
                       </div>
                     ) : (
-                      <div className="w-12 h-12 border-2 flex items-center justify-center mb-3" style={{ borderColor: design.template?.colors.accent || '#3B82F6' }}>
-                        <span className="text-xl font-bold">{design.logo}</span>
-                      </div>
+                    <div className="w-12 h-12 border-2 flex items-center justify-center mb-3" style={{ borderColor: design.template?.colors.accent || '#3B82F6' }}>
+                      <span className="text-xl font-bold">{design.logo}</span>
+                    </div>
                     )}
                     <h3 className="text-sm font-bold mb-1">{design.company}</h3>
                   </div>

@@ -84,6 +84,7 @@ app.use('/api/card', require('./routes/card'));
 app.use('/api/analytics', require('./routes/analytics'));
 app.use('/api/payment', paymentRoutes);
 app.use('/api/upload', require('./routes/upload'));
+app.use('/api/wedding', require('./routes/wedding'));
 
 // MongoDB Connection
 mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/cardora')

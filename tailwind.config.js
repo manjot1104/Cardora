@@ -39,6 +39,15 @@ module.exports = {
           '50%': { transform: 'translateY(-10px)' },
         },
       },
+      backgroundImage: {
+        'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
+      },
+      colors: {
+        'ivory': {
+          50: '#FFFEF7',
+          100: '#FFFEF0',
+        },
+      },
     },
   },
   plugins: [],
