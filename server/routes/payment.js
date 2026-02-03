@@ -354,6 +354,20 @@ const webhookHandler = async (req, res) => {
         type: isCartPayment ? 'cart_payment_success' : 'payment_success',
         deviceType: 'unknown',
       });
+
+      // Unlock card/invite based on payment
+      const user = await User.findById(payment.userId);
+      if (user) {
+        if (isCartPayment) {
+          // For cart payments, check metadata for item types
+          // We'll unlock based on what was purchased
+          // This is handled in a separate endpoint after payment verification
+        } else {
+          // For direct payments, unlock card
+          user.cardPaid = true;
+          await user.save();
+        }
+      }
     }
   }
 

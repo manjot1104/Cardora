@@ -40,12 +40,34 @@ const fileFilter = (req, file, cb) => {
   }
 };
 
+// File filter for audio files
+const audioFileFilter = (req, file, cb) => {
+  const allowedTypes = /mp3|wav|ogg|m4a|aac/;
+  const extname = allowedTypes.test(path.extname(file.originalname).toLowerCase());
+  const mimetype = allowedTypes.test(file.mimetype) || file.mimetype.startsWith('audio/');
+
+  if (mimetype || extname) {
+    return cb(null, true);
+  } else {
+    cb(new Error('Only audio files are allowed (mp3, wav, ogg, m4a, aac)'));
+  }
+};
+
 const upload = multer({
   storage: storage,
   limits: {
     fileSize: 5 * 1024 * 1024, // 5MB limit
   },
   fileFilter: fileFilter
+});
+
+// Audio upload configuration
+const audioUpload = multer({
+  storage: storage,
+  limits: {
+    fileSize: 10 * 1024 * 1024, // 10MB limit for audio
+  },
+  fileFilter: audioFileFilter
 });
 
 // @route   POST /api/upload/image
@@ -200,6 +222,107 @@ router.get('/images', auth, async (req, res) => {
     console.error('Get images error:', error);
     res.status(500).json({ 
       error: error.message || 'Failed to get images' 
+    });
+  }
+});
+
+// @route   POST /api/upload/audio
+// @desc    Upload audio file for wedding music
+// @access  Private
+router.post('/audio', auth, audioUpload.single('audio'), async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ error: 'No audio file provided' });
+    }
+
+    const userId = req.user.id;
+    const audioType = req.body.audioType || 'wedding';
+    const audioUrl = `/uploads/${req.file.filename}`;
+
+    // Update user with audio URL
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    // Delete old audio if exists
+    if (user.weddingMusic) {
+      const oldAudioPath = path.join(process.cwd(), 'public', user.weddingMusic);
+      if (fs.existsSync(oldAudioPath)) {
+        fs.unlinkSync(oldAudioPath);
+      }
+    }
+
+    // Update user with new audio
+    user.weddingMusic = audioUrl;
+    await user.save();
+
+    res.json({
+      success: true,
+      audioUrl: audioUrl,
+      audioType: audioType,
+      message: 'Audio uploaded successfully'
+    });
+  } catch (error) {
+    console.error('Audio upload error:', error);
+    
+    // Delete uploaded file if there was an error
+    if (req.file) {
+      const filePath = path.join(uploadsDir, req.file.filename);
+      if (fs.existsSync(filePath)) {
+        fs.unlinkSync(filePath);
+      }
+    }
+
+    res.status(500).json({ 
+      error: error.message || 'Failed to upload audio' 
+    });
+  }
+});
+
+// @route   DELETE /api/upload/audio/:audioUrl
+// @desc    Delete uploaded audio file
+// @access  Private
+router.delete('/audio/:audioUrl', auth, async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const audioUrl = decodeURIComponent(req.params.audioUrl);
+    const audioPath = path.join(process.cwd(), 'public', audioUrl);
+
+    // Verify file exists
+    if (!fs.existsSync(audioPath)) {
+      return res.status(404).json({ error: 'Audio file not found' });
+    }
+
+    // Verify user owns this audio (check filename starts with userId)
+    const filename = path.basename(audioUrl);
+    if (!filename.startsWith(userId + '-')) {
+      return res.status(403).json({ error: 'Unauthorized to delete this audio file' });
+    }
+
+    // Update user to remove audio reference
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    // Remove from user
+    if (user.weddingMusic === audioUrl) {
+      user.weddingMusic = undefined;
+      await user.save();
+    }
+
+    // Delete file
+    fs.unlinkSync(audioPath);
+
+    res.json({
+      success: true,
+      message: 'Audio deleted successfully'
+    });
+  } catch (error) {
+    console.error('Audio delete error:', error);
+    res.status(500).json({ 
+      error: error.message || 'Failed to delete audio' 
     });
   }
 });

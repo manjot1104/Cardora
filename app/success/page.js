@@ -36,6 +36,16 @@ function SuccessContent() {
       const response = await api.post('/payment/verify', { sessionId });
       if (response.data.success) {
         setPayment(response.data.payment);
+        
+        // Verify payment and unlock features
+        try {
+          const unlockResponse = await api.post('/unlock/verify-payment', { sessionId });
+          if (unlockResponse.data.success) {
+            console.log('Features unlocked:', unlockResponse.data);
+          }
+        } catch (unlockError) {
+          console.error('Error unlocking features:', unlockError);
+        }
       }
     } catch (error) {
       console.error('Error verifying payment:', error);

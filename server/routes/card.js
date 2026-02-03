@@ -1,6 +1,7 @@
 const express = require('express');
 const User = require('../models/User');
 const Analytics = require('../models/Analytics');
+const { demoCardData } = require('../../lib/demoData');
 
 const router = express.Router();
 
@@ -41,17 +42,38 @@ router.get('/:username', async (req, res) => {
       });
     }
 
+    // Check if user has paid for card - if not, show demo data
+    const isPaid = user.cardPaid || false;
+    const displayData = isPaid ? {
+      name: user.name,
+      profession: user.profession,
+      company: user.company,
+      phone: user.phone,
+      whatsapp: user.whatsapp,
+      email: user.email,
+      address: user.address,
+      socialLinks: user.socialLinks,
+      weddingDate: user.weddingDate,
+      venue: user.venue,
+      brideName: user.brideName,
+      groomName: user.groomName,
+      brideFatherName: user.brideFatherName,
+      brideMotherName: user.brideMotherName,
+      groomFatherName: user.groomFatherName,
+      groomMotherName: user.groomMotherName,
+      deceasedElders: user.deceasedElders,
+      profileImage: user.profileImage,
+      cardBackgroundImage: user.cardBackgroundImage,
+      cardImages: user.cardImages,
+    } : {
+      ...demoCardData,
+      theme: user.theme, // Keep user's theme selection
+    };
+
     res.json({
       user: {
         id: user._id,
-        name: user.name,
-        profession: user.profession,
-        company: user.company,
-        phone: user.phone,
-        whatsapp: user.whatsapp,
-        email: user.email,
-        address: user.address,
-        socialLinks: user.socialLinks,
+        ...displayData,
         profileEnabled: user.profileEnabled,
         paymentEnabled: user.paymentEnabled,
         paymentType: user.paymentType,
@@ -59,22 +81,12 @@ router.get('/:username', async (req, res) => {
         interacEmail: user.interacEmail,
         theme: user.theme,
         username: user.username,
-        weddingDate: user.weddingDate,
-        venue: user.venue,
-        brideName: user.brideName,
-        groomName: user.groomName,
-        brideFatherName: user.brideFatherName,
-        brideMotherName: user.brideMotherName,
-        groomFatherName: user.groomFatherName,
-        groomMotherName: user.groomMotherName,
-        deceasedElders: user.deceasedElders,
         cardType: user.cardType,
         collection: user.collection,
         country: user.country,
         currency: user.currency,
-        profileImage: user.profileImage,
-        cardBackgroundImage: user.cardBackgroundImage,
-        cardImages: user.cardImages,
+        cardPaid: isPaid, // Include payment status
+        isDemo: !isPaid, // Flag to indicate demo mode
       },
     });
   } catch (error) {

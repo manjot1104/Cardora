@@ -10,6 +10,7 @@ import toast from 'react-hot-toast';
 import { QRCodeSVG } from 'qrcode.react';
 import { animatedTemplates, getAnimatedTemplateById } from '@/lib/animatedTemplates';
 import ImageUpload from '@/components/ImageUpload';
+import MusicUpload from '@/components/MusicUpload';
 import { countries, formatCurrency, detectUserCountry } from '@/lib/countryConfig';
 import { addToCart, getCartCount } from '@/lib/cart';
 
@@ -49,13 +50,19 @@ export default function AnimatedInvitePage() {
 
   const fetchUser = async () => {
     try {
-      const [userRes, inviteRes] = await Promise.all([
-        api.get('/user/profile'),
-        api.get('/wedding/user/current').catch(() => null),
-      ]);
-      
+      // Fetch user profile first
+      const userRes = await api.get('/user/profile');
       const userData = userRes.data;
       setUser(userData);
+
+      // Try to fetch existing invite data (this might fail if no invite exists yet, which is okay)
+      let inviteRes = null;
+      try {
+        inviteRes = await api.get('/wedding/user/current');
+      } catch (inviteError) {
+        // It's okay if no invite exists yet - this is expected for new users
+        console.log('No existing invite found, using defaults');
+      }
 
       if (inviteRes?.data) {
         setFormData({
@@ -72,7 +79,7 @@ export default function AnimatedInvitePage() {
           setInviteUrl(`${window.location.origin}/wedding/${inviteRes.data.slug}`);
         }
       } else {
-        // Use existing user data
+        // Use existing user data or defaults
         setFormData({
           templateId: 'luxury-hills',
           groomName: userData.groomName || '',
@@ -85,7 +92,21 @@ export default function AnimatedInvitePage() {
         });
       }
     } catch (error) {
-      toast.error('Failed to load data');
+      console.error('Error fetching user data:', error);
+      const errorMessage = error.response?.data?.error || error.message || 'Failed to load data';
+      toast.error(errorMessage);
+      
+      // Set default form data even on error so user can still use the page
+      setFormData({
+        templateId: 'luxury-hills',
+        groomName: '',
+        brideName: '',
+        weddingDate: '',
+        venue: '',
+        weddingTime: '6:00 PM',
+        story: '',
+        slug: '',
+      });
     } finally {
       setLoading(false);
     }
@@ -108,6 +129,40 @@ export default function AnimatedInvitePage() {
   };
 
   const handleCreateInvite = async () => {
+    // If user hasn't paid, use demo data
+    if (!user?.invitePaid) {
+      // Use demo data for preview
+      const demoData = {
+        groomName: 'John',
+        brideName: 'Jane',
+        weddingDate: 'December 15, 2024',
+        venue: 'Grand Ballroom, Tuscany',
+        weddingTime: '6:00 PM onwards',
+        story: 'Two souls. One destiny. A love written in the stars.',
+      };
+      
+      setSaving(true);
+      try {
+        const response = await api.post('/wedding/create', {
+          ...formData,
+          ...demoData, // Use demo data
+          couplePhoto: user?.couplePhoto || user?.profileImage,
+          backgroundImage: user?.cardBackgroundImage,
+          music: user?.weddingMusic || null,
+        });
+
+        const newUrl = `${window.location.origin}/wedding/${response.data.slug}`;
+        setInviteUrl(newUrl);
+        return { success: true, slug: response.data.slug, url: newUrl };
+      } catch (error) {
+        toast.error(error.response?.data?.error || 'Failed to create invite');
+        return { success: false };
+      } finally {
+        setSaving(false);
+      }
+    }
+
+    // If user has paid, validate and use their data
     if (!formData.groomName || !formData.brideName) {
       toast.error('Please fill in groom and bride names');
       return;
@@ -119,7 +174,7 @@ export default function AnimatedInvitePage() {
         ...formData,
         couplePhoto: user?.couplePhoto || user?.profileImage,
         backgroundImage: user?.cardBackgroundImage,
-        music: user?.weddingMusic,
+        music: user?.weddingMusic || null,
       });
 
       const newUrl = `${window.location.origin}/wedding/${response.data.slug}`;
@@ -147,6 +202,15 @@ export default function AnimatedInvitePage() {
   };
 
   const handleAddToCart = async () => {
+    // If user hasn't paid, show payment prompt
+    if (!user?.invitePaid) {
+      toast.error('Please complete payment to add invites to cart');
+      setShowActionModal(false);
+      router.push('/dashboard/checkout');
+      return;
+    }
+
+    // If user has paid, validate their data
     if (!formData.groomName || !formData.brideName) {
       toast.error('Please fill in groom and bride names');
       setShowActionModal(false);
@@ -206,6 +270,13 @@ export default function AnimatedInvitePage() {
   };
 
   const handleCreateNow = () => {
+    // If user hasn't paid, allow preview with demo data
+    if (!user?.invitePaid) {
+      setShowActionModal(true);
+      return;
+    }
+
+    // If user has paid, validate their data
     if (!formData.groomName || !formData.brideName) {
       toast.error('Please fill in groom and bride names');
       return;
@@ -360,7 +431,24 @@ export default function AnimatedInvitePage() {
             Fill Your Details
           </h2>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {!user?.invitePaid ? (
+            <div className="bg-gradient-to-r from-yellow-50 to-orange-50 dark:from-yellow-900/20 dark:to-orange-900/20 border-2 border-yellow-400 dark:border-yellow-600 rounded-xl p-8 text-center">
+              <div className="text-5xl mb-4">🔒</div>
+              <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
+                Complete Payment to Unlock
+              </h3>
+              <p className="text-sm text-gray-600 dark:text-gray-400 mb-6">
+                Complete your payment to fill in your wedding invitation details
+              </p>
+              <button
+                onClick={() => router.push('/dashboard/checkout')}
+                className="px-6 py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-lg font-semibold hover:shadow-lg transform hover:scale-105 transition-all"
+              >
+                💳 Complete Payment
+              </button>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
               <label className="block text-sm font-semibold text-gray-900 dark:text-white mb-2">
                 Groom Name *
@@ -446,8 +534,10 @@ export default function AnimatedInvitePage() {
             </div>
 
           </div>
+          )}
 
           {/* Image Uploads */}
+          {user?.invitePaid && (
           <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
               <label className="block text-sm font-semibold text-gray-900 dark:text-white mb-2">
@@ -475,6 +565,19 @@ export default function AnimatedInvitePage() {
               />
             </div>
           </div>
+          )}
+
+          {/* Music Upload */}
+          {user?.invitePaid && (
+          <div className="mt-6">
+            <MusicUpload
+              currentMusic={user?.weddingMusic}
+              onMusicUploaded={(url) => {
+                setUser({ ...user, weddingMusic: url });
+              }}
+            />
+          </div>
+          )}
 
           {/* Pricing Section */}
           <div className="mt-6 p-4 sm:p-6 bg-gradient-to-br from-blue-50 to-purple-50 dark:from-gray-800 dark:to-gray-900 rounded-xl border-2 border-blue-200 dark:border-blue-800 overflow-hidden">

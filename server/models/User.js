@@ -110,6 +110,29 @@ const userSchema = new mongoose.Schema({
   couplePhoto: String, // URL to couple photo
   weddingMusic: String, // URL to background music file
   weddingTime: String, // Wedding time (e.g., "6:00 PM")
+  // Payment status for unlocking features
+  cardPaid: {
+    type: Boolean,
+    default: false,
+  },
+  invitePaid: {
+    type: Boolean,
+    default: false,
+  },
+  // Gallery - downloaded cards/invites
+  gallery: [{
+    type: {
+      type: String,
+      enum: ['card', 'invite'],
+    },
+    templateId: String,
+    slug: String,
+    downloadedAt: {
+      type: Date,
+      default: Date.now,
+    },
+    data: mongoose.Schema.Types.Mixed, // Store card/invite data snapshot
+  }],
 }, {
   timestamps: true,
 });

@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const auth = require('../middleware/auth');
 const User = require('../models/User');
+const { demoInviteData } = require('../../lib/demoData');
 
 // @route   GET /api/wedding/:slug
 // @desc    Get animated wedding invite by slug
@@ -14,10 +15,9 @@ router.get('/:slug', async (req, res) => {
       return res.status(404).json({ error: 'Wedding invite not found' });
     }
 
-    // Return wedding data in format expected by animated templates
-    res.json({
-      slug: user.animatedInviteSlug,
-      templateId: user.animatedTemplateId || 'luxury-hills',
+    // Check if user has paid for invite - if not, show demo data
+    const isPaid = user.invitePaid || false;
+    const displayData = isPaid ? {
       groomName: user.groomName || user.name?.split(' & ')[0] || 'Groom',
       brideName: user.brideName || user.name?.split(' & ')[1] || user.name?.split(' & ')[0] || 'Bride',
       weddingDate: user.weddingDate || 'Date TBA',
@@ -32,6 +32,17 @@ router.get('/:slug', async (req, res) => {
       groomFatherName: user.groomFatherName || '',
       groomMotherName: user.groomMotherName || '',
       deceasedElders: user.deceasedElders || '',
+    } : {
+      ...demoInviteData,
+    };
+
+    // Return wedding data in format expected by animated templates
+    res.json({
+      slug: user.animatedInviteSlug,
+      templateId: user.animatedTemplateId || 'luxury-hills',
+      ...displayData,
+      invitePaid: isPaid, // Include payment status
+      isDemo: !isPaid, // Flag to indicate demo mode
     });
   } catch (error) {
     console.error('Get wedding invite error:', error);

@@ -3,18 +3,34 @@
 import { useEffect, useRef, useState } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { getBackgroundImageUrl } from '@/lib/imageUtils';
+import { getBackgroundImageUrl, getImageUrl, getAudioUrl } from '@/lib/imageUtils';
 
 export default function MotionVideoTemplate({ data }) {
   const containerRef = useRef(null);
   const sealRef = useRef(null);
   const contentRef = useRef(null);
+  const audioRef = useRef(null);
   const [isOpened, setIsOpened] = useState(false);
+  const [musicPlaying, setMusicPlaying] = useState(true);
 
   const groomName = data.groomName || 'Groom';
   const brideName = data.brideName || 'Bride';
   const weddingDate = data.weddingDate || 'Date TBA';
   const venue = data.venue || 'Venue TBA';
+  const musicUrl = data.music ? getAudioUrl(data.music) : null;
+
+  // Handle music playback
+  useEffect(() => {
+    if (audioRef.current && musicUrl) {
+      if (musicPlaying) {
+        audioRef.current.play().catch(err => {
+          console.log('Auto-play prevented:', err);
+        });
+      } else {
+        audioRef.current.pause();
+      }
+    }
+  }, [musicPlaying, musicUrl]);
 
   useEffect(() => {
     // Initial entrance animation - keep brightness
@@ -98,6 +114,40 @@ export default function MotionVideoTemplate({ data }) {
       background: 'linear-gradient(to bottom, #e9d5ff, #fce7f3, #fecdd3)',
     }}>
       {/* Bright Glow Overlay */}
+      {/* Background Music */}
+      {musicUrl && (
+        <audio
+          ref={audioRef}
+          loop
+          preload="auto"
+          onPlay={() => setMusicPlaying(true)}
+          onPause={() => setMusicPlaying(false)}
+        >
+          <source src={musicUrl} type="audio/mpeg" />
+          <source src={musicUrl} type="audio/wav" />
+          <source src={musicUrl} type="audio/ogg" />
+        </audio>
+      )}
+
+      {/* Music Toggle */}
+      {musicUrl && (
+        <button
+          onClick={() => {
+            if (audioRef.current) {
+              if (musicPlaying) {
+                audioRef.current.pause();
+              } else {
+                audioRef.current.play();
+              }
+            }
+            setMusicPlaying(!musicPlaying);
+          }}
+          className="fixed bottom-6 right-6 z-50 w-14 h-14 rounded-full bg-purple-600 text-white flex items-center justify-center shadow-2xl hover:scale-110 transition-transform"
+        >
+          {musicPlaying ? '🔊' : '🔇'}
+        </button>
+      )}
+
       <div className="absolute inset-0 bg-gradient-to-b from-white/20 via-transparent to-white/20 pointer-events-none"></div>
       
       {/* Animated Background Particles */}

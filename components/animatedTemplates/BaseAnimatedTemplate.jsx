@@ -1,10 +1,14 @@
 'use client';
 
-import { getBackgroundImageUrl } from '@/lib/imageUtils';
+import { useEffect, useRef, useState } from 'react';
+import { getBackgroundImageUrl, getImageUrl, getAudioUrl } from '@/lib/imageUtils';
 
 export default function BaseAnimatedTemplate({ data, config }) {
+  const audioRef = useRef(null);
+  const [musicPlaying, setMusicPlaying] = useState(true);
+  
   const {
-    backgroundImage,
+    backgroundImage: configBackgroundImage,
     gradientColors,
     textColor = '#FFFFFF',
     accentColor = '#FFD700',
@@ -18,6 +22,23 @@ export default function BaseAnimatedTemplate({ data, config }) {
   const brideName = data.brideName || 'Bride';
   const weddingDate = data.weddingDate || 'Date TBA';
   const venue = data.venue || 'Venue TBA';
+  const musicUrl = data.music ? getAudioUrl(data.music) : null;
+  
+  // Use data.backgroundImage if available, otherwise use config backgroundImage
+  const backgroundImage = data.backgroundImage || configBackgroundImage;
+
+  // Handle music playback
+  useEffect(() => {
+    if (audioRef.current && musicUrl) {
+      if (musicPlaying) {
+        audioRef.current.play().catch(err => {
+          console.log('Auto-play prevented:', err);
+        });
+      } else {
+        audioRef.current.pause();
+      }
+    }
+  }, [musicPlaying, musicUrl]);
 
   return (
     <div className="min-h-screen relative">

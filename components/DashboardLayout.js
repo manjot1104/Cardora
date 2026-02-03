@@ -42,6 +42,7 @@ export default function DashboardLayout({ children }) {
     { href: '/dashboard/profile', label: 'Profile', icon: '👤' },
     { href: '/dashboard/card', label: 'My Card', icon: '💼' },
     { href: '/dashboard/animated-invite', label: 'Animated Invites', icon: '🎬' },
+    { href: '/dashboard/gallery', label: 'Gallery', icon: '📸' },
     { href: '/dashboard/payments', label: 'Payments', icon: '💳' },
     { href: '/dashboard/analytics', label: 'Analytics', icon: '📈' },
   ];
@@ -64,9 +65,12 @@ export default function DashboardLayout({ children }) {
       >
         <div className="mb-6 sm:mb-8">
           <div className="flex items-center justify-between mb-2">
-            <h1 className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+            <Link 
+              href="/"
+              className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent hover:from-blue-700 hover:to-purple-700 transition-all cursor-pointer"
+            >
               Cardora
-            </h1>
+            </Link>
             <button
               onClick={() => setSidebarOpen(false)}
               className="lg:hidden text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white text-xl sm:text-2xl"

@@ -1189,10 +1189,28 @@ export default function CardPage() {
                 {/* Event Template Fields - Show for Wedding, Engagement, Anniversary */}
                 {formData.cardType && ['wedding', 'engagement', 'anniversary'].includes(formData.cardType) && (
                   <div className="border-t-2 border-gray-200 dark:border-gray-700 pt-6 mt-6">
-                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
-                      {formData.cardType === 'engagement' ? '💎' : formData.cardType === 'anniversary' ? '🎉' : '💍'} {formData.cardType === 'engagement' ? 'Engagement' : formData.cardType === 'anniversary' ? 'Anniversary' : 'Wedding'} Details
-                      <span className="text-xs font-normal text-gray-500">(Optional but recommended)</span>
-                    </h3>
+                    {!user?.cardPaid ? (
+                      <div className="bg-gradient-to-r from-yellow-50 to-orange-50 dark:from-yellow-900/20 dark:to-orange-900/20 border-2 border-yellow-400 dark:border-yellow-600 rounded-xl p-6 text-center">
+                        <div className="text-4xl mb-3">🔒</div>
+                        <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+                          Complete Payment to Unlock
+                        </h3>
+                        <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
+                          Complete your payment to fill in your {formData.cardType === 'engagement' ? 'engagement' : formData.cardType === 'anniversary' ? 'anniversary' : 'wedding'} details
+                        </p>
+                        <button
+                          onClick={() => router.push('/dashboard/checkout')}
+                          className="px-6 py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-lg font-semibold hover:shadow-lg transform hover:scale-105 transition-all"
+                        >
+                          💳 Complete Payment
+                        </button>
+                      </div>
+                    ) : (
+                      <>
+                        <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
+                          {formData.cardType === 'engagement' ? '💎' : formData.cardType === 'anniversary' ? '🎉' : '💍'} {formData.cardType === 'engagement' ? 'Engagement' : formData.cardType === 'anniversary' ? 'Anniversary' : 'Wedding'} Details
+                          <span className="text-xs font-normal text-gray-500">(Optional but recommended)</span>
+                        </h3>
                     <div className="space-y-4">
                       <div>
                         <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
@@ -1323,6 +1341,8 @@ export default function CardPage() {
                         </div>
                       )}
                     </div>
+                      </>
+                    )}
                   </div>
                 )}
 
