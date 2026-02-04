@@ -320,9 +320,34 @@ export default function BusinessCardPreview({ user, orientation = 'horizontal', 
                   </div>
                 </div>
               )}
+              
+              {/* CARDORA Watermark - Bottom Right */}
+              <div 
+                className="absolute bottom-2 right-2 z-50 pointer-events-none"
+                style={{
+                  fontFamily: "'Playfair Display', 'Georgia', serif",
+                  fontWeight: 700,
+                  fontSize: '10px',
+                  letterSpacing: '1.5px',
+                  color: textColor === '#FFFFFF' ? 'rgba(255, 255, 255, 0.5)' : 'rgba(0, 0, 0, 0.4)',
+                  opacity: 0.6,
+                }}
+              >
+                CARDORA
+              </div>
             </motion.div>
           );
         })}
+      </div>
+      
+      {/* Website Name - Bottom Center */}
+      <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 z-50 pointer-events-none">
+        <p 
+          className="text-xs opacity-60 font-serif italic"
+          style={{ color: '#666' }}
+        >
+          cardoradigital.ca
+        </p>
       </div>
     </div>
   );

@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { getBackgroundImageUrl, getImageUrl, getAudioUrl } from '@/lib/imageUtils';
 
-export default function BaseAnimatedTemplate({ data, config }) {
+export default function BaseAnimatedTemplate({ data, config, onRSVPClick }) {
   const audioRef = useRef(null);
   const [musicPlaying, setMusicPlaying] = useState(true);
   
@@ -231,13 +231,42 @@ export default function BaseAnimatedTemplate({ data, config }) {
             Will you join us?
           </h2>
           <button 
-            className="px-12 py-4 rounded-full text-xl font-semibold hover:scale-105 transition-all shadow-xl fade-up"
+            onClick={onRSVPClick}
+            className="px-12 py-4 rounded-full text-xl font-semibold hover:scale-105 transition-all shadow-xl fade-up cursor-pointer"
             style={{ backgroundColor: accentColor, color: '#FFFFFF' }}
           >
             Confirm Attendance
           </button>
         </div>
       </section>
+
+      {/* CARDORA Watermark - Bottom Right */}
+      <div 
+        className="fixed bottom-20 right-6 z-40 pointer-events-none"
+        style={{
+          fontFamily: "'Playfair Display', 'Georgia', serif",
+          fontWeight: 700,
+          fontSize: '20px',
+          letterSpacing: '2px',
+          color: textColor || '#FFFFFF',
+          opacity: 0.6,
+        }}
+      >
+        CARDORA
+      </div>
+
+      {/* Website Name - Bottom Center */}
+      <div className="fixed bottom-2 left-1/2 transform -translate-x-1/2 z-50 pointer-events-none">
+        <p 
+          className="text-xs opacity-70 font-serif italic"
+          style={{ 
+            color: textColor || '#FFFFFF',
+            textShadow: '0 1px 3px rgba(0, 0, 0, 0.5)',
+          }}
+        >
+          cardoradigital.ca
+        </p>
+      </div>
     </div>
   );
 }

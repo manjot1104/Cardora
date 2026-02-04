@@ -9,6 +9,7 @@ import api from '@/lib/api';
 import { getAnimatedTemplateById } from '@/lib/animatedTemplates';
 import Link from 'next/link';
 import { getAudioUrl } from '@/lib/imageUtils';
+import RSVPModal from '@/components/RSVPModal';
 
 // Register GSAP plugins
 if (typeof window !== 'undefined') {
@@ -22,6 +23,7 @@ export default function AnimatedWeddingInvite() {
   const [loading, setLoading] = useState(true);
   const [template, setTemplate] = useState(null);
   const audioRef = useRef(null);
+  const [showRSVPModal, setShowRSVPModal] = useState(false);
 
   useEffect(() => {
     fetchWeddingData();
@@ -162,10 +164,33 @@ export default function AnimatedWeddingInvite() {
       )}
 
       {/* Render Template */}
-      <TemplateComponent data={weddingData} />
+      <TemplateComponent 
+        data={weddingData} 
+        onRSVPClick={() => setShowRSVPModal(true)}
+      />
+
+      {/* RSVP Modal */}
+      <RSVPModal
+        isOpen={showRSVPModal}
+        onClose={() => setShowRSVPModal(false)}
+        inviteSlug={params.slug}
+      />
+
+      {/* Website Name - Below Action Buttons */}
+      <div className="fixed bottom-2 left-1/2 transform -translate-x-1/2 z-40 pointer-events-none">
+        <p 
+          className="text-xs opacity-70 font-serif italic text-center"
+          style={{ 
+            color: '#FFFFFF',
+            textShadow: '0 1px 3px rgba(0, 0, 0, 0.8)',
+          }}
+        >
+          cardoradigital.ca
+        </p>
+      </div>
 
       {/* Action Buttons */}
-      <div className="fixed bottom-4 sm:bottom-8 left-1/2 transform -translate-x-1/2 z-50 flex flex-col sm:flex-row gap-2 sm:gap-4 px-4 w-full sm:w-auto max-w-sm sm:max-w-none">
+      <div className="fixed bottom-12 sm:bottom-16 left-1/2 transform -translate-x-1/2 z-50 flex flex-col sm:flex-row gap-2 sm:gap-4 px-4 w-full sm:w-auto max-w-sm sm:max-w-none">
         {isDemo ? (
           <a
             href={`/dashboard/animated-invite`}

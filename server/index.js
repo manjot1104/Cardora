@@ -87,6 +87,7 @@ app.use('/api/upload', require('./routes/upload'));
 app.use('/api/wedding', require('./routes/wedding'));
 app.use('/api/unlock', require('./routes/unlock'));
 app.use('/api/download', require('./routes/download'));
+app.use('/api/rsvp', require('./routes/rsvp'));
 
 // MongoDB Connection
 mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/cardora')

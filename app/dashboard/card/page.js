@@ -1207,10 +1207,10 @@ export default function CardPage() {
                       </div>
                     ) : (
                       <>
-                        <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
-                          {formData.cardType === 'engagement' ? '💎' : formData.cardType === 'anniversary' ? '🎉' : '💍'} {formData.cardType === 'engagement' ? 'Engagement' : formData.cardType === 'anniversary' ? 'Anniversary' : 'Wedding'} Details
-                          <span className="text-xs font-normal text-gray-500">(Optional but recommended)</span>
-                        </h3>
+                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
+                      {formData.cardType === 'engagement' ? '💎' : formData.cardType === 'anniversary' ? '🎉' : '💍'} {formData.cardType === 'engagement' ? 'Engagement' : formData.cardType === 'anniversary' ? 'Anniversary' : 'Wedding'} Details
+                      <span className="text-xs font-normal text-gray-500">(Optional but recommended)</span>
+                    </h3>
                     <div className="space-y-4">
                       <div>
                         <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">

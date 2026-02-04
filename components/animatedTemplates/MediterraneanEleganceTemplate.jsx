@@ -9,7 +9,7 @@ if (typeof window !== 'undefined') {
   gsap.registerPlugin(ScrollTrigger);
 }
 
-export default function MediterraneanEleganceTemplate({ data }) {
+export default function MediterraneanEleganceTemplate({ data, onRSVPClick }) {
   const containerRef = useRef(null);
   const sealRef = useRef(null);
   const contentRef = useRef(null);
@@ -284,14 +284,12 @@ export default function MediterraneanEleganceTemplate({ data }) {
                 {formatDate(weddingDate)}
               </p>
               <div className="mt-12">
-                <p className="text-lg font-serif text-[#2D5016] mb-4">
+                <button
+                  onClick={onRSVPClick}
+                  className="px-8 py-4 bg-[#2D5016] text-white rounded-full hover:bg-[#1f3a0f] transition-all font-semibold shadow-lg hover:shadow-xl cursor-pointer"
+                >
                   CONFIRM YOUR ATTENDANCE
-                </p>
-                <div className="animate-bounce">
-                  <svg className="w-6 h-6 mx-auto text-[#2D5016] opacity-60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                  </svg>
-                </div>
+                </button>
               </div>
             </div>
           </section>
@@ -520,10 +518,41 @@ export default function MediterraneanEleganceTemplate({ data }) {
             <div className="text-xl text-white/90 font-serif mb-6">
               {formatDate(weddingDate)}
             </div>
-            <div className="text-sm text-white/70 font-serif">
+            <div className="text-sm text-white/70 font-serif mb-2">
               Made by Cardora
             </div>
+            <div className="text-xs text-white/60 font-serif">
+              cardoradigital.ca
+            </div>
           </section>
+
+          {/* Website Name - Bottom Center (Fixed) */}
+          <div className="fixed bottom-2 left-1/2 transform -translate-x-1/2 z-50 pointer-events-none">
+            <p 
+              className="text-xs opacity-70 font-serif italic"
+              style={{ 
+                color: '#2D5016',
+                textShadow: '0 1px 3px rgba(255, 255, 255, 0.8)',
+              }}
+            >
+              cardoradigital.ca
+            </p>
+          </div>
+
+          {/* CARDORA Watermark - Bottom Right */}
+          <div 
+            className="fixed bottom-20 right-6 z-40 pointer-events-none"
+            style={{
+              fontFamily: "'Playfair Display', 'Georgia', serif",
+              fontWeight: 700,
+              fontSize: '20px',
+              letterSpacing: '2px',
+              color: 'rgba(45, 80, 22, 0.5)',
+              opacity: 0.6,
+            }}
+          >
+            CARDORA
+          </div>
 
           {/* Music Toggle Button */}
           {musicUrl && (

@@ -812,6 +812,32 @@ export default function WeddingTemplate({ user, templateId, cardType = 'wedding'
             {template.name}
           </p>
         </div>
+        
+        {/* Website Name */}
+        <div className="text-center py-2 px-4">
+          <p 
+            className="text-xs opacity-70 font-serif italic"
+            style={{ color: template.colors.text }}
+          >
+            cardoradigital.ca
+          </p>
+        </div>
+      </div>
+
+      {/* CARDORA Watermark - Bottom Right */}
+      <div 
+        className="absolute bottom-4 right-4 z-50 pointer-events-none"
+        style={{
+          fontFamily: "'Playfair Display', 'Georgia', serif",
+          fontWeight: 700,
+          fontSize: '18px',
+          letterSpacing: '2px',
+          color: fullImageUrl ? 'rgba(255, 255, 255, 0.6)' : template.colors.text || '#FFFFFF',
+          textShadow: fullImageUrl ? '0 2px 8px rgba(0, 0, 0, 0.5)' : 'none',
+          opacity: 0.7,
+        }}
+      >
+        CARDORA
       </div>
 
       {/* Additional Floating Decorative Elements Outside Card */}

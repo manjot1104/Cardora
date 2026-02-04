@@ -136,6 +136,47 @@ const sendPasswordResetEmail = async (email, resetToken, resetUrl) => {
   }
 };
 
+// Generic email sending function
+const sendEmail = async ({ to, subject, html, text }) => {
+  try {
+    // If no email config, log the email (for development)
+    if (!process.env.SMTP_USER || !process.env.SMTP_PASS) {
+      console.log('📧 Email (Email not configured):');
+      console.log(`To: ${to}`);
+      console.log(`Subject: ${subject}`);
+      console.log(`Body: ${text || html}`);
+      return { success: false, emailConfigured: false, message: 'Email logged (SMTP not configured)' };
+    }
+
+    const transporter = createTransporter();
+    
+    // Verify connection before sending
+    try {
+      await transporter.verify();
+    } catch (verifyError) {
+      console.error('❌ SMTP connection verification failed:', verifyError);
+      throw verifyError;
+    }
+    
+    const mailOptions = {
+      from: `"Cardora" <${process.env.SMTP_USER}>`,
+      to,
+      subject,
+      html,
+      text: text || html.replace(/<[^>]*>/g, ''), // Strip HTML for text version
+    };
+
+    const info = await transporter.sendMail(mailOptions);
+    console.log('✅ Email sent successfully!');
+    console.log('📧 Message ID:', info.messageId);
+    return { success: true, messageId: info.messageId };
+  } catch (error) {
+    console.error('❌ Error sending email:', error);
+    return { success: false, error: error.message };
+  }
+};
+
 module.exports = {
   sendPasswordResetEmail,
+  sendEmail,
 };

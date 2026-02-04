@@ -19,7 +19,7 @@ import {
  * Premium auto-play cinematic wedding invitation.
  * Feels like a luxury wedding teaser film - NO SCROLLING, AUTO-PLAY ONLY.
  */
-export default function CinematicFilmTemplate({ data }) {
+export default function CinematicFilmTemplate({ data, onRSVPClick }) {
   const containerRef = useRef(null);
   const audioRef = useRef(null);
   const [reducedMotion, setReducedMotion] = useState(false);
@@ -538,7 +538,8 @@ export default function CinematicFilmTemplate({ data }) {
                   scale: 1.05,
                   boxShadow: '0 25px 70px rgba(255, 255, 255, 0.4)',
                 }}
-                className="px-12 md:px-16 py-5 md:py-6 bg-white text-amber-900 rounded-full text-xl md:text-2xl font-semibold shadow-2xl transition-all relative overflow-hidden"
+                onClick={onRSVPClick}
+                className="px-12 md:px-16 py-5 md:py-6 bg-white text-amber-900 rounded-full text-xl md:text-2xl font-semibold shadow-2xl transition-all relative overflow-hidden cursor-pointer"
                 style={{
                   boxShadow: '0 20px 60px rgba(0, 0, 0, 0.4), 0 0 50px rgba(255, 255, 255, 0.3)',
                 }}
@@ -561,6 +562,34 @@ export default function CinematicFilmTemplate({ data }) {
           </motion.div>
         </div>
       </section>
+
+      {/* CARDORA Watermark - Bottom Right */}
+      <div 
+        className="fixed bottom-20 right-6 z-40 pointer-events-none"
+        style={{
+          fontFamily: "'Playfair Display', 'Georgia', serif",
+          fontWeight: 700,
+          fontSize: '20px',
+          letterSpacing: '2px',
+          color: 'rgba(212, 175, 55, 0.5)',
+          opacity: 0.6,
+        }}
+      >
+        CARDORA
+      </div>
+
+      {/* Website Name - Bottom Center */}
+      <div className="fixed bottom-2 left-1/2 transform -translate-x-1/2 z-50 pointer-events-none">
+        <p 
+          className="text-xs opacity-70 font-serif italic"
+          style={{ 
+            color: '#D4AF37',
+            textShadow: '0 1px 3px rgba(0, 0, 0, 0.5)',
+          }}
+        >
+          cardoradigital.ca
+        </p>
+      </div>
     </div>
   );
 }

@@ -6,7 +6,7 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { getBackgroundImageUrl, getImageUrl, getAudioUrl } from '@/lib/imageUtils';
 
-export default function TheaterLuxuryTemplate({ data }) {
+export default function TheaterLuxuryTemplate({ data, onRSVPClick }) {
   const containerRef = useRef(null);
   const leftCurtainRef = useRef(null);
   const rightCurtainRef = useRef(null);
@@ -707,7 +707,10 @@ export default function TheaterLuxuryTemplate({ data }) {
             </p>
             
             <div className="space-y-4 mb-8">
-              <button className="px-8 py-4 bg-[#8B0000] text-white rounded-full hover:bg-[#6B0000] transition-all font-semibold shadow-lg hover:shadow-xl">
+              <button 
+                onClick={onRSVPClick}
+                className="px-8 py-4 bg-[#8B0000] text-white rounded-full hover:bg-[#6B0000] transition-all font-semibold shadow-lg hover:shadow-xl cursor-pointer"
+              >
                 Confirm Attendance
               </button>
             </div>
@@ -752,6 +755,34 @@ export default function TheaterLuxuryTemplate({ data }) {
           </motion.div>
         </section>
       )}
+
+      {/* CARDORA Watermark - Bottom Right */}
+      <div 
+        className="fixed bottom-20 right-6 z-40 pointer-events-none"
+        style={{
+          fontFamily: "'Playfair Display', 'Georgia', serif",
+          fontWeight: 700,
+          fontSize: '20px',
+          letterSpacing: '2px',
+          color: 'rgba(139, 0, 0, 0.5)',
+          opacity: 0.6,
+        }}
+      >
+        CARDORA
+      </div>
+
+      {/* Website Name - Bottom Center */}
+      <div className="fixed bottom-2 left-1/2 transform -translate-x-1/2 z-50 pointer-events-none">
+        <p 
+          className="text-xs opacity-70 font-serif italic"
+          style={{ 
+            color: '#8B0000',
+            textShadow: '0 1px 3px rgba(255, 255, 255, 0.8)',
+          }}
+        >
+          cardoradigital.ca
+        </p>
+      </div>
 
       <style jsx>{`
         @keyframes float {

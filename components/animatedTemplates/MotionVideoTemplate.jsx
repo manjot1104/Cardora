@@ -5,7 +5,7 @@ import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { getBackgroundImageUrl, getImageUrl, getAudioUrl } from '@/lib/imageUtils';
 
-export default function MotionVideoTemplate({ data }) {
+export default function MotionVideoTemplate({ data, onRSVPClick }) {
   const containerRef = useRef(null);
   const sealRef = useRef(null);
   const contentRef = useRef(null);
@@ -416,7 +416,9 @@ export default function MotionVideoTemplate({ data }) {
           }}>
             Will you join us?
           </h2>
-          <button className="px-16 py-6 bg-gradient-to-r from-yellow-300 via-orange-300 to-pink-300 text-black rounded-full text-xl font-bold shadow-2xl hover:scale-110 transition-transform active:scale-95 relative z-20" style={{
+          <button 
+            onClick={onRSVPClick}
+            className="px-16 py-6 bg-gradient-to-r from-yellow-300 via-orange-300 to-pink-300 text-black rounded-full text-xl font-bold shadow-2xl hover:scale-110 transition-transform active:scale-95 relative z-20 cursor-pointer" style={{
             boxShadow: '0 10px 60px rgba(251, 191, 36, 0.8), 0 0 100px rgba(236, 72, 153, 0.6), 0 0 150px rgba(251, 191, 36, 0.4)',
             textShadow: '2px 2px 8px rgba(0, 0, 0, 0.2)',
             background: 'linear-gradient(to right, #fde047, #fb923c, #f9a8d4)',
@@ -427,6 +429,34 @@ export default function MotionVideoTemplate({ data }) {
           </button>
         </section>
       )}
+
+      {/* CARDORA Watermark - Bottom Right */}
+      <div 
+        className="fixed bottom-20 right-6 z-40 pointer-events-none"
+        style={{
+          fontFamily: "'Playfair Display', 'Georgia', serif",
+          fontWeight: 700,
+          fontSize: '20px',
+          letterSpacing: '2px',
+          color: 'rgba(147, 51, 234, 0.5)',
+          opacity: 0.6,
+        }}
+      >
+        CARDORA
+      </div>
+
+      {/* Website Name - Bottom Center */}
+      <div className="fixed bottom-2 left-1/2 transform -translate-x-1/2 z-50 pointer-events-none">
+        <p 
+          className="text-xs opacity-70 font-serif italic"
+          style={{ 
+            color: '#9333EA',
+            textShadow: '0 1px 3px rgba(0, 0, 0, 0.5)',
+          }}
+        >
+          cardoradigital.ca
+        </p>
+      </div>
 
       <style jsx>{`
         @keyframes float {

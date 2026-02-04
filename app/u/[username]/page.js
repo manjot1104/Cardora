@@ -95,23 +95,23 @@ export default function PublicCardPage() {
             </Link>
           ) : (
             <>
-              <button
-                onClick={() => {
-                  if (navigator.share) {
-                    navigator.share({
-                      title: `${user.name}'s Wedding Invitation`,
-                      text: `You're invited to ${user.name}'s wedding!`,
-                      url: window.location.href,
-                    });
-                  } else {
-                    navigator.clipboard.writeText(window.location.href);
-                    alert('Link copied to clipboard!');
-                  }
-                }}
-                className="px-4 sm:px-6 py-2.5 sm:py-3 bg-white/90 backdrop-blur-sm text-gray-700 rounded-full font-semibold shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all flex items-center justify-center gap-2 text-sm sm:text-base"
-              >
-                📤 Share Invitation
-              </button>
+          <button
+            onClick={() => {
+              if (navigator.share) {
+                navigator.share({
+                  title: `${user.name}'s Wedding Invitation`,
+                  text: `You're invited to ${user.name}'s wedding!`,
+                  url: window.location.href,
+                });
+              } else {
+                navigator.clipboard.writeText(window.location.href);
+                alert('Link copied to clipboard!');
+              }
+            }}
+            className="px-4 sm:px-6 py-2.5 sm:py-3 bg-white/90 backdrop-blur-sm text-gray-700 rounded-full font-semibold shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all flex items-center justify-center gap-2 text-sm sm:text-base"
+          >
+            📤 Share Invitation
+          </button>
             </>
           )}
         </div>

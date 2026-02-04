@@ -45,14 +45,14 @@ router.get('/:username', async (req, res) => {
     // Check if user has paid for card - if not, show demo data
     const isPaid = user.cardPaid || false;
     const displayData = isPaid ? {
-      name: user.name,
-      profession: user.profession,
-      company: user.company,
-      phone: user.phone,
-      whatsapp: user.whatsapp,
-      email: user.email,
-      address: user.address,
-      socialLinks: user.socialLinks,
+        name: user.name,
+        profession: user.profession,
+        company: user.company,
+        phone: user.phone,
+        whatsapp: user.whatsapp,
+        email: user.email,
+        address: user.address,
+        socialLinks: user.socialLinks,
       weddingDate: user.weddingDate,
       venue: user.venue,
       brideName: user.brideName,
