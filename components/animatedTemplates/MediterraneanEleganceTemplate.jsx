@@ -401,6 +401,12 @@ export default function MediterraneanEleganceTemplate({ data, onRSVPClick }) {
                       src={getImageUrl(couplePhoto)} 
                       alt="Venue" 
                       className="w-full h-64 object-cover"
+                      style={{
+                        imageRendering: 'auto',
+                        WebkitBackfaceVisibility: 'hidden',
+                        backfaceVisibility: 'hidden',
+                        transform: 'translateZ(0)',
+                      }}
                       onError={(e) => {
                         e.target.style.display = 'none';
                       }}

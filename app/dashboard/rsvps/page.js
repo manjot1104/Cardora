@@ -102,53 +102,53 @@ export default function RSVPsPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className="glass p-6 rounded-2xl border-2 border-blue-200 dark:border-blue-800"
+            className="bg-gradient-to-br from-blue-50 via-indigo-50 to-blue-100 dark:from-blue-900/20 dark:via-indigo-900/20 dark:to-blue-800/30 p-6 rounded-2xl border-2 border-blue-200/50 dark:border-blue-700/50 shadow-lg hover:shadow-xl transition-all"
           >
             <div className="text-3xl mb-2">📊</div>
-            <div className="text-2xl font-bold text-gray-900 dark:text-white">{stats.total}</div>
-            <div className="text-sm text-gray-600 dark:text-gray-400">Total RSVPs</div>
+            <div className="text-2xl font-bold text-blue-700 dark:text-blue-300">{stats.total}</div>
+            <div className="text-sm text-blue-600 dark:text-blue-400 font-medium">Total RSVPs</div>
           </motion.div>
 
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
-            className="glass p-6 rounded-2xl border-2 border-green-200 dark:border-green-800"
+            className="bg-gradient-to-br from-emerald-50 via-green-50 to-teal-50 dark:from-emerald-900/20 dark:via-green-900/20 dark:to-teal-800/30 p-6 rounded-2xl border-2 border-emerald-200/50 dark:border-emerald-700/50 shadow-lg hover:shadow-xl transition-all"
           >
             <div className="text-3xl mb-2">✅</div>
-            <div className="text-2xl font-bold text-gray-900 dark:text-white">{stats.attending}</div>
-            <div className="text-sm text-gray-600 dark:text-gray-400">Attending</div>
+            <div className="text-2xl font-bold text-emerald-700 dark:text-emerald-300">{stats.attending}</div>
+            <div className="text-sm text-emerald-600 dark:text-emerald-400 font-medium">Attending</div>
           </motion.div>
 
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3 }}
-            className="glass p-6 rounded-2xl border-2 border-red-200 dark:border-red-800"
+            className="bg-gradient-to-br from-rose-50 via-red-50 to-pink-50 dark:from-rose-900/20 dark:via-red-900/20 dark:to-pink-800/30 p-6 rounded-2xl border-2 border-rose-200/50 dark:border-rose-700/50 shadow-lg hover:shadow-xl transition-all"
           >
             <div className="text-3xl mb-2">❌</div>
-            <div className="text-2xl font-bold text-gray-900 dark:text-white">{stats.declined}</div>
-            <div className="text-sm text-gray-600 dark:text-gray-400">Declined</div>
+            <div className="text-2xl font-bold text-rose-700 dark:text-rose-300">{stats.declined}</div>
+            <div className="text-sm text-rose-600 dark:text-rose-400 font-medium">Declined</div>
           </motion.div>
 
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4 }}
-            className="glass p-6 rounded-2xl border-2 border-purple-200 dark:border-purple-800"
+            className="bg-gradient-to-br from-purple-50 via-violet-50 to-fuchsia-50 dark:from-purple-900/20 dark:via-violet-900/20 dark:to-fuchsia-800/30 p-6 rounded-2xl border-2 border-purple-200/50 dark:border-purple-700/50 shadow-lg hover:shadow-xl transition-all"
           >
             <div className="text-3xl mb-2">👥</div>
-            <div className="text-2xl font-bold text-gray-900 dark:text-white">{stats.totalGuests}</div>
-            <div className="text-sm text-gray-600 dark:text-gray-400">Total Guests</div>
+            <div className="text-2xl font-bold text-purple-700 dark:text-purple-300">{stats.totalGuests}</div>
+            <div className="text-sm text-purple-600 dark:text-purple-400 font-medium">Total Guests</div>
           </motion.div>
         </div>
 
         {/* RSVPs List */}
-        {rsvps.length === 0 ? (
+                    {rsvps.length === 0 ? (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="glass p-12 rounded-2xl text-center"
+            className="bg-gradient-to-br from-gray-50 via-white to-gray-50 dark:from-gray-800 dark:via-gray-700 dark:to-gray-800 p-12 rounded-2xl text-center border-2 border-dashed border-gray-300 dark:border-gray-600"
           >
             <div className="text-6xl mb-4">📭</div>
             <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
@@ -168,14 +168,14 @@ export default function RSVPsPage() {
           <div className="space-y-6">
             {/* Filter by Invite Slug */}
             {inviteSlugs.length > 1 && (
-              <div className="glass p-4 rounded-2xl">
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              <div className="bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 dark:from-gray-700/50 dark:via-gray-700/30 dark:to-gray-700/50 p-4 rounded-2xl border border-indigo-100 dark:border-gray-600/50">
+                <label className="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">
                   Filter by Invite:
                 </label>
                 <select
                   value={selectedInvite || ''}
                   onChange={(e) => setSelectedInvite(e.target.value || null)}
-                  className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+                  className="w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-700/50 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-400 transition-all"
                 >
                   <option value="">All Invites</option>
                   {inviteSlugs.map((slug) => (
@@ -191,11 +191,11 @@ export default function RSVPsPage() {
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              className="glass rounded-2xl overflow-hidden"
+              className="bg-gradient-to-br from-white via-gray-50 to-white dark:from-gray-800 dark:via-gray-700 dark:to-gray-800 rounded-2xl overflow-hidden border border-gray-200/50 dark:border-gray-700/50 shadow-xl"
             >
               <div className="overflow-x-auto">
                 <table className="w-full">
-                  <thead className="bg-gradient-to-r from-blue-600 to-purple-600 text-white">
+                  <thead className="bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 dark:from-indigo-700 dark:via-purple-700 dark:to-pink-700 text-white shadow-lg">
                     <tr>
                       <th className="px-4 py-3 text-left text-sm font-semibold">Guest Name</th>
                       <th className="px-4 py-3 text-left text-sm font-semibold">Email</th>
@@ -258,7 +258,7 @@ export default function RSVPsPage() {
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="glass p-6 rounded-2xl"
+                className="bg-gradient-to-br from-white via-gray-50 to-white dark:from-gray-800 dark:via-gray-700 dark:to-gray-800 p-6 rounded-2xl border border-gray-200/50 dark:border-gray-700/50 shadow-lg"
               >
                 <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4">
                   Invite: {selectedInvite}
@@ -267,7 +267,7 @@ export default function RSVPsPage() {
                   {groupedRSVPs[selectedInvite].map((rsvp) => (
                     <div
                       key={rsvp._id}
-                      className="border border-gray-200 dark:border-gray-700 rounded-lg p-4"
+                      className="border-2 border-gray-200 dark:border-gray-700 rounded-xl p-4 bg-white/50 dark:bg-gray-700/30 hover:bg-white dark:hover:bg-gray-700/50 transition-all shadow-sm hover:shadow-md"
                     >
                       <div className="flex items-start justify-between mb-2">
                         <div>

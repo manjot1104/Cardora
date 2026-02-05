@@ -70,7 +70,7 @@ export default function RSVPModal({ isOpen, onClose, inviteSlug }) {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
-            className="fixed inset-0 bg-black/60 z-50 backdrop-blur-sm"
+            className="fixed inset-0 bg-gradient-to-br from-gray-900/70 via-purple-900/60 to-pink-900/70 dark:from-black/80 dark:via-gray-900/80 dark:to-black/80 z-50 backdrop-blur-md"
           />
 
           {/* Modal */}
@@ -81,9 +81,9 @@ export default function RSVPModal({ isOpen, onClose, inviteSlug }) {
             className="fixed inset-0 z-50 flex items-center justify-center p-4"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl max-w-md w-full max-h-[90vh] overflow-y-auto">
+            <div className="bg-gradient-to-br from-white via-gray-50 to-white dark:from-gray-800 dark:via-gray-700 dark:to-gray-800 rounded-3xl shadow-2xl max-w-md w-full max-h-[90vh] overflow-y-auto border border-gray-200/50 dark:border-gray-700/50">
               {/* Header */}
-              <div className="sticky top-0 bg-gradient-to-r from-pink-500 to-rose-500 text-white p-6 rounded-t-2xl">
+              <div className="sticky top-0 bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 dark:from-indigo-700 dark:via-purple-700 dark:to-pink-700 text-white p-6 rounded-t-3xl shadow-lg">
                 <div className="flex items-center justify-between">
                   <h2 className="text-2xl font-bold">Confirm Attendance</h2>
                   <button
@@ -117,16 +117,16 @@ export default function RSVPModal({ isOpen, onClose, inviteSlug }) {
                 ) : (
                   <form onSubmit={handleSubmit} className="space-y-4">
                     {/* Attending Toggle */}
-                    <div className="flex items-center gap-4 p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
-                      <label className="flex items-center gap-2 cursor-pointer flex-1">
+                    <div className="flex items-center gap-4 p-4 bg-gradient-to-r from-indigo-50 via-purple-50 to-pink-50 dark:from-gray-700/50 dark:via-gray-700/30 dark:to-gray-700/50 rounded-xl border border-indigo-100 dark:border-gray-600/50">
+                      <label className="flex items-center gap-3 cursor-pointer flex-1">
                         <input
                           type="checkbox"
                           name="attending"
                           checked={formData.attending}
                           onChange={handleChange}
-                          className="w-5 h-5 text-pink-500 rounded focus:ring-2 focus:ring-pink-500"
+                          className="w-5 h-5 text-indigo-600 dark:text-indigo-400 rounded focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition-all"
                         />
-                        <span className="font-semibold text-gray-800 dark:text-white">
+                        <span className="font-semibold text-gray-800 dark:text-gray-100">
                           I will be attending
                         </span>
                       </label>
@@ -143,7 +143,7 @@ export default function RSVPModal({ isOpen, onClose, inviteSlug }) {
                         value={formData.guestName}
                         onChange={handleChange}
                         required
-                        className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
+                        className="w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-400 dark:focus:border-indigo-500 bg-white dark:bg-gray-700/50 dark:text-gray-100 transition-all placeholder:text-gray-400 dark:placeholder:text-gray-500"
                         placeholder="Enter your name"
                       />
                     </div>
@@ -158,7 +158,7 @@ export default function RSVPModal({ isOpen, onClose, inviteSlug }) {
                         name="guestEmail"
                         value={formData.guestEmail}
                         onChange={handleChange}
-                        className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
+                        className="w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-400 dark:focus:border-indigo-500 bg-white dark:bg-gray-700/50 dark:text-gray-100 transition-all placeholder:text-gray-400 dark:placeholder:text-gray-500"
                         placeholder="your.email@example.com"
                       />
                     </div>
@@ -173,7 +173,7 @@ export default function RSVPModal({ isOpen, onClose, inviteSlug }) {
                         name="phone"
                         value={formData.phone}
                         onChange={handleChange}
-                        className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
+                        className="w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-400 dark:focus:border-indigo-500 bg-white dark:bg-gray-700/50 dark:text-gray-100 transition-all placeholder:text-gray-400 dark:placeholder:text-gray-500"
                         placeholder="+1 (555) 123-4567"
                       />
                     </div>
@@ -191,7 +191,7 @@ export default function RSVPModal({ isOpen, onClose, inviteSlug }) {
                           onChange={handleChange}
                           min="1"
                           max="20"
-                          className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
+                          className="w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-400 dark:focus:border-indigo-500 bg-white dark:bg-gray-700/50 dark:text-gray-100 transition-all placeholder:text-gray-400 dark:placeholder:text-gray-500"
                         />
                       </div>
                     )}
@@ -207,7 +207,7 @@ export default function RSVPModal({ isOpen, onClose, inviteSlug }) {
                           value={formData.dietaryRestrictions}
                           onChange={handleChange}
                           rows="2"
-                          className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
+                          className="w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-400 dark:focus:border-indigo-500 bg-white dark:bg-gray-700/50 dark:text-gray-100 transition-all placeholder:text-gray-400 dark:placeholder:text-gray-500"
                           placeholder="e.g., Vegetarian, Gluten-free, Allergies..."
                         />
                       </div>
@@ -223,7 +223,7 @@ export default function RSVPModal({ isOpen, onClose, inviteSlug }) {
                         value={formData.message}
                         onChange={handleChange}
                         rows="3"
-                        className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
+                        className="w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-400 dark:focus:border-indigo-500 bg-white dark:bg-gray-700/50 dark:text-gray-100 transition-all placeholder:text-gray-400 dark:placeholder:text-gray-500"
                         placeholder="Leave a message for the couple..."
                       />
                     </div>
@@ -232,7 +232,7 @@ export default function RSVPModal({ isOpen, onClose, inviteSlug }) {
                     <button
                       type="submit"
                       disabled={submitting || !formData.guestName}
-                      className="w-full py-4 bg-gradient-to-r from-pink-500 to-rose-500 text-white rounded-lg font-semibold shadow-lg hover:shadow-xl transform hover:scale-[1.02] transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+                      className="w-full py-4 bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 dark:from-indigo-700 dark:via-purple-700 dark:to-pink-700 text-white rounded-xl font-semibold shadow-lg hover:shadow-2xl transform hover:scale-[1.02] transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none disabled:hover:shadow-lg"
                     >
                       {submitting ? 'Submitting...' : 'Confirm RSVP'}
                     </button>

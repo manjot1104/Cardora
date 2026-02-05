@@ -52,6 +52,10 @@ export default function BaseAnimatedTemplate({ data, config, onRSVPClick }) {
               backgroundImage: getBackgroundImageUrl(backgroundImage),
               opacity: 0.7,
               zIndex: 0,
+              imageRendering: 'auto',
+              WebkitBackfaceVisibility: 'hidden',
+              backfaceVisibility: 'hidden',
+              transform: 'translateZ(0)',
             }}
           />
         )}
@@ -69,7 +73,18 @@ export default function BaseAnimatedTemplate({ data, config, onRSVPClick }) {
         />
         
         {/* Content */}
-        <div className="text-center backdrop-blur-md bg-white/10 p-12 rounded-2xl border-2 relative z-10" style={{ borderColor: accentColor }}>
+        <div 
+          className="text-center bg-white/10 p-12 rounded-2xl border-2 relative z-10" 
+          style={{ 
+            borderColor: accentColor,
+            backdropFilter: 'blur(8px)',
+            WebkitBackdropFilter: 'blur(8px)',
+            WebkitFontSmoothing: 'antialiased',
+            MozOsxFontSmoothing: 'grayscale',
+            textRendering: 'optimizeLegibility',
+            transform: 'translateZ(0)',
+          }}
+        >
           {showFlowers && <div className="text-4xl mb-4">🌸</div>}
           {showStars && <div className="text-4xl mb-4">✨</div>}
           <h1 className="text-6xl font-serif mb-4 fade-up" style={{ color: textColor }}>
@@ -94,6 +109,10 @@ export default function BaseAnimatedTemplate({ data, config, onRSVPClick }) {
               backgroundImage: getBackgroundImageUrl(backgroundImage),
               opacity: 0.7,
               zIndex: 0,
+              imageRendering: 'auto',
+              WebkitBackfaceVisibility: 'hidden',
+              backfaceVisibility: 'hidden',
+              transform: 'translateZ(0)',
             }}
           />
         )}

@@ -239,6 +239,12 @@ export default function BusinessCardPreview({ user, orientation = 'horizontal', 
                           src={`${typeof window !== 'undefined' ? window.location.origin : ''}${design.profileImage}`}
                           alt={design.name}
                           className="w-full h-full object-cover"
+                          style={{
+                            imageRendering: 'auto',
+                            WebkitBackfaceVisibility: 'hidden',
+                            backfaceVisibility: 'hidden',
+                            transform: 'translateZ(0)',
+                          }}
                         />
                       </div>
                     ) : (

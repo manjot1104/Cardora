@@ -370,6 +370,10 @@ export default function TheaterLuxuryTemplate({ data, onRSVPClick }) {
               fontStyle: 'italic',
               letterSpacing: '0.05em',
               textShadow: '3px 3px 10px rgba(0, 0, 0, 0.9), 0 0 30px rgba(0, 0, 0, 0.7), 0 0 50px rgba(139, 0, 0, 0.5)',
+              WebkitFontSmoothing: 'antialiased',
+              MozOsxFontSmoothing: 'grayscale',
+              textRendering: 'optimizeLegibility',
+              transform: 'translateZ(0)',
             }}>
               {groomName.toUpperCase()}
             </div>
@@ -508,7 +512,15 @@ export default function TheaterLuxuryTemplate({ data, onRSVPClick }) {
                 whileInView={{ opacity: 1, scale: 1 }}
                 viewport={{ once: true }}
                 transition={{ delay: index * 0.1 }}
-                className="border-2 border-[#8B0000] p-6 sm:p-8 text-center bg-white/50 backdrop-blur-sm rounded-lg"
+                className="border-2 border-[#8B0000] p-6 sm:p-8 text-center bg-white/50 rounded-lg"
+                style={{
+                  backdropFilter: 'blur(4px)',
+                  WebkitBackdropFilter: 'blur(4px)',
+                  WebkitFontSmoothing: 'antialiased',
+                  MozOsxFontSmoothing: 'grayscale',
+                  textRendering: 'optimizeLegibility',
+                  transform: 'translateZ(0)',
+                }}
               >
                 <div className="text-4xl sm:text-5xl font-bold text-[#8B0000] mb-2">
                   {item.value}
@@ -614,6 +626,12 @@ export default function TheaterLuxuryTemplate({ data, onRSVPClick }) {
                 src={getImageUrl(data.couplePhoto || '/images/wedding-backgrounds/traditional-wedding-couple.jpg')}
                 alt="Couple"
                 className="w-full h-full object-cover"
+                style={{
+                  imageRendering: 'auto',
+                  WebkitBackfaceVisibility: 'hidden',
+                  backfaceVisibility: 'hidden',
+                  transform: 'translateZ(0)',
+                }}
                 onError={(e) => {
                   console.error('Image failed to load:', e.target.src);
                   e.target.src = '/images/wedding-backgrounds/traditional-wedding-couple.jpg';

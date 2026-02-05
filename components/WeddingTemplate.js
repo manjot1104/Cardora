@@ -95,6 +95,12 @@ export default function WeddingTemplate({ user, templateId, cardType = 'wedding'
         minHeight: isPreview ? '100vh' : 'auto',
         overflow: 'hidden',
         margin: isPreview ? '0 auto' : '0',
+        imageRendering: 'auto',
+        WebkitFontSmoothing: 'antialiased',
+        MozOsxFontSmoothing: 'grayscale',
+        textRendering: 'optimizeLegibility',
+        transform: 'translateZ(0)',
+        willChange: 'auto',
       }}
     >
       {/* Overlay for image backgrounds to ensure text readability */}
