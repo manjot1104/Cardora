@@ -6,6 +6,7 @@ import DashboardLayout from '@/components/DashboardLayout';
 import api from '@/lib/api';
 import { getAuthToken } from '@/lib/auth';
 import { motion } from 'framer-motion';
+import LoadingScreen from '@/components/LoadingScreen';
 
 export default function PaymentsPage() {
   const router = useRouter();
@@ -48,9 +49,7 @@ export default function PaymentsPage() {
   if (loading) {
     return (
       <DashboardLayout>
-        <div className="flex items-center justify-center h-64">
-          <div className="text-xl text-gray-600 dark:text-gray-400">Loading...</div>
-        </div>
+        <LoadingScreen fullScreen={false} message="Loading payment history..." />
       </DashboardLayout>
     );
   }

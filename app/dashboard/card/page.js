@@ -16,6 +16,7 @@ import ImageUpload from '@/components/ImageUpload';
 import { countries, detectUserCountry, formatCurrency } from '@/lib/countryConfig';
 import { businessCardTemplates, getBusinessCardTemplateById, getBusinessCardCategories } from '@/lib/businessCardTemplates';
 import { addToCart, getCartCount } from '@/lib/cart';
+import LoadingScreen from '@/components/LoadingScreen';
 
 export default function CardPage() {
   const router = useRouter();
@@ -314,9 +315,7 @@ export default function CardPage() {
   if (loading) {
     return (
       <DashboardLayout>
-        <div className="flex items-center justify-center h-64">
-          <div className="text-xl text-gray-600 dark:text-gray-400">Loading...</div>
-        </div>
+        <LoadingScreen fullScreen={false} message="Loading your card editor..." />
       </DashboardLayout>
     );
   }

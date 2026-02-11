@@ -7,6 +7,7 @@ import api from '@/lib/api';
 import { getAuthToken } from '@/lib/auth';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
+import LoadingScreen from '@/components/LoadingScreen';
 
 export default function DashboardPage() {
   const router = useRouter();
@@ -42,9 +43,7 @@ export default function DashboardPage() {
   if (loading) {
     return (
       <DashboardLayout>
-        <div className="flex items-center justify-center h-64">
-          <div className="text-xl text-gray-600 dark:text-gray-400">Loading...</div>
-        </div>
+        <LoadingScreen fullScreen={false} message="Loading your dashboard..." />
       </DashboardLayout>
     );
   }

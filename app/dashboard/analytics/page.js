@@ -18,6 +18,7 @@ import {
   Legend,
   ResponsiveContainer,
 } from 'recharts';
+import LoadingScreen from '@/components/LoadingScreen';
 
 export default function AnalyticsPage() {
   const router = useRouter();
@@ -87,9 +88,7 @@ export default function AnalyticsPage() {
   if (loading) {
     return (
       <DashboardLayout>
-        <div className="flex items-center justify-center h-64">
-          <div className="text-xl text-gray-600 dark:text-gray-400">Loading...</div>
-        </div>
+        <LoadingScreen fullScreen={false} message="Loading analytics..." />
       </DashboardLayout>
     );
   }

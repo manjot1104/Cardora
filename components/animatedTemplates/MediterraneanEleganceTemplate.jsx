@@ -535,10 +535,11 @@ export default function MediterraneanEleganceTemplate({ data, onRSVPClick }) {
           {/* Website Name - Bottom Center (Fixed) */}
           <div className="fixed bottom-2 left-1/2 transform -translate-x-1/2 z-50 pointer-events-none">
             <p 
-              className="text-xs opacity-70 font-serif italic"
+              className="text-xs opacity-60 font-serif italic"
               style={{ 
                 color: '#2D5016',
                 textShadow: '0 1px 3px rgba(255, 255, 255, 0.8)',
+                letterSpacing: '0.5px',
               }}
             >
               cardoradigital.ca
@@ -547,14 +548,16 @@ export default function MediterraneanEleganceTemplate({ data, onRSVPClick }) {
 
           {/* CARDORA Watermark - Bottom Right */}
           <div 
-            className="fixed bottom-20 right-6 z-40 pointer-events-none"
+            className="fixed bottom-3 right-3 z-40 pointer-events-none"
             style={{
-              fontFamily: "'Playfair Display', 'Georgia', serif",
-              fontWeight: 700,
-              fontSize: '20px',
-              letterSpacing: '2px',
-              color: 'rgba(45, 80, 22, 0.5)',
-              opacity: 0.6,
+              fontFamily: "'Cormorant Garamond', 'Playfair Display', 'Georgia', serif",
+              fontWeight: 500,
+              fontSize: '15px',
+              letterSpacing: '1px',
+              color: 'rgba(45, 80, 22, 0.45)',
+              opacity: 0.55,
+              fontStyle: 'italic',
+              textShadow: '0 1px 3px rgba(0, 0, 0, 0.2)',
             }}
           >
             CARDORA

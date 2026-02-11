@@ -8,6 +8,7 @@ import api from '@/lib/api';
 import { motion } from 'framer-motion';
 import toast from 'react-hot-toast';
 import Link from 'next/link';
+import LoadingScreen from '@/components/LoadingScreen';
 
 export default function GalleryPage() {
   const router = useRouter();
@@ -40,9 +41,7 @@ export default function GalleryPage() {
   if (loading) {
     return (
       <DashboardLayout>
-        <div className="flex items-center justify-center h-64">
-          <div className="text-xl text-gray-600 dark:text-gray-400">Loading gallery...</div>
-        </div>
+        <LoadingScreen fullScreen={false} message="Loading your gallery..." />
       </DashboardLayout>
     );
   }

@@ -7,6 +7,7 @@ import Confetti from 'react-confetti';
 import api from '@/lib/api';
 import { clearCart } from '@/lib/cart';
 import Link from 'next/link';
+import LoadingScreen from '@/components/LoadingScreen';
 
 function SuccessContent() {
   const searchParams = useSearchParams();
@@ -157,11 +158,7 @@ function SuccessContent() {
 
 export default function SuccessPage() {
   return (
-    <Suspense fallback={
-      <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-blue-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 flex items-center justify-center">
-        <div className="text-xl text-gray-600 dark:text-gray-400">Loading...</div>
-      </div>
-    }>
+    <Suspense fallback={<LoadingScreen message="Verifying your payment..." />}>
       <SuccessContent />
     </Suspense>
   );

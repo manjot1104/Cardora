@@ -261,14 +261,16 @@ export default function BaseAnimatedTemplate({ data, config, onRSVPClick }) {
 
       {/* CARDORA Watermark - Bottom Right */}
       <div 
-        className="fixed bottom-20 right-6 z-40 pointer-events-none"
+        className="fixed bottom-3 right-3 z-40 pointer-events-none"
         style={{
-          fontFamily: "'Playfair Display', 'Georgia', serif",
-          fontWeight: 700,
-          fontSize: '20px',
-          letterSpacing: '2px',
+          fontFamily: "'Cormorant Garamond', 'Playfair Display', 'Georgia', serif",
+          fontWeight: 500,
+          fontSize: '15px',
+          letterSpacing: '1px',
           color: textColor || '#FFFFFF',
-          opacity: 0.6,
+          opacity: 0.55,
+          fontStyle: 'italic',
+          textShadow: '0 1px 3px rgba(0, 0, 0, 0.3)',
         }}
       >
         CARDORA
@@ -277,10 +279,11 @@ export default function BaseAnimatedTemplate({ data, config, onRSVPClick }) {
       {/* Website Name - Bottom Center */}
       <div className="fixed bottom-2 left-1/2 transform -translate-x-1/2 z-50 pointer-events-none">
         <p 
-          className="text-xs opacity-70 font-serif italic"
+          className="text-xs opacity-60 font-serif italic"
           style={{ 
             color: textColor || '#FFFFFF',
             textShadow: '0 1px 3px rgba(0, 0, 0, 0.5)',
+            letterSpacing: '0.5px',
           }}
         >
           cardoradigital.ca

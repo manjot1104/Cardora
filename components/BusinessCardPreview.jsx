@@ -329,14 +329,15 @@ export default function BusinessCardPreview({ user, orientation = 'horizontal', 
               
               {/* CARDORA Watermark - Bottom Right */}
               <div 
-                className="absolute bottom-2 right-2 z-50 pointer-events-none"
+                className="absolute bottom-1 right-1 z-50 pointer-events-none"
                 style={{
-                  fontFamily: "'Playfair Display', 'Georgia', serif",
-                  fontWeight: 700,
-                  fontSize: '10px',
-                  letterSpacing: '1.5px',
-                  color: textColor === '#FFFFFF' ? 'rgba(255, 255, 255, 0.5)' : 'rgba(0, 0, 0, 0.4)',
-                  opacity: 0.6,
+                  fontFamily: "'Cormorant Garamond', 'Playfair Display', 'Georgia', serif",
+                  fontWeight: 500,
+                  fontSize: '8px',
+                  letterSpacing: '0.8px',
+                  color: textColor === '#FFFFFF' ? 'rgba(255, 255, 255, 0.45)' : 'rgba(0, 0, 0, 0.35)',
+                  opacity: 0.55,
+                  fontStyle: 'italic',
                 }}
               >
                 CARDORA
@@ -347,10 +348,13 @@ export default function BusinessCardPreview({ user, orientation = 'horizontal', 
       </div>
       
       {/* Website Name - Bottom Center */}
-      <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 z-50 pointer-events-none">
+      <div className="absolute bottom-1 left-1/2 transform -translate-x-1/2 z-50 pointer-events-none">
         <p 
-          className="text-xs opacity-60 font-serif italic"
-          style={{ color: '#666' }}
+          className="text-xs opacity-55 font-serif italic"
+          style={{ 
+            color: '#666',
+            letterSpacing: '0.3px',
+          }}
         >
           cardoradigital.ca
         </p>

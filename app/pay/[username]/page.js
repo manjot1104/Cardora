@@ -8,6 +8,7 @@ import api from '@/lib/api';
 import toast from 'react-hot-toast';
 import Link from 'next/link';
 import { getCountryByCode, formatCurrency } from '@/lib/countryConfig';
+import LoadingScreen from '@/components/LoadingScreen';
 
 export default function PaymentPage() {
   const params = useParams();
@@ -93,11 +94,7 @@ export default function PaymentPage() {
   };
 
   if (loading) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 flex items-center justify-center">
-        <div className="text-xl text-gray-600 dark:text-gray-400">Loading...</div>
-      </div>
-    );
+    return <LoadingScreen message="Loading payment page..." />;
   }
 
   if (!user || !user.paymentEnabled) {

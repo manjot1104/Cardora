@@ -10,6 +10,7 @@ import { getAnimatedTemplateById } from '@/lib/animatedTemplates';
 import Link from 'next/link';
 import { getAudioUrl } from '@/lib/imageUtils';
 import RSVPModal from '@/components/RSVPModal';
+import LoadingScreen from '@/components/LoadingScreen';
 
 // Register GSAP plugins
 if (typeof window !== 'undefined') {
@@ -133,18 +134,14 @@ export default function AnimatedWeddingInvite() {
   };
 
   if (loading || !weddingData || !template) {
-    return (
-      <div className="min-h-screen bg-black text-white flex items-center justify-center">
-        <div className="text-xl">Loading your invitation...</div>
-      </div>
-    );
+    return <LoadingScreen message="Preparing your magical invitation..." />;
   }
 
   const TemplateComponent = template.component;
   const isDemo = weddingData.isDemo || !weddingData.invitePaid;
 
   return (
-    <div ref={containerRef} className="bg-black text-white overflow-hidden">
+    <div ref={containerRef} className="overflow-hidden" style={{ backgroundColor: template?.id === 'raabta' ? '#4A7C7E' : '#000000', color: template?.id === 'raabta' ? '#F5E6D3' : '#FFFFFF' }}>
       {/* Demo Mode Banner */}
       {isDemo && (
         <div className="fixed top-0 left-0 right-0 z-50 bg-gradient-to-r from-yellow-400 to-orange-500 text-white p-3 text-center shadow-lg">
@@ -164,10 +161,12 @@ export default function AnimatedWeddingInvite() {
       )}
 
       {/* Render Template */}
-      <TemplateComponent 
-        data={weddingData} 
-        onRSVPClick={() => setShowRSVPModal(true)}
-      />
+      <div style={{ position: 'relative', zIndex: 1 }}>
+        <TemplateComponent 
+          data={weddingData} 
+          onRSVPClick={() => setShowRSVPModal(true)}
+        />
+      </div>
 
       {/* RSVP Modal */}
       <RSVPModal
@@ -176,18 +175,20 @@ export default function AnimatedWeddingInvite() {
         inviteSlug={params.slug}
       />
 
-      {/* Website Name - Below Action Buttons */}
-      <div className="fixed bottom-2 left-1/2 transform -translate-x-1/2 z-40 pointer-events-none">
-        <p 
-          className="text-xs opacity-70 font-serif italic text-center"
-          style={{ 
-            color: '#FFFFFF',
-            textShadow: '0 1px 3px rgba(0, 0, 0, 0.8)',
-          }}
-        >
-          cardoradigital.ca
-        </p>
-      </div>
+      {/* Website Name - Below Action Buttons (only for non-Raabta templates) */}
+      {template?.id !== 'raabta' && (
+        <div className="fixed bottom-2 left-1/2 transform -translate-x-1/2 z-40 pointer-events-none">
+          <p 
+            className="text-xs opacity-70 font-serif italic text-center"
+            style={{ 
+              color: '#FFFFFF',
+              textShadow: '0 1px 3px rgba(0, 0, 0, 0.8)',
+            }}
+          >
+            cardoradigital.ca
+          </p>
+        </div>
+      )}
 
       {/* Action Buttons */}
       <div className="fixed bottom-12 sm:bottom-16 left-1/2 transform -translate-x-1/2 z-50 flex flex-col sm:flex-row gap-2 sm:gap-4 px-4 w-full sm:w-auto max-w-sm sm:max-w-none">

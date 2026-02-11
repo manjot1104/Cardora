@@ -13,6 +13,7 @@ import ImageUpload from '@/components/ImageUpload';
 import MusicUpload from '@/components/MusicUpload';
 import { countries, formatCurrency, detectUserCountry } from '@/lib/countryConfig';
 import { addToCart, getCartCount } from '@/lib/cart';
+import LoadingScreen from '@/components/LoadingScreen';
 
 export default function AnimatedInvitePage() {
   const router = useRouter();
@@ -293,9 +294,7 @@ export default function AnimatedInvitePage() {
   if (loading) {
     return (
       <DashboardLayout>
-        <div className="flex items-center justify-center h-64">
-          <div className="text-xl text-gray-600 dark:text-gray-400">Loading...</div>
-        </div>
+        <LoadingScreen fullScreen={false} message="Loading your invitation editor..." />
       </DashboardLayout>
     );
   }

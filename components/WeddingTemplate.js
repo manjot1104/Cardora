@@ -51,7 +51,7 @@ export default function WeddingTemplate({ user, templateId, cardType = 'wedding'
     ? (backgroundImageUrl.startsWith('/uploads/')
         ? getImageUrl(backgroundImageUrl)
         : (typeof window !== 'undefined' 
-            ? `${window.location.origin}${backgroundImageUrl}`
+        ? `${window.location.origin}${backgroundImageUrl}`
             : backgroundImageUrl))
     : null;
   
@@ -528,7 +528,187 @@ export default function WeddingTemplate({ user, templateId, cardType = 'wedding'
           </div>
         )}
 
-        {/* Premium Header Section with Decorative Elements */}
+        {/* Hindu Wedding Section - Premium with Background Image */}
+        {template.hasHindu && (
+          <div 
+            className="text-center py-8 sm:py-12 px-6 sm:px-8 relative overflow-hidden min-h-screen flex items-center justify-center"
+            style={{
+              backgroundImage: fullImageUrl || `url("/images/wedding-backgrounds/hindu-template.jpeg")`,
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
+              backgroundRepeat: 'no-repeat',
+              backgroundColor: '#FFFFFF',
+            }}
+          >
+            {/* Premium Overlay for Better Text Readability */}
+            <div 
+              className="absolute inset-0"
+              style={{
+                background: 'linear-gradient(to bottom, rgba(255,255,255,0.3) 0%, rgba(255,255,255,0.1) 50%, rgba(255,255,255,0.3) 100%)',
+              }}
+            />
+
+            {/* Premium Decorative Border - Roses and Leaves */}
+            <div className="absolute inset-0 pointer-events-none z-0" style={{ padding: '15px' }}>
+              {/* Top Border - Red Roses and Green Leaves */}
+              <div className="absolute top-0 left-0 right-0 flex justify-between items-center px-2 sm:px-4 text-4xl sm:text-5xl md:text-6xl" style={{ opacity: 0.85 }}>
+                <span className="drop-shadow-lg">🌹</span>
+                <span className="drop-shadow-lg">🍃</span>
+                <span className="drop-shadow-lg">🌹</span>
+                <span className="drop-shadow-lg">🌺</span>
+                <span className="drop-shadow-lg">🍃</span>
+                <span className="drop-shadow-lg">🌹</span>
+                <span className="drop-shadow-lg">🌺</span>
+                <span className="drop-shadow-lg">🍃</span>
+                <span className="drop-shadow-lg">🌹</span>
+                <span className="drop-shadow-lg">🌺</span>
+                <span className="drop-shadow-lg">🍃</span>
+                <span className="drop-shadow-lg">🌹</span>
+              </div>
+              
+              {/* Left Border - Pillar with Vines and Leaves */}
+              <div className="absolute left-0 top-1/5 bottom-1/5 w-14 sm:w-20 text-5xl sm:text-6xl md:text-7xl" style={{ opacity: 0.7 }}>
+                <div className="flex flex-col h-full justify-center gap-4">
+                  <span className="drop-shadow-lg">🌿</span>
+                  <span className="drop-shadow-lg">🍃</span>
+                  <span className="drop-shadow-lg">🌿</span>
+                  <span className="drop-shadow-lg">🍃</span>
+                  <span className="drop-shadow-lg">🌿</span>
+                </div>
+              </div>
+              
+              {/* Right Border - Pillar with Vines and Leaves */}
+              <div className="absolute right-0 top-1/5 bottom-1/5 w-14 sm:w-20 text-5xl sm:text-6xl md:text-7xl" style={{ opacity: 0.7 }}>
+                <div className="flex flex-col h-full justify-center gap-4">
+                  <span className="drop-shadow-lg">🌿</span>
+                  <span className="drop-shadow-lg">🍃</span>
+                  <span className="drop-shadow-lg">🌿</span>
+                  <span className="drop-shadow-lg">🍃</span>
+                  <span className="drop-shadow-lg">🌿</span>
+                </div>
+              </div>
+              
+              {/* Bottom Border - Red Roses and Green Leaves */}
+              <div className="absolute bottom-0 left-0 right-0 flex justify-between items-center px-2 sm:px-4 text-4xl sm:text-5xl md:text-6xl" style={{ opacity: 0.85 }}>
+                <span className="drop-shadow-lg">🌹</span>
+                <span className="drop-shadow-lg">🍃</span>
+                <span className="drop-shadow-lg">🌹</span>
+                <span className="drop-shadow-lg">🌺</span>
+                <span className="drop-shadow-lg">🍃</span>
+                <span className="drop-shadow-lg">🌹</span>
+                <span className="drop-shadow-lg">🌺</span>
+                <span className="drop-shadow-lg">🍃</span>
+                <span className="drop-shadow-lg">🌹</span>
+                <span className="drop-shadow-lg">🌺</span>
+                <span className="drop-shadow-lg">🍃</span>
+                <span className="drop-shadow-lg">🌹</span>
+              </div>
+            </div>
+
+            {/* Premium Content Overlay */}
+            <div className="relative z-10 max-w-4xl mx-auto w-full">
+              {/* Ganesha Icon at Top Center - Golden with Premium Shadow */}
+              <div 
+                className="text-7xl sm:text-8xl md:text-9xl mb-5 sm:mb-7"
+                style={{ 
+                  color: '#FFD700',
+                  filter: 'drop-shadow(0 4px 8px rgba(0,0,0,0.3))',
+                }}
+              >
+                🕉️
+              </div>
+              
+              {/* Main Title - Premium Styling */}
+              <h2 
+                className="text-sm sm:text-base md:text-lg font-bold mb-5 sm:mb-7 tracking-widest uppercase"
+                style={{ 
+                  color: '#1A1A1A',
+                  fontFamily: 'sans-serif',
+                  letterSpacing: '4px',
+                  textShadow: '0 2px 4px rgba(255,255,255,0.8), 0 0 8px rgba(255,255,255,0.5)',
+                }}
+              >
+                THE HINDU WEDDING CEREMONY OF
+              </h2>
+              
+              {/* Couple Names - Premium Elegant Red Script Style */}
+              <div 
+                className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mb-5 sm:mb-7"
+                style={{ 
+                  color: '#DC143C',
+                  fontFamily: "'Playfair Display', 'Cormorant Garamond', 'Georgia', serif",
+                  fontStyle: 'italic',
+                  letterSpacing: '3px',
+                  textShadow: '0 3px 6px rgba(0,0,0,0.3), 0 0 12px rgba(255,255,255,0.5)',
+                  filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.2))',
+                }}
+              >
+                {groomName} & {brideName}
+              </div>
+              
+              {/* Wedding Date - Premium Dark Font */}
+              <div 
+                className="text-base sm:text-lg md:text-xl font-bold mb-10 sm:mb-12 uppercase"
+                style={{ 
+                  color: '#1A1A1A',
+                  fontFamily: 'sans-serif',
+                  letterSpacing: '2px',
+                  textShadow: '0 2px 4px rgba(255,255,255,0.8), 0 0 8px rgba(255,255,255,0.5)',
+                }}
+              >
+                {weddingDate}
+              </div>
+              
+              {/* Couple Illustrations with Premium Hearts Scattered */}
+              <div className="relative flex justify-center items-center mb-8 sm:mb-10">
+                {/* Scattered Hearts Around - Premium Style */}
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <span className="absolute top-0 left-1/4 text-2xl sm:text-3xl" style={{ color: '#DC143C', opacity: 0.7, filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.3))' }}>💖</span>
+                  <span className="absolute top-1/4 right-1/4 text-2xl sm:text-3xl" style={{ color: '#DC143C', opacity: 0.7, filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.3))' }}>💖</span>
+                  <span className="absolute bottom-0 left-1/3 text-2xl sm:text-3xl" style={{ color: '#DC143C', opacity: 0.7, filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.3))' }}>💖</span>
+                  <span className="absolute bottom-1/4 right-1/3 text-2xl sm:text-3xl" style={{ color: '#DC143C', opacity: 0.7, filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.3))' }}>💖</span>
+                  <span className="absolute top-1/2 left-0 text-2xl sm:text-3xl" style={{ color: '#DC143C', opacity: 0.7, filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.3))' }}>💖</span>
+                  <span className="absolute top-1/2 right-0 text-2xl sm:text-3xl" style={{ color: '#DC143C', opacity: 0.7, filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.3))' }}>💖</span>
+                </div>
+                
+                {/* Bride and Groom - Premium Size */}
+                <div className="flex items-center gap-8 sm:gap-12">
+                  {/* Bride - Red Lehenga */}
+                  <div 
+                    className="text-6xl sm:text-7xl md:text-8xl"
+                    style={{ filter: 'drop-shadow(0 4px 8px rgba(0,0,0,0.3))' }}
+                  >
+                    👰
+                  </div>
+                  
+                  {/* Groom - Cream Sherwani */}
+                  <div 
+                    className="text-6xl sm:text-7xl md:text-8xl"
+                    style={{ filter: 'drop-shadow(0 4px 8px rgba(0,0,0,0.3))' }}
+                  >
+                    🤵
+                  </div>
+                </div>
+              </div>
+              
+              {/* Share Moments Text - Premium Styling */}
+              <div 
+                className="text-sm sm:text-base font-semibold mb-2"
+                style={{ 
+                  color: '#4A4A4A',
+                  fontFamily: 'sans-serif',
+                  letterSpacing: '2px',
+                  textShadow: '0 1px 3px rgba(255,255,255,0.8)',
+                }}
+              >
+                SHARE YOUR PRECIOUS MOMENTS
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Premium Header Section with Decorative Elements - Hidden for Hindu Template */}
+        {!template.hasHindu && (
         <div 
           className="text-center py-4 sm:py-5 px-4 sm:px-6 relative overflow-hidden"
           style={{
@@ -573,6 +753,7 @@ export default function WeddingTemplate({ user, templateId, cardType = 'wedding'
             </div>
           </div>
         </div>
+        )}
 
         {/* Main Content - Full Width with Proper Spacing */}
         <div className="px-4 sm:px-8 md:px-12 lg:px-16 xl:px-20 py-2 sm:py-3 md:py-4 relative flex-1 flex flex-col justify-center">
@@ -822,8 +1003,12 @@ export default function WeddingTemplate({ user, templateId, cardType = 'wedding'
         {/* Website Name */}
         <div className="text-center py-2 px-4">
           <p 
-            className="text-xs opacity-70 font-serif italic"
-            style={{ color: template.colors.text }}
+            className="text-xs opacity-60 font-serif italic"
+            style={{ 
+              color: template.colors.text,
+              letterSpacing: '0.5px',
+              marginTop: '2px',
+            }}
           >
             cardoradigital.ca
           </p>
@@ -832,15 +1017,16 @@ export default function WeddingTemplate({ user, templateId, cardType = 'wedding'
 
       {/* CARDORA Watermark - Bottom Right */}
       <div 
-        className="absolute bottom-4 right-4 z-50 pointer-events-none"
+        className="absolute bottom-2 right-2 z-50 pointer-events-none"
         style={{
-          fontFamily: "'Playfair Display', 'Georgia', serif",
-          fontWeight: 700,
-          fontSize: '18px',
-          letterSpacing: '2px',
-          color: fullImageUrl ? 'rgba(255, 255, 255, 0.6)' : template.colors.text || '#FFFFFF',
-          textShadow: fullImageUrl ? '0 2px 8px rgba(0, 0, 0, 0.5)' : 'none',
-          opacity: 0.7,
+          fontFamily: "'Cormorant Garamond', 'Playfair Display', 'Georgia', serif",
+          fontWeight: 500,
+          fontSize: '14px',
+          letterSpacing: '1px',
+          color: fullImageUrl ? 'rgba(255, 255, 255, 0.5)' : template.colors.text || '#FFFFFF',
+          textShadow: fullImageUrl ? '0 1px 4px rgba(0, 0, 0, 0.4)' : '0 1px 2px rgba(0, 0, 0, 0.2)',
+          opacity: 0.6,
+          fontStyle: 'italic',
         }}
       >
         CARDORA
