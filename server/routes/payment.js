@@ -20,6 +20,7 @@ const User = require('../models/User');
 const Payment = require('../models/Payment');
 const Analytics = require('../models/Analytics');
 const auth = require('../middleware/auth');
+const { sendPaymentSuccessEmail } = require('../utils/email');
 
 const router = express.Router();
 
@@ -206,6 +207,19 @@ router.post('/create-cart-session', auth, async (req, res) => {
 
     // Create payment records for each item
     for (const item of items) {
+      // Determine purpose based on item type
+      let purpose = '';
+      if (item.type === 'animated_invite') {
+        purpose = `Animated Invites - ${item.name}`;
+      } else if (item.type === 'business_card') {
+        purpose = `Business Cards - ${item.name}`;
+      } else if (item.type?.includes('_card')) {
+        const cardType = item.type.replace('_card', '');
+        purpose = `${cardType.charAt(0).toUpperCase() + cardType.slice(1)} Cards - ${item.name}`;
+      } else {
+        purpose = `${item.name || 'Cart Item'}`;
+      }
+
       await Payment.create({
         userId: user._id,
         amount: item.price,
@@ -213,7 +227,15 @@ router.post('/create-cart-session', auth, async (req, res) => {
         paymentMethod: 'stripe',
         stripeSessionId: session.id,
         status: 'pending',
-        purpose: `Business Cards - ${item.name}`,
+        purpose: purpose,
+        // Store item data for post-payment processing
+        itemData: {
+          type: item.type,
+          templateId: item.templateId,
+          slug: item.slug,
+          formData: item.formData,
+          quantity: item.quantity,
+        },
       });
     }
 
@@ -278,8 +300,8 @@ router.post('/verify', async (req, res) => {
 
       if (payment) {
         // Check if this is a cart payment from metadata
-        const session = await stripe.checkout.sessions.retrieve(sessionId);
-        const isCartPayment = session.metadata?.type === 'cart';
+        const sessionData = await stripe.checkout.sessions.retrieve(sessionId);
+        const isCartPayment = sessionData.metadata?.type === 'cart';
         
         // Track successful payment
         await Analytics.create({
@@ -287,6 +309,33 @@ router.post('/verify', async (req, res) => {
           type: isCartPayment ? 'cart_payment_success' : 'payment_success',
           deviceType: 'unknown',
         });
+
+        // Send payment success email
+        try {
+          const user = await User.findById(payment.userId);
+          if (user) {
+            // Get all payments for this session (for cart payments)
+            const allPayments = isCartPayment 
+              ? await Payment.find({ stripeSessionId: sessionId, status: 'completed' })
+              : [payment];
+            
+            const paymentDetails = {
+              items: allPayments.map(p => ({
+                name: p.purpose || 'Payment',
+                quantity: p.itemData?.quantity || 1,
+                price: p.amount,
+              })),
+            };
+
+            // Send email (don't block response if email fails)
+            sendPaymentSuccessEmail(user, payment, paymentDetails).catch(emailError => {
+              console.error('Failed to send payment success email:', emailError);
+            });
+          }
+        } catch (emailError) {
+          console.error('Error preparing payment success email:', emailError);
+          // Don't fail the payment verification if email fails
+        }
       }
 
       res.json({ success: true, payment });
@@ -366,6 +415,30 @@ const webhookHandler = async (req, res) => {
           // For direct payments, unlock card
           user.cardPaid = true;
           await user.save();
+        }
+
+        // Send payment success email via webhook
+        try {
+          // Get all payments for this session (for cart payments)
+          const allPayments = isCartPayment 
+            ? await Payment.find({ stripeSessionId: session.id, status: 'completed' })
+            : [payment];
+          
+          const paymentDetails = {
+            items: allPayments.map(p => ({
+              name: p.purpose || 'Payment',
+              quantity: p.itemData?.quantity || 1,
+              price: p.amount,
+            })),
+          };
+
+          // Send email (don't block webhook response if email fails)
+          sendPaymentSuccessEmail(user, payment, paymentDetails).catch(emailError => {
+            console.error('Failed to send payment success email via webhook:', emailError);
+          });
+        } catch (emailError) {
+          console.error('Error preparing payment success email in webhook:', emailError);
+          // Don't fail the webhook if email fails
         }
       }
     }

@@ -12,7 +12,7 @@ import { animatedTemplates, getAnimatedTemplateById } from '@/lib/animatedTempla
 import ImageUpload from '@/components/ImageUpload';
 import MusicUpload from '@/components/MusicUpload';
 import { countries, formatCurrency, detectUserCountry } from '@/lib/countryConfig';
-import { addToCart, getCartCount } from '@/lib/cart';
+import { addToCart, getCartCount, getCart } from '@/lib/cart';
 import LoadingScreen from '@/components/LoadingScreen';
 
 export default function AnimatedInvitePage() {
@@ -203,32 +203,58 @@ export default function AnimatedInvitePage() {
   };
 
   const handleAddToCart = async () => {
-    // If user hasn't paid, show payment prompt
-    if (!user?.invitePaid) {
-      toast.error('Please complete payment to add invites to cart');
-      setShowActionModal(false);
-      router.push('/dashboard/checkout');
-      return;
-    }
-
-    // If user has paid, validate their data
-    if (!formData.groomName || !formData.brideName) {
-      toast.error('Please fill in groom and bride names');
-      setShowActionModal(false);
-      return;
-    }
-
+    console.log('🛒 handleAddToCart called');
+    console.log('🛒 User:', user);
+    console.log('🛒 FormData:', formData);
+    console.log('🛒 Quantity:', quantity);
+    console.log('🛒 Country:', country);
+    
     if (!user) {
+      console.error('❌ User is null');
       toast.error('Please save your card settings first');
       setShowActionModal(false);
       return;
     }
 
-    // First create the invite to get slug
-    const result = await handleCreateInvite();
-    if (!result.success) {
-      setShowActionModal(false);
-      return;
+    // If user has paid, validate their data
+    // If user hasn't paid, we'll use demo data or allow them to proceed
+    let inviteSlug = '';
+    let inviteFormData = {};
+
+    if (user?.invitePaid) {
+      // User has paid - validate their data
+      if (!formData.groomName || !formData.brideName) {
+        toast.error('Please fill in groom and bride names');
+        setShowActionModal(false);
+        return;
+      }
+
+      // Create the invite to get slug
+      const result = await handleCreateInvite();
+      if (!result.success) {
+        setShowActionModal(false);
+        return;
+      }
+      inviteSlug = result.slug;
+      inviteFormData = {
+        groomName: formData.groomName,
+        brideName: formData.brideName,
+        weddingDate: formData.weddingDate,
+        venue: formData.venue,
+        weddingTime: formData.weddingTime,
+        story: formData.story,
+      };
+    } else {
+      // User hasn't paid - use demo data or allow them to add to cart
+      // The invite will be created after payment
+      inviteFormData = {
+        groomName: formData.groomName || 'John',
+        brideName: formData.brideName || 'Jane',
+        weddingDate: formData.weddingDate || '',
+        venue: formData.venue || '',
+        weddingTime: formData.weddingTime || '6:00 PM',
+        story: formData.story || '',
+      };
     }
 
     // Add to cart
@@ -238,36 +264,88 @@ export default function AnimatedInvitePage() {
     const totalPrice = basePrice + (unitPrice * quantity) + serviceFee;
 
     const template = getAnimatedTemplateById(formData.templateId);
+    console.log('🛒 Template:', template);
     
     const cartItem = {
       type: 'animated_invite',
       name: `${quantity} Animated Wedding Invites - ${template?.name || 'Custom'}`,
       quantity: quantity,
-      templateId: formData.templateId,
-      slug: result.slug,
+      templateId: formData.templateId || 'luxury-hills',
+      slug: inviteSlug, // Will be empty if user hasn't paid, will be created after payment
       unitPrice: unitPrice,
       basePrice: basePrice,
       serviceFee: serviceFee,
       price: totalPrice,
       currency: country === 'CA' ? 'CAD' : 'INR',
-      country: country,
-      userId: user._id,
-      username: user.username,
+      country: country || 'IN',
+      userId: user._id || user.id,
+      username: user.username || 'user',
       // Store form data for later use
-      formData: {
-        groomName: formData.groomName,
-        brideName: formData.brideName,
-        weddingDate: formData.weddingDate,
-        venue: formData.venue,
-        weddingTime: formData.weddingTime,
-        story: formData.story,
-      },
+      formData: inviteFormData,
+      needsPayment: !user?.invitePaid, // Flag to indicate payment is needed
     };
 
-    addToCart(cartItem);
-    setCartCount(getCartCount());
-    toast.success(`${quantity} animated invites added to cart!`);
-    setShowActionModal(false);
+    console.log('🛒 Cart item to add:', cartItem);
+
+    try {
+      if (typeof window === 'undefined') {
+        console.error('❌ Window is undefined, cannot add to cart');
+        toast.error('Cannot add to cart. Please refresh the page.');
+        setShowActionModal(false);
+        return;
+      }
+
+      const updatedCart = addToCart(cartItem);
+      console.log('🛒 Cart after adding:', updatedCart);
+      console.log('🛒 Cart length:', updatedCart?.length);
+      
+      // Verify cart was saved
+      const savedCart = getCart();
+      console.log('🛒 Verified cart after save:', savedCart);
+      console.log('🛒 Saved cart length:', savedCart?.length);
+      
+      if (!savedCart || savedCart.length === 0) {
+        console.error('❌ Cart is empty after adding item');
+        toast.error('Failed to save cart. Please try again.');
+        setShowActionModal(false);
+        return;
+      }
+      
+      // Check if our item is in the cart
+      const itemInCart = savedCart.find(item => 
+        item.type === 'animated_invite' && 
+        item.templateId === cartItem.templateId
+      );
+      
+      if (!itemInCart) {
+        console.error('❌ Item not found in cart after adding');
+        toast.error('Item was not added to cart. Please try again.');
+        setShowActionModal(false);
+        return;
+      }
+      
+      console.log('✅ Item successfully added to cart');
+      setCartCount(getCartCount());
+      toast.success(`${quantity} animated invites added to cart!`);
+      setShowActionModal(false);
+      
+      // If user hasn't paid, show a message about completing payment
+      if (!user?.invitePaid) {
+        toast('Complete payment at checkout to finalize your invite', { 
+          duration: 4000,
+          icon: 'ℹ️'
+        });
+      }
+    } catch (error) {
+      console.error('❌ Error adding to cart:', error);
+      console.error('❌ Error details:', {
+        message: error.message,
+        stack: error.stack,
+        name: error.name,
+      });
+      toast.error(`Failed to add item to cart: ${error.message || 'Unknown error'}`);
+      setShowActionModal(false);
+    }
   };
 
   const handleCreateNow = () => {

@@ -3,6 +3,7 @@ const router = express.Router();
 const auth = require('../middleware/auth');
 const User = require('../models/User');
 const Payment = require('../models/Payment');
+const { sendPaymentSuccessEmail } = require('../utils/email');
 
 // @route   POST /api/unlock/card
 // @desc    Unlock card after payment verification
@@ -91,33 +92,102 @@ router.post('/verify-payment', auth, async (req, res) => {
       return res.status(404).json({ error: 'User not found' });
     }
 
-    // Check for completed payment
-    const payment = await Payment.findOne({
+    // Check for all completed payments with this session ID
+    const payments = await Payment.find({
       userId: user._id,
       stripeSessionId: sessionId,
       status: 'completed',
     });
 
-    if (!payment) {
+    if (!payments || payments.length === 0) {
       return res.status(400).json({ error: 'Payment not found or not completed' });
     }
 
-    // Unlock based on payment purpose
-    const purpose = payment.purpose?.toLowerCase() || '';
-    
-    if (purpose.includes('animated') || purpose.includes('invite')) {
-      user.invitePaid = true;
-    } else if (purpose.includes('card') || purpose.includes('business')) {
-      user.cardPaid = true;
+    // Process each payment item
+    const unlockedItems = {
+      cardPaid: user.cardPaid,
+      invitePaid: user.invitePaid,
+      createdInvites: [],
+    };
+
+    for (const payment of payments) {
+      // Unlock based on payment purpose
+      const purpose = payment.purpose?.toLowerCase() || '';
+      
+      if (purpose.includes('animated') || purpose.includes('invite')) {
+        user.invitePaid = true;
+        unlockedItems.invitePaid = true;
+
+        // If payment has itemData with formData, create the invite
+        if (payment.itemData && payment.itemData.type === 'animated_invite' && payment.itemData.formData) {
+          try {
+            const { templateId, formData } = payment.itemData;
+            
+            // Generate slug
+            const baseSlug = `${(formData.groomName || 'groom').toLowerCase().replace(/\s+/g, '-')}-${(formData.brideName || 'bride').toLowerCase().replace(/\s+/g, '-')}`;
+            let inviteSlug = baseSlug;
+            
+            // Check if slug exists
+            let counter = 1;
+            while (await User.findOne({ animatedInviteSlug: inviteSlug, _id: { $ne: user._id } })) {
+              inviteSlug = `${baseSlug}-${counter}`;
+              counter++;
+            }
+
+            // Update user with wedding invite data
+            user.animatedInviteSlug = inviteSlug;
+            user.animatedTemplateId = templateId || 'luxury-hills';
+            user.groomName = formData.groomName || user.groomName;
+            user.brideName = formData.brideName || user.brideName;
+            user.weddingDate = formData.weddingDate || user.weddingDate;
+            user.venue = formData.venue || user.venue;
+            user.weddingTime = formData.weddingTime || user.weddingTime;
+            user.weddingStory = formData.story || user.weddingStory;
+
+            unlockedItems.createdInvites.push({
+              slug: inviteSlug,
+              url: `${process.env.FRONTEND_URL || 'http://localhost:3000'}/wedding/${inviteSlug}`,
+            });
+          } catch (inviteError) {
+            console.error('Error creating invite after payment:', inviteError);
+            // Don't fail the whole process if invite creation fails
+          }
+        }
+      } else if (purpose.includes('card') || purpose.includes('business')) {
+        user.cardPaid = true;
+        unlockedItems.cardPaid = true;
+      }
     }
 
     await user.save();
+
+    // Send payment success email with all details
+    try {
+      const firstPayment = payments[0];
+      const paymentDetails = {
+        items: payments.map(p => ({
+          name: p.purpose || 'Payment',
+          quantity: p.itemData?.quantity || 1,
+          price: p.amount,
+        })),
+        createdInvites: unlockedItems.createdInvites,
+      };
+
+      // Send email (don't block response if email fails)
+      sendPaymentSuccessEmail(user, firstPayment, paymentDetails).catch(emailError => {
+        console.error('Failed to send payment success email:', emailError);
+      });
+    } catch (emailError) {
+      console.error('Error preparing payment success email:', emailError);
+      // Don't fail the unlock process if email fails
+    }
 
     res.json({
       success: true,
       message: 'Payment verified and features unlocked',
       cardPaid: user.cardPaid,
       invitePaid: user.invitePaid,
+      createdInvites: unlockedItems.createdInvites,
     });
   } catch (error) {
     console.error('Verify payment error:', error);

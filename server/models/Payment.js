@@ -29,6 +29,10 @@ const paymentSchema = new mongoose.Schema({
   purpose: String,
   payerEmail: String,
   payerName: String,
+  itemData: {
+    type: mongoose.Schema.Types.Mixed,
+    default: null,
+  },
 }, {
   timestamps: true,
 });

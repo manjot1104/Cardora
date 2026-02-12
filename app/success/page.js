@@ -21,18 +21,13 @@ function SuccessContent() {
     const type = searchParams.get('type');
     
     if (sessionId) {
-      verifyPayment(sessionId);
+      verifyPayment(sessionId, type);
     } else {
       setVerifying(false);
     }
-
-    // Clear cart if it's a cart payment
-    if (type === 'cart') {
-      clearCart();
-    }
   }, [searchParams]);
 
-  const verifyPayment = async (sessionId) => {
+  const verifyPayment = async (sessionId, type) => {
     try {
       const response = await api.post('/payment/verify', { sessionId });
       if (response.data.success) {
@@ -43,13 +38,23 @@ function SuccessContent() {
           const unlockResponse = await api.post('/unlock/verify-payment', { sessionId });
           if (unlockResponse.data.success) {
             console.log('Features unlocked:', unlockResponse.data);
+            
+            // Only clear cart AFTER successful payment verification and unlock
+            if (type === 'cart') {
+              clearCart();
+              console.log('✅ Cart cleared after successful payment');
+            }
           }
         } catch (unlockError) {
           console.error('Error unlocking features:', unlockError);
+          // Don't clear cart if unlock fails
         }
+      } else {
+        console.warn('Payment verification failed, keeping cart');
       }
     } catch (error) {
       console.error('Error verifying payment:', error);
+      // Don't clear cart if verification fails
     } finally {
       setVerifying(false);
     }

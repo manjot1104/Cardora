@@ -29,18 +29,67 @@ export default function CheckoutPage() {
   }, []);
 
   const loadCart = () => {
-    const cart = getCart();
-    if (cart.length === 0) {
-      toast.error('Your cart is empty');
-      router.push('/dashboard/card');
-      return;
+    try {
+      let cart = getCart();
+      console.log('🛒 Loading cart from localStorage:', cart);
+      console.log('🛒 Cart items count:', cart?.length || 0);
+      
+      // If cart is empty, try to restore from sessionStorage backup
+      if (!cart || cart.length === 0) {
+        if (typeof window !== 'undefined') {
+          const backupCart = sessionStorage.getItem('cart_backup');
+          const pendingCart = sessionStorage.getItem('pending_cart');
+          
+          if (backupCart) {
+            try {
+              cart = JSON.parse(backupCart);
+              console.log('🔄 Restored cart from backup:', cart);
+              // Restore to localStorage
+              localStorage.setItem('cardora_cart', backupCart);
+              toast('Cart restored from backup', { icon: '🔄' });
+            } catch (e) {
+              console.error('Error restoring backup cart:', e);
+            }
+          } else if (pendingCart) {
+            try {
+              cart = JSON.parse(pendingCart);
+              console.log('🔄 Restored cart from pending:', cart);
+              // Restore to localStorage
+              localStorage.setItem('cardora_cart', pendingCart);
+              toast('Cart restored', { icon: '🔄' });
+            } catch (e) {
+              console.error('Error restoring pending cart:', e);
+            }
+          }
+        }
+      }
+      
+      if (!cart || cart.length === 0) {
+        console.warn('⚠️ Cart is empty after all attempts');
+        toast.error('Your cart is empty');
+        // Check if user came from animated invite page
+        const referrer = typeof window !== 'undefined' ? document.referrer : '';
+        if (referrer.includes('animated-invite')) {
+          router.push('/dashboard/animated-invite');
+        } else {
+          router.push('/dashboard/card');
+        }
+        setLoading(false);
+        return;
+      }
+      
+      console.log('✅ Cart loaded successfully with', cart.length, 'items');
+      setCartItems(cart);
+      // Get country from first item
+      if (cart.length > 0) {
+        setCountry(cart[0].country || 'IN');
+      }
+      setLoading(false);
+    } catch (error) {
+      console.error('❌ Error loading cart:', error);
+      toast.error('Error loading cart. Please try again.');
+      setLoading(false);
     }
-    setCartItems(cart);
-    // Get country from first item
-    if (cart.length > 0) {
-      setCountry(cart[0].country || 'IN');
-    }
-    setLoading(false);
   };
 
   const handleRemoveItem = (itemId) => {
@@ -103,15 +152,21 @@ export default function CheckoutPage() {
         });
 
         if (response.data.url) {
-          // Store cart items in session storage for after payment
+          // Store cart items in session storage for after payment (backup)
           if (typeof window !== 'undefined') {
             sessionStorage.setItem('pending_cart', JSON.stringify(cartItems));
+            sessionStorage.setItem('cart_backup', JSON.stringify(cartItems));
+            console.log('💾 Cart backed up to sessionStorage before payment');
           }
+          // Don't clear cart yet - only clear after successful payment
           window.location.href = response.data.url;
+        } else {
+          toast.error('Failed to create payment session');
+          setProcessing(false);
         }
       } else if (selectedPaymentMethod === 'interac') {
         // Handle Interac payment
-        toast.info('Interac payment will be processed after order confirmation');
+        toast('Interac payment will be processed after order confirmation', { icon: '💳' });
         // For now, just clear cart and show success
         clearCart();
         toast.success('Order placed successfully!');
@@ -171,9 +226,18 @@ export default function CheckoutPage() {
                         <h3 className="font-semibold text-gray-900 dark:text-white mb-1">{item.name}</h3>
                         <div className="text-sm text-gray-600 dark:text-gray-400 space-y-1">
                           <p>Quantity: {item.quantity}</p>
-                          <p>Size: {item.size === 'standard' ? '3.5" x 2"' : '4" x 2.5"'}</p>
-                          <p>Orientation: {item.orientation === 'horizontal' ? 'Horizontal' : 'Vertical'}</p>
-                          <p>Type: {item.printType === 'digital' ? 'Digital Card' : 'Standard Card'}</p>
+                          {item.type === 'animated_invite' ? (
+                            <>
+                              <p>Type: Animated Wedding Invite</p>
+                              {item.templateId && <p>Template: {item.templateId}</p>}
+                            </>
+                          ) : (
+                            <>
+                              {item.size && <p>Size: {item.size === 'standard' ? '3.5" x 2"' : '4" x 2.5"'}</p>}
+                              {item.orientation && <p>Orientation: {item.orientation === 'horizontal' ? 'Horizontal' : 'Vertical'}</p>}
+                              {item.printType && <p>Type: {item.printType === 'digital' ? 'Digital Card' : 'Standard Card'}</p>}
+                            </>
+                          )}
                         </div>
                       </div>
                       <div className="flex items-center gap-4">
