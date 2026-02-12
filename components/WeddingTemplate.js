@@ -850,17 +850,32 @@ export default function WeddingTemplate({ user, templateId, cardType = 'wedding'
               
               {/* Bride's Parents Section */}
               <div className="mb-1 bg-gradient-to-r from-pink-50/50 to-rose-50/50 dark:from-gray-800/50 dark:to-gray-700/50 p-1.5 rounded-lg">
-                <p className="text-xs sm:text-sm font-semibold text-gray-800 dark:text-gray-200 mb-0.5">
-                  🌸 Bride's Parents
+                <p 
+                  className="text-xs sm:text-sm font-bold mb-0.5 text-center"
+                  style={{ 
+                    color: '#1A1A1A',
+                    textShadow: '0 1px 3px rgba(255,255,255,0.9), 0 0 6px rgba(255,255,255,0.6)',
+                    fontWeight: '700'
+                  }}
+                >
+                  ❤️ Bride's Parents ❤️
                 </p>
                 {(brideFatherName?.trim() || brideMotherName?.trim()) ? (
-                  <p className="text-xs text-gray-700 dark:text-gray-300 font-medium">
+                  <p 
+                    className="text-xs sm:text-sm font-semibold text-center"
+                    style={{ 
+                      color: '#1A1A1A',
+                      textShadow: '0 1px 3px rgba(255,255,255,0.9), 0 0 6px rgba(255,255,255,0.6)',
+                      fontWeight: '600'
+                    }}
+                  >
                     {brideFatherName?.trim() && brideMotherName?.trim() 
                       ? `${brideFatherName.trim()} & ${brideMotherName.trim()}`
                       : (brideFatherName?.trim() || brideMotherName?.trim() || '')}
+                    <span className="ml-1">😊😊</span>
                   </p>
                 ) : (
-                  <p className="text-xs text-gray-500 dark:text-gray-500 italic">
+                  <p className="text-xs text-gray-500 dark:text-gray-500 italic text-center">
                     (Name not provided)
                   </p>
                 )}
@@ -868,17 +883,32 @@ export default function WeddingTemplate({ user, templateId, cardType = 'wedding'
 
               {/* Groom's Parents Section */}
               <div className="mb-1 bg-gradient-to-r from-blue-50/50 to-indigo-50/50 dark:from-gray-800/50 dark:to-gray-700/50 p-1.5 rounded-lg">
-                <p className="text-xs sm:text-sm font-semibold text-gray-800 dark:text-gray-200 mb-0.5">
-                  🌺 Groom's Parents
+                <p 
+                  className="text-xs sm:text-sm font-bold mb-0.5 text-center"
+                  style={{ 
+                    color: '#1A1A1A',
+                    textShadow: '0 1px 3px rgba(255,255,255,0.9), 0 0 6px rgba(255,255,255,0.6)',
+                    fontWeight: '700'
+                  }}
+                >
+                  ❤️ Groom's Parents ❤️
                 </p>
                 {(groomFatherName?.trim() || groomMotherName?.trim()) ? (
-                  <p className="text-xs text-gray-700 dark:text-gray-300 font-medium">
+                  <p 
+                    className="text-xs sm:text-sm font-semibold text-center"
+                    style={{ 
+                      color: '#1A1A1A',
+                      textShadow: '0 1px 3px rgba(255,255,255,0.9), 0 0 6px rgba(255,255,255,0.6)',
+                      fontWeight: '600'
+                    }}
+                  >
                     {groomFatherName?.trim() && groomMotherName?.trim() 
                       ? `${groomFatherName.trim()} & ${groomMotherName.trim()}`
                       : (groomFatherName?.trim() || groomMotherName?.trim() || '')}
+                    <span className="ml-1">😊😊</span>
                   </p>
                 ) : (
-                  <p className="text-xs text-gray-500 dark:text-gray-500 italic">
+                  <p className="text-xs text-gray-500 dark:text-gray-500 italic text-center">
                     (Name not provided)
                   </p>
                 )}
@@ -907,16 +937,40 @@ export default function WeddingTemplate({ user, templateId, cardType = 'wedding'
           </div>
 
           {/* Invitation Message */}
-          <div className="text-center bg-gradient-to-br from-pink-50/50 via-purple-50/50 to-rose-50/50 dark:from-gray-800/50 dark:via-gray-700/50 dark:to-gray-800/50 p-2 sm:p-2.5 rounded-lg border border-dashed" style={{ borderColor: template.colors.accent, opacity: 0.3 }}>
-            <p className="text-xs sm:text-sm text-gray-700 dark:text-gray-300 italic mb-1 font-medium">
+          <div 
+            className="text-center p-3 sm:p-4 rounded-lg border-2 border-dashed backdrop-blur-sm"
+            style={{ 
+              backgroundColor: 'rgba(255, 248, 220, 0.85)',
+              borderColor: template.colors.accent || '#FFD700',
+              boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.5)'
+            }}
+          >
+            <p 
+              className="text-sm sm:text-base italic mb-2 font-bold"
+              style={{ 
+                color: '#1A1A1A',
+                textShadow: '0 2px 4px rgba(255,255,255,1), 0 0 8px rgba(255,255,255,0.8), 0 1px 2px rgba(0,0,0,0.3)',
+                fontWeight: '700',
+                lineHeight: '1.5'
+              }}
+            >
+              <span className="mr-2 text-base">🌷</span>
               "You are cordially invited to celebrate this special day with us"
             </p>
-            <div className="flex items-center justify-center gap-1.5">
-              <span className="text-sm">💕</span>
-              <p className="text-xs text-gray-600 dark:text-gray-400">
+            <div className="flex items-center justify-center gap-2">
+              <span className="text-base sm:text-lg">❤️</span>
+              <p 
+                className="text-xs sm:text-sm font-bold"
+                style={{ 
+                  color: '#1A1A1A',
+                  textShadow: '0 2px 4px rgba(255,255,255,1), 0 0 8px rgba(255,255,255,0.8), 0 1px 2px rgba(0,0,0,0.3)',
+                  fontWeight: '700',
+                  lineHeight: '1.5'
+                }}
+              >
                 We look forward to sharing this joyous occasion with you
               </p>
-              <span className="text-sm">💕</span>
+              <span className="text-base sm:text-lg">❤️</span>
             </div>
           </div>
           

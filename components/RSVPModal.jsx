@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import api from '@/lib/api';
+import toast from 'react-hot-toast';
 
 export default function RSVPModal({ isOpen, onClose, inviteSlug }) {
   const [formData, setFormData] = useState({
@@ -22,12 +23,38 @@ export default function RSVPModal({ isOpen, onClose, inviteSlug }) {
     setSubmitting(true);
 
     try {
-      const response = await api.post('/rsvp/submit', {
+      console.log('📝 Submitting RSVP with data:', {
         inviteSlug,
-        ...formData,
+        formData
       });
 
+      if (!inviteSlug) {
+        toast.error('Error: Invite slug is missing. Please refresh the page and try again.');
+        setSubmitting(false);
+        return;
+      }
+
+      if (!formData.guestName || formData.guestName.trim() === '') {
+        toast.error('Please enter your name.');
+        setSubmitting(false);
+        return;
+      }
+
+      const response = await api.post('/rsvp/submit', {
+        inviteSlug,
+        guestName: formData.guestName.trim(),
+        guestEmail: formData.guestEmail?.trim() || '',
+        attending: formData.attending,
+        numberOfGuests: formData.attending ? (formData.numberOfGuests || 1) : 0,
+        dietaryRestrictions: formData.dietaryRestrictions?.trim() || '',
+        message: formData.message?.trim() || '',
+        phone: formData.phone?.trim() || '',
+      });
+
+      console.log('✅ RSVP submission response:', response.data);
+
       if (response.data.success) {
+        toast.success(response.data.message || 'RSVP submitted successfully!');
         setSubmitted(true);
         // Reset form after 2 seconds and close modal
         setTimeout(() => {
@@ -43,10 +70,19 @@ export default function RSVPModal({ isOpen, onClose, inviteSlug }) {
           });
           onClose();
         }, 2000);
+      } else {
+        toast.error(response.data.error || 'Failed to submit RSVP. Please try again.');
       }
     } catch (error) {
-      console.error('RSVP submission error:', error);
-      alert(error.response?.data?.error || 'Failed to submit RSVP. Please try again.');
+      console.error('❌ RSVP submission error:', error);
+      console.error('❌ Error response:', error.response?.data);
+      console.error('❌ Error status:', error.response?.status);
+      
+      const errorMessage = error.response?.data?.error || 
+                          error.message || 
+                          'Failed to submit RSVP. Please try again.';
+      
+      toast.error(errorMessage);
     } finally {
       setSubmitting(false);
     }
@@ -70,7 +106,8 @@ export default function RSVPModal({ isOpen, onClose, inviteSlug }) {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
-            className="fixed inset-0 bg-gradient-to-br from-gray-900/70 via-purple-900/60 to-pink-900/70 dark:from-black/80 dark:via-gray-900/80 dark:to-black/80 z-50 backdrop-blur-md"
+            className="fixed inset-0 bg-black/50 dark:bg-black/70 z-40"
+            style={{ backdropFilter: 'blur(4px)', WebkitBackdropFilter: 'blur(4px)' }}
           />
 
           {/* Modal */}
@@ -78,10 +115,13 @@ export default function RSVPModal({ isOpen, onClose, inviteSlug }) {
             initial={{ opacity: 0, scale: 0.9, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.9, y: 20 }}
-            className="fixed inset-0 z-50 flex items-center justify-center p-4"
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 pointer-events-none"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="bg-gradient-to-br from-white via-gray-50 to-white dark:from-gray-800 dark:via-gray-700 dark:to-gray-800 rounded-3xl shadow-2xl max-w-md w-full max-h-[90vh] overflow-y-auto border border-gray-200/50 dark:border-gray-700/50">
+            <div 
+              className="bg-gradient-to-br from-white via-gray-50 to-white dark:from-gray-800 dark:via-gray-700 dark:to-gray-800 rounded-3xl shadow-2xl max-w-md w-full max-h-[90vh] overflow-y-auto border border-gray-200/50 dark:border-gray-700/50 pointer-events-auto"
+              onClick={(e) => e.stopPropagation()}
+            >
               {/* Header */}
               <div className="sticky top-0 bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 dark:from-indigo-700 dark:via-purple-700 dark:to-pink-700 text-white p-6 rounded-t-3xl shadow-lg">
                 <div className="flex items-center justify-between">

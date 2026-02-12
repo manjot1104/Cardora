@@ -7,7 +7,6 @@ import api from '@/lib/api';
 import { getAuthToken } from '@/lib/auth';
 import { motion, AnimatePresence } from 'framer-motion';
 import toast from 'react-hot-toast';
-import { QRCodeSVG } from 'qrcode.react';
 import { weddingTemplates, getTemplateById, getCategories } from '@/lib/templates';
 import { getAllSignatureTemplates, getSignatureTemplateById, getSignatureTemplatesByType } from '@/lib/signatureTemplates';
 import WeddingTemplate from '@/components/WeddingTemplate';
@@ -1100,7 +1099,7 @@ export default function CardPage() {
             </motion.div>
           )}
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 md:gap-8">
+          <div>
             {/* Settings Form */}
             <div className="glass p-4 sm:p-6 lg:p-8 rounded-2xl sm:rounded-3xl">
               <h2 className="text-lg sm:text-xl md:text-2xl font-bold text-gray-900 dark:text-white mb-4 sm:mb-6">Configure Your Card</h2>
@@ -1353,41 +1352,6 @@ export default function CardPage() {
                   {saving ? 'Saving...' : 'Save Settings'}
                 </button>
               </form>
-            </div>
-
-            {/* QR Code Preview */}
-            <div className="glass p-4 sm:p-6 md:p-8 rounded-2xl sm:rounded-3xl">
-              <h2 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white mb-4 sm:mb-6">Your QR Code</h2>
-
-              <div className="flex flex-col items-center space-y-4 sm:space-y-6">
-                <div className="p-3 sm:p-4 bg-white rounded-xl sm:rounded-2xl shadow-lg animate-glow">
-                  <QRCodeSVG
-                    value={cardUrl}
-                    size={typeof window !== 'undefined' && window.innerWidth < 640 ? 150 : 200}
-                    level="H"
-                    includeMargin={true}
-                  />
-                </div>
-
-                <div className="text-center w-full">
-                  <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">Card URL:</p>
-                  <p className="text-blue-600 dark:text-blue-400 font-mono text-sm break-all">{cardUrl}</p>
-                </div>
-
-                {formData.paymentEnabled && (
-                  <div className="text-center w-full pt-4 border-t border-gray-200 dark:border-gray-700">
-                    <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">Payment URL:</p>
-                    <p className="text-purple-600 dark:text-purple-400 font-mono text-sm break-all">{paymentUrl}</p>
-                  </div>
-                )}
-
-                <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg w-full">
-                  <p className="text-sm text-blue-800 dark:text-blue-300">
-                    <strong>💡 NFC Card Tip:</strong> Store this URL on your NFC chip. When someone taps your card,
-                    they'll be redirected here. You can update your profile anytime without reprogramming the NFC chip!
-                  </p>
-                </div>
-              </div>
             </div>
           </div>
         </motion.div>

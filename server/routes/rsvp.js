@@ -11,6 +11,11 @@ const router = express.Router();
 // @access  Public (anyone can RSVP)
 router.post('/submit', async (req, res) => {
   try {
+    console.log('📝 RSVP submission request received:', {
+      body: req.body,
+      inviteSlug: req.body.inviteSlug
+    });
+
     const {
       inviteSlug,
       guestName,
@@ -23,17 +28,41 @@ router.post('/submit', async (req, res) => {
     } = req.body;
 
     // Validation
-    if (!inviteSlug || !guestName) {
+    if (!inviteSlug) {
+      console.error('❌ Missing inviteSlug');
       return res.status(400).json({ 
-        error: 'Invite slug and guest name are required' 
+        success: false,
+        error: 'Invite slug is required' 
       });
     }
 
+    if (!guestName || guestName.trim() === '') {
+      console.error('❌ Missing or empty guestName');
+      return res.status(400).json({ 
+        success: false,
+        error: 'Guest name is required' 
+      });
+    }
+
+    console.log('🔍 Searching for user with animatedInviteSlug:', inviteSlug);
+
     // Find the user who created this invite
     const user = await User.findOne({ animatedInviteSlug: inviteSlug });
+    
     if (!user) {
-      return res.status(404).json({ error: 'Wedding invite not found' });
+      console.error('❌ User not found with animatedInviteSlug:', inviteSlug);
+      // Try to find by username as fallback
+      const userByUsername = await User.findOne({ username: inviteSlug });
+      if (userByUsername) {
+        console.log('✅ Found user by username, but animatedInviteSlug does not match');
+      }
+      return res.status(404).json({ 
+        success: false,
+        error: 'Wedding invite not found. Please check the invitation link.' 
+      });
     }
+
+    console.log('✅ User found:', user.email, 'User ID:', user._id);
 
     // Create RSVP
     const rsvp = await RSVP.create({
@@ -125,6 +154,8 @@ router.post('/submit', async (req, res) => {
       }
     }
 
+    console.log('✅ RSVP created successfully:', rsvp._id);
+
     res.json({
       success: true,
       message: attending 
@@ -133,8 +164,12 @@ router.post('/submit', async (req, res) => {
       rsvp,
     });
   } catch (error) {
-    console.error('RSVP submission error:', error);
-    res.status(500).json({ error: 'Failed to submit RSVP' });
+    console.error('❌ RSVP submission error:', error);
+    console.error('❌ Error stack:', error.stack);
+    res.status(500).json({ 
+      success: false,
+      error: error.message || 'Failed to submit RSVP. Please try again.' 
+    });
   }
 });
 
