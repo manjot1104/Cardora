@@ -180,16 +180,24 @@ const sendEmail = async ({ to, subject, html, text }) => {
 const sendPaymentSuccessEmail = async (user, payment, paymentDetails = {}) => {
   try {
     const email = payment.payerEmail || user.email;
+    console.log('📧 [sendPaymentSuccessEmail] Starting email send process...');
+    console.log('📧 [sendPaymentSuccessEmail] Email address:', email);
+    console.log('📧 [sendPaymentSuccessEmail] Payment ID:', payment._id);
+    console.log('📧 [sendPaymentSuccessEmail] Payment amount:', payment.amount, payment.currency);
     
     // If no email config, log the email (for development)
     if (!process.env.SMTP_USER || !process.env.SMTP_PASS) {
+      console.log('⚠️ [sendPaymentSuccessEmail] SMTP not configured!');
       console.log('📧 Payment Success Email (Email not configured):');
       console.log(`To: ${email}`);
       console.log(`Payment Amount: ${payment.amount} ${payment.currency}`);
       console.log(`Payment Purpose: ${payment.purpose}`);
+      console.log('💡 To enable emails, add SMTP_USER and SMTP_PASS to .env file');
       return { success: false, emailConfigured: false, message: 'Email logged (SMTP not configured)' };
     }
 
+    console.log('✅ [sendPaymentSuccessEmail] SMTP configured, proceeding...');
+    console.log('📧 [sendPaymentSuccessEmail] SMTP_USER:', process.env.SMTP_USER);
     console.log('📧 Attempting to send payment success email...');
     const transporter = createTransporter();
     
@@ -250,9 +258,9 @@ const sendPaymentSuccessEmail = async (user, payment, paymentDetails = {}) => {
     }
 
     const mailOptions = {
-      from: `"Cardora" <${process.env.SMTP_USER}>`,
+      from: `"Cardora Digital" <${process.env.SMTP_USER}>`,
       to: email,
-      subject: 'Payment Successful - Cardora',
+      subject: '🎉 Payment Successful - Cardora Digital',
       html: `
         <!DOCTYPE html>
         <html>
@@ -274,6 +282,9 @@ const sendPaymentSuccessEmail = async (user, payment, paymentDetails = {}) => {
             </div>
             
             <p>Hello ${userName},</p>
+            <p style="font-size: 18px; color: #4caf50; font-weight: bold; margin: 20px 0;">
+              ✅ You have completed payment successfully!
+            </p>
             <p>Thank you for your payment! Your transaction has been processed successfully.</p>
             
             <div style="background: white; padding: 20px; border-radius: 8px; margin: 20px 0; border: 1px solid #ddd;">
@@ -342,9 +353,11 @@ const sendPaymentSuccessEmail = async (user, payment, paymentDetails = {}) => {
         </html>
       `,
       text: `
-        Payment Successful - Cardora
+        Payment Successful - Cardora Digital
         
         Hello ${userName},
+        
+        ✅ You have completed payment successfully!
         
         Thank you for your payment! Your transaction has been processed successfully.
         
@@ -376,22 +389,36 @@ const sendPaymentSuccessEmail = async (user, payment, paymentDetails = {}) => {
       `,
     };
 
-    console.log('📧 Sending payment success email to:', email);
+    console.log('📧 [sendPaymentSuccessEmail] Sending email to:', email);
+    console.log('📧 [sendPaymentSuccessEmail] Email subject: Payment Successful - Cardora');
     const info = await transporter.sendMail(mailOptions);
-    console.log('✅ Payment success email sent successfully!');
-    console.log('📧 Message ID:', info.messageId);
+    console.log('✅ [sendPaymentSuccessEmail] Payment success email sent successfully!');
+    console.log('📧 [sendPaymentSuccessEmail] Message ID:', info.messageId);
+    console.log('📧 [sendPaymentSuccessEmail] Response:', info.response);
     return { success: true, messageId: info.messageId };
   } catch (error) {
-    console.error('❌ Error sending payment success email:');
-    console.error('Error code:', error.code);
-    console.error('Error message:', error.message);
+    console.error('❌ [sendPaymentSuccessEmail] Error sending payment success email:');
+    console.error('❌ [sendPaymentSuccessEmail] Error code:', error.code);
+    console.error('❌ [sendPaymentSuccessEmail] Error message:', error.message);
+    console.error('❌ [sendPaymentSuccessEmail] Full error:', error);
     
     // Log payment details even if email fails (for development)
-    console.log('📧 Payment Success Email (Email failed):');
-    console.log(`Payment Amount: ${payment.amount} ${payment.currency}`);
-    console.log(`Payment Purpose: ${payment.purpose}`);
+    console.log('📧 [sendPaymentSuccessEmail] Payment Success Email (Email failed):');
+    console.log(`📧 [sendPaymentSuccessEmail] To: ${payment.payerEmail || user.email}`);
+    console.log(`📧 [sendPaymentSuccessEmail] Payment Amount: ${payment.amount} ${payment.currency}`);
+    console.log(`📧 [sendPaymentSuccessEmail] Payment Purpose: ${payment.purpose}`);
     
-    return { success: false, error: error.message, errorCode: error.code };
+    // Provide more helpful error messages
+    let errorMessage = error.message;
+    if (error.code === 'EAUTH') {
+      errorMessage = 'Authentication failed. Please check your Gmail app password.';
+    } else if (error.code === 'ECONNECTION') {
+      errorMessage = 'Connection failed. Please check your internet connection and SMTP settings.';
+    } else if (error.code === 'ETIMEDOUT') {
+      errorMessage = 'Connection timed out. Please check your SMTP settings.';
+    }
+    
+    return { success: false, error: errorMessage, errorCode: error.code };
   }
 };
 

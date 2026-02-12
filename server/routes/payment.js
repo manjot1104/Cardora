@@ -284,7 +284,11 @@ router.post('/verify', async (req, res) => {
       return res.status(400).json({ error: 'Session ID is required' });
     }
 
+    console.log('🔍 [Payment Verify] Starting verification for session:', sessionId);
+    const startTime = Date.now();
+
     const session = await stripe.checkout.sessions.retrieve(sessionId);
+    console.log('🔍 [Payment Verify] Stripe session retrieved, payment_status:', session.payment_status);
 
     if (session.payment_status === 'paid') {
       // Update payment record
@@ -298,53 +302,87 @@ router.post('/verify', async (req, res) => {
         { new: true }
       );
 
+      console.log('🔍 [Payment Verify] Payment record updated:', payment ? 'found' : 'not found');
+
+      // Send response immediately, don't wait for email/analytics
+      res.json({ success: true, payment });
+
+      // Do non-blocking operations after response
       if (payment) {
-        // Check if this is a cart payment from metadata
-        const sessionData = await stripe.checkout.sessions.retrieve(sessionId);
-        const isCartPayment = sessionData.metadata?.type === 'cart';
+        // Check if this is a cart payment from metadata (we already have session data)
+        const isCartPayment = session.metadata?.type === 'cart';
         
-        // Track successful payment
-        await Analytics.create({
+        // Track successful payment (non-blocking)
+        Analytics.create({
           userId: payment.userId,
           type: isCartPayment ? 'cart_payment_success' : 'payment_success',
           deviceType: 'unknown',
-        });
+        }).catch(err => console.error('❌ Analytics error:', err));
 
-        // Send payment success email
-        try {
-          const user = await User.findById(payment.userId);
-          if (user) {
-            // Get all payments for this session (for cart payments)
-            const allPayments = isCartPayment 
-              ? await Payment.find({ stripeSessionId: sessionId, status: 'completed' })
-              : [payment];
-            
-            const paymentDetails = {
-              items: allPayments.map(p => ({
-                name: p.purpose || 'Payment',
-                quantity: p.itemData?.quantity || 1,
-                price: p.amount,
-              })),
-            };
+        // Send payment success email (non-blocking)
+        setImmediate(async () => {
+          try {
+            console.log('📧 Preparing to send payment success email...');
+            const user = await User.findById(payment.userId);
+            if (user) {
+              console.log('📧 User found:', user.email);
+              // Get all payments for this session (for cart payments)
+              const allPayments = isCartPayment 
+                ? await Payment.find({ stripeSessionId: sessionId, status: 'completed' })
+                : [payment];
+              
+              console.log('📧 All payments for session:', allPayments.length);
+              
+              const paymentDetails = {
+                items: allPayments.map(p => ({
+                  name: p.purpose || 'Payment',
+                  quantity: p.itemData?.quantity || 1,
+                  price: p.amount,
+                })),
+              };
 
-            // Send email (don't block response if email fails)
-            sendPaymentSuccessEmail(user, payment, paymentDetails).catch(emailError => {
-              console.error('Failed to send payment success email:', emailError);
-            });
+              console.log('📧 Payment details:', JSON.stringify(paymentDetails, null, 2));
+              console.log('📧 Calling sendPaymentSuccessEmail...');
+
+              // Send email (don't block response if email fails)
+              sendPaymentSuccessEmail(user, payment, paymentDetails)
+                .then(result => {
+                  if (result.success) {
+                    console.log('✅ Payment success email sent successfully!');
+                    console.log('📧 Message ID:', result.messageId);
+                  } else {
+                    console.error('❌ Payment success email failed:', result.error || result.message);
+                    console.error('❌ Email configured:', result.emailConfigured);
+                  }
+                })
+                .catch(emailError => {
+                  console.error('❌ Exception sending payment success email:', emailError);
+                  console.error('❌ Error stack:', emailError.stack);
+                });
+            } else {
+              console.error('❌ User not found for payment:', payment.userId);
+            }
+          } catch (emailError) {
+            console.error('❌ Error preparing payment success email:', emailError);
+            console.error('❌ Error stack:', emailError.stack);
           }
-        } catch (emailError) {
-          console.error('Error preparing payment success email:', emailError);
-          // Don't fail the payment verification if email fails
-        }
+        });
       }
 
-      res.json({ success: true, payment });
+      const duration = Date.now() - startTime;
+      console.log(`✅ [Payment Verify] Verification completed in ${duration}ms`);
     } else {
+      console.log('⚠️ [Payment Verify] Payment not paid, status:', session.payment_status);
       res.json({ success: false, status: session.payment_status });
     }
   } catch (error) {
-    console.error('Verify payment error:', error);
-    res.status(500).json({ error: 'Failed to verify payment' });
+    console.error('❌ [Payment Verify] Error:', error);
+    console.error('❌ [Payment Verify] Error stack:', error.stack);
+    res.status(500).json({ 
+      success: false,
+      error: 'Failed to verify payment',
+      message: error.message 
+    });
   }
 });
 
@@ -433,9 +471,21 @@ const webhookHandler = async (req, res) => {
           };
 
           // Send email (don't block webhook response if email fails)
-          sendPaymentSuccessEmail(user, payment, paymentDetails).catch(emailError => {
-            console.error('Failed to send payment success email via webhook:', emailError);
-          });
+          console.log('📧 [Webhook] Preparing to send payment success email...');
+          sendPaymentSuccessEmail(user, payment, paymentDetails)
+            .then(result => {
+              if (result.success) {
+                console.log('✅ [Webhook] Payment success email sent successfully!');
+                console.log('📧 [Webhook] Message ID:', result.messageId);
+              } else {
+                console.error('❌ [Webhook] Payment success email failed:', result.error || result.message);
+                console.error('❌ [Webhook] Email configured:', result.emailConfigured);
+              }
+            })
+            .catch(emailError => {
+              console.error('❌ [Webhook] Exception sending payment success email:', emailError);
+              console.error('❌ [Webhook] Error stack:', emailError.stack);
+            });
         } catch (emailError) {
           console.error('Error preparing payment success email in webhook:', emailError);
           // Don't fail the webhook if email fails

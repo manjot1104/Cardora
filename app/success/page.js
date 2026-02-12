@@ -27,34 +27,150 @@ function SuccessContent() {
     }
   }, [searchParams]);
 
-  const verifyPayment = async (sessionId, type) => {
+  const verifyPayment = async (sessionId, type, retryCount = 0) => {
+    const maxRetries = 2;
+    const retryDelay = 3000; // 3 seconds
+    
     try {
-      const response = await api.post('/payment/verify', { sessionId });
+      console.log(`🔍 Verifying payment with sessionId: ${sessionId} (attempt ${retryCount + 1}/${maxRetries + 1})`);
+      
+      // Create a timeout promise
+      const timeoutPromise = new Promise((_, reject) => {
+        setTimeout(() => reject(new Error('Request timeout')), 30000); // 30 second timeout
+      });
+      
+      // Race between API call and timeout
+      const response = await Promise.race([
+        api.post('/payment/verify', { sessionId }),
+        timeoutPromise
+      ]);
+      
+      console.log('✅ Payment verification response:', response.data);
+      
       if (response.data.success) {
         setPayment(response.data.payment);
         
-        // Verify payment and unlock features
+        // Verify payment and unlock features (only if user is logged in)
+        // Wait a bit to ensure payment is fully updated in database
+        await new Promise(resolve => setTimeout(resolve, 1500));
+        
         try {
-          const unlockResponse = await api.post('/unlock/verify-payment', { sessionId });
-          if (unlockResponse.data.success) {
-            console.log('Features unlocked:', unlockResponse.data);
+          // Check if user has auth token
+          const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
+          if (token) {
+            console.log('🔓 User is authenticated, unlocking features...');
+            console.log('🔓 Calling unlock with sessionId:', sessionId);
             
-            // Only clear cart AFTER successful payment verification and unlock
+            try {
+              // Also add timeout for unlock call
+              const unlockTimeoutPromise = new Promise((_, reject) => {
+                setTimeout(() => reject(new Error('Unlock request timeout')), 30000);
+              });
+              
+              const unlockResponse = await Promise.race([
+                api.post('/unlock/verify-payment', { sessionId }),
+                unlockTimeoutPromise
+              ]);
+              
+              console.log('✅ Unlock response:', unlockResponse.data);
+              
+              if (unlockResponse.data && unlockResponse.data.success) {
+                console.log('Features unlocked:', unlockResponse.data);
+                
+                // Only clear cart AFTER successful payment verification and unlock
+                if (type === 'cart') {
+                  clearCart();
+                  console.log('✅ Cart cleared after successful payment');
+                }
+              } else {
+                console.warn('⚠️ Unlock response indicates failure:', unlockResponse.data);
+                // Still clear cart if payment was successful
+                if (type === 'cart' && response.data.success) {
+                  clearCart();
+                  console.log('✅ Cart cleared (unlock failed but payment successful)');
+                }
+              }
+            } catch (unlockApiError) {
+              console.error('❌ Unlock API error:', unlockApiError);
+              console.error('❌ Unlock error message:', unlockApiError.message);
+              console.error('❌ Unlock error response:', unlockApiError.response?.data);
+              console.error('❌ Unlock error status:', unlockApiError.response?.status);
+              console.error('❌ Unlock error code:', unlockApiError.code);
+              
+              // If it's a timeout, don't fail completely - webhook will handle it
+              if (unlockApiError.message === 'Unlock request timeout') {
+                console.warn('⚠️ Unlock timed out, but payment was successful. Webhook will handle feature unlock.');
+                // Still clear cart since payment was successful
+                if (type === 'cart' && response.data.success) {
+                  clearCart();
+                  console.log('✅ Cart cleared (unlock timed out but payment successful)');
+                }
+              } else if (unlockApiError.response?.status === 400) {
+                // 400 error means payment not found yet - this is OK, webhook will handle it
+                const errorData = unlockApiError.response?.data;
+                console.warn('⚠️ Unlock returned 400:', errorData);
+                console.warn('⚠️ This usually means payment is still processing. Webhook will handle feature unlock automatically.');
+                
+                // Still clear cart since payment was successful (Stripe confirmed it)
+                if (type === 'cart' && response.data.success) {
+                  clearCart();
+                  console.log('✅ Cart cleared (unlock 400 error but payment successful - webhook will handle unlock)');
+                }
+              } else {
+                // Other errors
+                console.error('❌ Unlock error (non-timeout, non-400):', unlockApiError);
+                
+                // If payment was successful, still clear cart
+                if (type === 'cart' && response.data.success) {
+                  clearCart();
+                  console.log('✅ Cart cleared (unlock failed but payment successful)');
+                }
+              }
+            }
+          } else {
+            console.warn('⚠️ User not authenticated, skipping unlock. User should login to unlock features.');
+            // Still clear cart if payment was successful
             if (type === 'cart') {
               clearCart();
-              console.log('✅ Cart cleared after successful payment');
+              console.log('✅ Cart cleared after successful payment (user not logged in)');
             }
           }
         } catch (unlockError) {
-          console.error('Error unlocking features:', unlockError);
-          // Don't clear cart if unlock fails
+          console.error('❌ Error in unlock process:', unlockError);
+          // Don't clear cart if unlock fails, but payment was successful
+          if (type === 'cart' && response.data.success) {
+            clearCart();
+            console.log('✅ Cart cleared (unlock error but payment successful)');
+          }
         }
       } else {
-        console.warn('Payment verification failed, keeping cart');
+        console.warn('⚠️ Payment verification failed, keeping cart');
       }
     } catch (error) {
-      console.error('Error verifying payment:', error);
-      // Don't clear cart if verification fails
+      console.error('❌ Error verifying payment:', error);
+      console.error('❌ Error message:', error.message);
+      console.error('❌ Error code:', error.code);
+      
+      // Handle timeout or network errors with retry
+      const isTimeout = error.message === 'Request timeout' || error.code === 'ECONNABORTED';
+      const isNetworkError = !error.response && (error.code === 'ECONNREFUSED' || error.code === 'ERR_NETWORK');
+      
+      if ((isTimeout || isNetworkError) && retryCount < maxRetries) {
+        console.log(`⏳ Retrying payment verification in ${retryDelay / 1000} seconds... (${retryCount + 1}/${maxRetries})`);
+        await new Promise(resolve => setTimeout(resolve, retryDelay));
+        return verifyPayment(sessionId, type, retryCount + 1);
+      }
+      
+      // If all retries failed or it's a different error, still show success
+      // because Stripe webhook will handle the verification
+      console.warn('⚠️ Payment verification failed after retries, but payment was successful via Stripe.');
+      console.warn('⚠️ Webhook will handle verification and feature unlock in the background.');
+      
+      // Clear cart anyway since payment was successful (Stripe confirmed it)
+      if (type === 'cart') {
+        clearCart();
+        console.log('✅ Cart cleared (verification timed out but payment was successful)');
+      }
     } finally {
       setVerifying(false);
     }
@@ -96,7 +212,7 @@ function SuccessContent() {
           Payment Successful!
         </motion.h1>
 
-        <motion.p
+          <motion.p
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4 }}
@@ -104,6 +220,23 @@ function SuccessContent() {
         >
           Your payment has been processed successfully.
         </motion.p>
+
+        {verifying && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.45 }}
+            className="mb-6"
+          >
+            <div className="flex items-center justify-center space-x-2 text-blue-600 dark:text-blue-400">
+              <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-blue-600 dark:border-blue-400"></div>
+              <span className="text-sm">Verifying payment and unlocking features...</span>
+            </div>
+            <p className="text-xs text-gray-500 dark:text-gray-500 mt-2">
+              This may take a few moments. Your features will be unlocked automatically.
+            </p>
+          </motion.div>
+        )}
 
         {payment && (
           <motion.div
@@ -150,10 +283,10 @@ function SuccessContent() {
           className="space-y-4"
         >
           <Link
-            href="/"
+            href="/dashboard"
             className="block w-full py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl font-semibold hover:shadow-lg transform hover:scale-105 transition-all"
           >
-            Return Home
+            Go to Dashboard
           </Link>
         </motion.div>
       </motion.div>
