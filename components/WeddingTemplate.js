@@ -979,27 +979,6 @@ export default function WeddingTemplate({ user, templateId, cardType = 'wedding'
           )}
         </div>
 
-        {/* Premium Footer */}
-        <div 
-          className="text-center py-1 sm:py-1.5 px-4 relative overflow-hidden"
-          style={{
-            background: `linear-gradient(135deg, ${template.colors.accent} 0%, ${template.colors.primary} 100%)`,
-          }}
-        >
-          {/* Footer Decorations */}
-          <div className="absolute inset-0 opacity-10 flex items-center justify-center gap-2">
-            <span className="text-sm">🌺</span>
-            <span className="text-xs">✨</span>
-            <span className="text-sm">🌺</span>
-          </div>
-          <p 
-            className="text-xs font-semibold relative z-10 drop-shadow-md"
-            style={{ color: template.colors.text }}
-          >
-            {template.name}
-          </p>
-        </div>
-        
         {/* Website Name */}
         <div className="text-center py-2 px-4">
           <p 
