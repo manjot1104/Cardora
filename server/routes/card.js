@@ -42,17 +42,17 @@ router.get('/:username', async (req, res) => {
       });
     }
 
-    // Check if user has paid for card - if not, show demo data
-    const isPaid = user.cardPaid || false;
-    const displayData = isPaid ? {
-        name: user.name,
-        profession: user.profession,
-        company: user.company,
-        phone: user.phone,
-        whatsapp: user.whatsapp,
-        email: user.email,
-        address: user.address,
-        socialLinks: user.socialLinks,
+    // Always show user's actual profile data (not demo data)
+    // Payment status is only used for premium features, not for displaying the card
+    const displayData = {
+      name: user.name,
+      profession: user.profession,
+      company: user.company,
+      phone: user.phone,
+      whatsapp: user.whatsapp,
+      email: user.email,
+      address: user.address,
+      socialLinks: user.socialLinks,
       weddingDate: user.weddingDate,
       venue: user.venue,
       brideName: user.brideName,
@@ -65,9 +65,6 @@ router.get('/:username', async (req, res) => {
       profileImage: user.profileImage,
       cardBackgroundImage: user.cardBackgroundImage,
       cardImages: user.cardImages,
-    } : {
-      ...demoCardData,
-      theme: user.theme, // Keep user's theme selection
     };
 
     res.json({
@@ -85,8 +82,8 @@ router.get('/:username', async (req, res) => {
         collection: user.collection,
         country: user.country,
         currency: user.currency,
-        cardPaid: isPaid, // Include payment status
-        isDemo: !isPaid, // Flag to indicate demo mode
+        cardPaid: user.cardPaid || false, // Include payment status
+        isDemo: false, // Always show real data, not demo
       },
     });
   } catch (error) {

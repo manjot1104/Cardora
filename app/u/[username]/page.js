@@ -5,8 +5,6 @@ import { useParams, useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import api from '@/lib/api';
 import Link from 'next/link';
-import WeddingTemplate from '@/components/WeddingTemplate';
-import { getTemplateById } from '@/lib/templates';
 import LoadingScreen from '@/components/LoadingScreen';
 
 export default function PublicCardPage() {
@@ -53,68 +51,8 @@ export default function PublicCardPage() {
     );
   }
 
-  // Check if user has selected a wedding/engagement/anniversary template
-  const isEventTemplate = user.theme && user.theme !== 'default' && (
-    getTemplateById(user.theme) || 
-    (user.cardType && ['wedding', 'engagement', 'anniversary'].includes(user.cardType))
-  );
-
-  // If event template is selected, render it
-  if (isEventTemplate) {
-    const isDemo = user.isDemo || !user.cardPaid;
-    
-    return (
-      <div className="min-h-screen w-full">
-        {/* Demo Mode Banner */}
-        {isDemo && (
-          <div className="fixed top-0 left-0 right-0 z-50 bg-gradient-to-r from-yellow-400 to-orange-500 text-white p-3 text-center shadow-lg">
-            <p className="text-sm font-semibold">
-              🎭 Demo Mode - Complete payment to unlock your personalized card
-            </p>
-          </div>
-        )}
-        
-        <WeddingTemplate 
-          user={{
-            ...user,
-            cardType: user.cardType || (user.theme && user.theme !== 'default' ? 'wedding' : 'business')
-          }} 
-          templateId={user.theme} 
-        />
-        {/* Overlay with action buttons */}
-        <div className="fixed bottom-4 sm:bottom-8 left-1/2 transform -translate-x-1/2 z-50 flex flex-col sm:flex-row gap-2 sm:gap-4 px-4 w-full sm:w-auto max-w-sm sm:max-w-none">
-          {isDemo ? (
-            <Link
-              href={`/pay/${user.username}`}
-              className="px-4 sm:px-6 py-2.5 sm:py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-full font-semibold shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all flex items-center justify-center gap-2 text-sm sm:text-base"
-            >
-              💳 Unlock Your Card
-            </Link>
-          ) : (
-            <>
-          <button
-            onClick={() => {
-              if (navigator.share) {
-                navigator.share({
-                  title: `${user.name}'s Wedding Invitation`,
-                  text: `You're invited to ${user.name}'s wedding!`,
-                  url: window.location.href,
-                });
-              } else {
-                navigator.clipboard.writeText(window.location.href);
-                alert('Link copied to clipboard!');
-              }
-            }}
-            className="px-4 sm:px-6 py-2.5 sm:py-3 bg-white/90 backdrop-blur-sm text-gray-700 rounded-full font-semibold shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all flex items-center justify-center gap-2 text-sm sm:text-base"
-          >
-            📤 Share Invitation
-          </button>
-            </>
-          )}
-        </div>
-      </div>
-    );
-  }
+  // Always show user profile card at /u/[username] route
+  // Wedding templates are shown at /wedding/[slug] route
 
   const socialLinks = [
     { key: 'linkedin', icon: '💼', label: 'LinkedIn' },

@@ -198,8 +198,16 @@ export default function AnimatedInvitePage() {
     }
   };
 
+  const getUnitPrice = (country) => {
+    // Dynamic pricing: quantity * unitPrice
+    // INR: 20 per unit (50 quantity = 1000, 100 = 2000, 150 = 3000, 200 = 4000)
+    // CAD: 0.50 per unit (50 quantity = 25, 100 = 50, 150 = 75, 200 = 100)
+    return country === 'CA' ? 0.50 : 20;
+  };
+
   const getAnimatedInviteBasePrice = (country) => {
-    return country === 'CA' ? 50 : 2000; // $50 for Canada, ₹2000 for India
+    // Base price is now 0, all pricing is quantity-based
+    return 0;
   };
 
   const handleAddToCart = async () => {
@@ -258,10 +266,10 @@ export default function AnimatedInvitePage() {
     }
 
     // Add to cart
-    const unitPrice = 0.19;
-    const basePrice = getAnimatedInviteBasePrice(country);
-    const serviceFee = 2.99;
-    const totalPrice = basePrice + (unitPrice * quantity) + serviceFee;
+    const unitPrice = getUnitPrice(country);
+    const basePrice = 0; // No base price, all quantity-based
+    const serviceFee = 0; // No service fee
+    const totalPrice = unitPrice * quantity; // Simple: quantity * unitPrice
 
     const template = getAnimatedTemplateById(formData.templateId);
     console.log('🛒 Template:', template);
@@ -672,15 +680,11 @@ export default function AnimatedInvitePage() {
             <div className="mb-6">
               <div className="flex items-baseline gap-2 mb-2">
                 <span className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">
-                  {formatCurrency(getAnimatedInviteBasePrice(country), country)}
+                  {formatCurrency(getUnitPrice(country) * quantity, country)}
                 </span>
-                <span className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">*</span>
               </div>
-              <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 flex items-start sm:items-center gap-1 flex-wrap">
-                <span>*</span>Service fee up to {formatCurrency(2.99, country)} per order
-                <svg className="w-3 h-3 sm:w-4 sm:h-4 text-gray-400 flex-shrink-0 mt-0.5 sm:mt-0" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z" clipRule="evenodd" />
-                </svg>
+              <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">
+                {quantity} shares × {formatCurrency(getUnitPrice(country), country)} per share
               </p>
             </div>
 
@@ -743,18 +747,21 @@ export default function AnimatedInvitePage() {
                 </button>
               </div>
               <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 mt-2">
-                Unit price: {formatCurrency(0.19, country)}
+                Unit price: {formatCurrency(getUnitPrice(country), country)}
               </p>
             </div>
 
             {/* Price Summary */}
             <div className="mb-6 p-3 sm:p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
-              <div className="flex justify-between items-center">
-                <span className="text-sm sm:text-base font-medium text-gray-600 dark:text-gray-400">Subtotal</span>
+              <div className="flex justify-between items-center mb-2">
+                <span className="text-sm sm:text-base font-medium text-gray-600 dark:text-gray-400">Total Price</span>
                 <span className="text-lg sm:text-xl font-bold text-gray-900 dark:text-white">
-                  {formatCurrency(getAnimatedInviteBasePrice(country), country)}
+                  {formatCurrency(getUnitPrice(country) * quantity, country)}
                 </span>
               </div>
+              <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                {quantity} shares × {formatCurrency(getUnitPrice(country), country)} = {formatCurrency(getUnitPrice(country) * quantity, country)}
+              </p>
             </div>
 
             {/* Create Now Button */}

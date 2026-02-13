@@ -3,7 +3,8 @@
 import { useState, useEffect } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import Link from 'next/link';
-import { removeAuthToken } from '@/lib/auth';
+import { removeAuthToken, getAuthToken } from '@/lib/auth';
+import api from '@/lib/api';
 import toast from 'react-hot-toast';
 
 export default function DashboardLayout({ children }) {
@@ -11,6 +12,7 @@ export default function DashboardLayout({ children }) {
   const pathname = usePathname();
   const [isDark, setIsDark] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [cardPaid, setCardPaid] = useState(false);
 
   useEffect(() => {
     const darkMode = localStorage.getItem('darkMode') === 'true';
@@ -18,7 +20,22 @@ export default function DashboardLayout({ children }) {
     if (darkMode) {
       document.documentElement.classList.add('dark');
     }
+    
+    // Fetch user payment status
+    fetchUserPaymentStatus();
   }, []);
+
+  const fetchUserPaymentStatus = async () => {
+    try {
+      const token = getAuthToken();
+      if (!token) return;
+      
+      const response = await api.get('/user/profile');
+      setCardPaid(response.data.cardPaid || false);
+    } catch (error) {
+      console.error('Error fetching user payment status:', error);
+    }
+  };
 
   const toggleDarkMode = () => {
     const newMode = !isDark;
@@ -37,16 +54,24 @@ export default function DashboardLayout({ children }) {
     router.push('/login');
   };
 
-  const navItems = [
+  const allNavItems = [
     { href: '/dashboard', label: 'Dashboard', icon: '📊' },
     { href: '/dashboard/profile', label: 'Profile', icon: '👤' },
-    { href: '/dashboard/card', label: 'My Card', icon: '💼' },
+    { href: '/dashboard/card', label: 'Invitations', icon: '💼' },
     { href: '/dashboard/animated-invite', label: 'Animated Invites', icon: '🎬' },
-    { href: '/dashboard/rsvps', label: 'RSVPs', icon: '✉️' },
-    { href: '/dashboard/gallery', label: 'Gallery', icon: '📸' },
+    { href: '/dashboard/rsvps', label: 'RSVPs', icon: '✉️', requiresPayment: true },
+    { href: '/dashboard/gallery', label: 'My Cards', icon: '📸' },
     { href: '/dashboard/payments', label: 'Payments', icon: '💳' },
     { href: '/dashboard/analytics', label: 'Analytics', icon: '📈' },
   ];
+
+  // Filter nav items based on payment status
+  const navItems = allNavItems.filter(item => {
+    if (item.requiresPayment && !cardPaid) {
+      return false;
+    }
+    return true;
+  });
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
@@ -136,7 +161,7 @@ export default function DashboardLayout({ children }) {
         </div>
 
         {/* Page Content */}
-        <div className="p-3 sm:p-4 md:p-6 lg:p-8">
+        <div className="p-3 sm:p-4 md:p-6 lg:p-8 pl-4 sm:pl-6 md:pl-8 lg:pl-12">
           {children}
         </div>
       </div>

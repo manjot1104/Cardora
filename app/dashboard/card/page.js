@@ -197,8 +197,16 @@ export default function CardPage() {
     }
   };
 
+  const getUnitPrice = (country) => {
+    // Dynamic pricing: quantity * unitPrice
+    // INR: 5 per unit (100 quantity = 500, 50 = 250, 150 = 750, 200 = 1000)
+    // CAD: 0.20 per unit (50 quantity = 10, 100 = 20, 150 = 30, 200 = 40)
+    return country === 'CA' ? 0.20 : 5;
+  };
+
   const getCardBasePrice = (country) => {
-    return country === 'CA' ? 20 : 500; // $20 for Canada, ₹500 for India
+    // Base price is now 0, all pricing is quantity-based
+    return 0;
   };
 
   const handleAddToCart = () => {
@@ -208,10 +216,10 @@ export default function CardPage() {
     }
 
     let cartItem;
-    const unitPrice = 0.19;
-    const basePrice = getCardBasePrice(formData.country || 'IN');
-    const serviceFee = 2.99;
-    const totalPrice = basePrice + (unitPrice * quantity) + serviceFee;
+    const unitPrice = getUnitPrice(formData.country || 'IN');
+    const basePrice = 0; // No base price, all quantity-based
+    const serviceFee = 0; // No service fee
+    const totalPrice = unitPrice * quantity; // Simple: quantity * unitPrice
 
     if (formData.cardType === 'business') {
       if (!selectedBusinessTemplate) {
@@ -532,12 +540,11 @@ export default function CardPage() {
                   <div className="mb-6">
                     <div className="flex items-baseline gap-2 mb-2">
                       <span className="text-3xl font-bold text-gray-900 dark:text-white">
-                        {formatCurrency(getCardBasePrice(formData.country || 'IN'), formData.country || 'IN')}
+                        {formatCurrency(getUnitPrice(formData.country || 'IN') * quantity, formData.country || 'IN')}
                       </span>
-                      <span className="text-sm text-gray-600 dark:text-gray-400">*</span>
                     </div>
-                    <p className="text-xs text-gray-600 dark:text-gray-400 flex items-center gap-1">
-                      <span>*</span>Service fee up to {formatCurrency(2.99, formData.country || 'IN')} per order
+                    <p className="text-xs text-gray-600 dark:text-gray-400">
+                      {quantity} shares × {formatCurrency(getUnitPrice(formData.country || 'IN'), formData.country || 'IN')} per share
                       <svg className="w-4 h-4 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
                         <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z" clipRule="evenodd" />
                       </svg>
@@ -701,18 +708,21 @@ export default function CardPage() {
                       </button>
                     </div>
                     <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
-                      Unit price: {formatCurrency(0.19, formData.country || 'IN')}
+                      Unit price: {formatCurrency(getUnitPrice(formData.country || 'IN'), formData.country || 'IN')}
                     </p>
                   </div>
 
                   {/* Price Summary */}
                   <div className="mb-6 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
                     <div className="flex justify-between items-center mb-2">
-                      <span className="text-sm text-gray-600 dark:text-gray-400">Subtotal</span>
+                      <span className="text-sm text-gray-600 dark:text-gray-400">Total Price</span>
                       <span className="text-lg font-bold text-gray-900 dark:text-white">
-                        {formatCurrency(getCardBasePrice(formData.country || 'IN'), formData.country || 'IN')}
+                        {formatCurrency(getUnitPrice(formData.country || 'IN') * quantity, formData.country || 'IN')}
                       </span>
                     </div>
+                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                      {quantity} shares × {formatCurrency(getUnitPrice(formData.country || 'IN'), formData.country || 'IN')} = {formatCurrency(getUnitPrice(formData.country || 'IN') * quantity, formData.country || 'IN')}
+                    </p>
                   </div>
 
                   {/* Create Now Button */}
@@ -1061,18 +1071,21 @@ export default function CardPage() {
                     </button>
                   </div>
                   <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
-                    Unit price: {formatCurrency(0.19, formData.country || 'IN')}
+                    Unit price: {formatCurrency(getUnitPrice(formData.country || 'IN'), formData.country || 'IN')}
                   </p>
                 </div>
 
                 {/* Price Summary */}
                 <div className="mb-6 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
                   <div className="flex justify-between items-center mb-2">
-                    <span className="text-sm text-gray-600 dark:text-gray-400">Subtotal</span>
+                    <span className="text-sm text-gray-600 dark:text-gray-400">Total Price</span>
                     <span className="text-lg font-bold text-gray-900 dark:text-white">
-                      {formatCurrency(getCardBasePrice(formData.country || 'IN'), formData.country || 'IN')}
+                      {formatCurrency(getUnitPrice(formData.country || 'IN') * quantity, formData.country || 'IN')}
                     </span>
                   </div>
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                    {quantity} shares × {formatCurrency(getUnitPrice(formData.country || 'IN'), formData.country || 'IN')} = {formatCurrency(getUnitPrice(formData.country || 'IN') * quantity, formData.country || 'IN')}
+                  </p>
                 </div>
 
                 {/* Create Now Button */}
